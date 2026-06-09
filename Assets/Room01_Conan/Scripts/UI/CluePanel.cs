@@ -2,33 +2,36 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// 단서 클릭 시 뜨는 확대 팝업 패널
-// Canvas 안에 Panel(CluePanel) → Image + Text + Button(닫기) 구조
-public class CluePanel : MonoBehaviour
+namespace Room01Conan
 {
-    public static CluePanel Instance { get; private set; }
-
-    [SerializeField] private GameObject panelRoot;
-    [SerializeField] private Image detailImage;
-    [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private Button closeButton;
-
-    void Awake()
+    // 단서 클릭 시 뜨는 확대 팝업 패널
+    // Canvas 안에 Panel(CluePanel) → Image + Text + Button(닫기) 구조
+    public class CluePanel : MonoBehaviour
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-        Instance = this;
+        public static CluePanel Instance { get; private set; }
 
-        closeButton.onClick.AddListener(Hide);
-        panelRoot.SetActive(false);
+        [SerializeField] private GameObject panelRoot;
+        [SerializeField] private Image detailImage;
+        [SerializeField] private TextMeshProUGUI descriptionText;
+        [SerializeField] private Button closeButton;
+
+        void Awake()
+        {
+            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+            Instance = this;
+
+            closeButton.onClick.AddListener(Hide);
+            panelRoot.SetActive(false);
+        }
+
+        public void Show(ClueData data)
+        {
+            detailImage.sprite = data.detailImage;
+            detailImage.gameObject.SetActive(data.detailImage != null);
+            descriptionText.text = data.description;
+            panelRoot.SetActive(true);
+        }
+
+        public void Hide() => panelRoot.SetActive(false);
     }
-
-    public void Show(ClueData data)
-    {
-        detailImage.sprite = data.detailImage;
-        detailImage.gameObject.SetActive(data.detailImage != null);
-        descriptionText.text = data.description;
-        panelRoot.SetActive(true);
-    }
-
-    public void Hide() => panelRoot.SetActive(false);
 }
