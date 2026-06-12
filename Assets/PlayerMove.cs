@@ -1,4 +1,5 @@
 using UnityEngine;
+using EscapeGame;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
@@ -22,6 +23,12 @@ public class PlayerMove : MonoBehaviour
         }
 
         characterController.center = new Vector3(0f, 1f, 0f);
+
+        if (GetComponent<DoorInteractor>() == null)
+        {
+            gameObject.AddComponent<DoorInteractor>();
+        }
+
         Cursor.lockState = CursorLockMode.Locked;
     }
 

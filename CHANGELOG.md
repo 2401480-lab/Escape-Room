@@ -27,3 +27,8 @@
 - PlayerMove에 CharacterController 기반 중력 이동을 복구하여 계단이나 단차에서 내려올 수 있도록 수정
 - CharacterController 중심 보정은 유지하여 시작 직후 바닥 아래로 빠지지 않도록 처리
 - PlayerMove 검증 테스트에 중력 적용, 접지 상태 보정, 수직 이동 조건 추가
+
+### [2026-06-12 22:51:00]
+- 플레이어가 바라보는 문 오브젝트를 E키로 열 수 있도록 DoorInteractor 추가
+- DoorInteractor가 문 오브젝트를 회전시키고 문 하위 콜라이더를 비활성화하여 막힌 입구를 통과할 수 있도록 구현
+- 기존 플레이어 오브젝트에 DoorInteractor가 런타임 자동 부착되도록 PlayerMove 보강 및 검증 테스트 추가
