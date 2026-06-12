@@ -22,3 +22,8 @@
 - 플레이어가 시작하자마자 바닥 아래로 떨어지던 문제를 수정하기 위해 PlayerMove의 임시 중력 이동 제거
 - 런타임에 추가되는 CharacterController의 중심을 y=1로 설정하여 컨트롤러 하단이 바닥 높이에 맞도록 보정
 - PlayerMove 검증 테스트에 시작 낙하 방지 조건 추가
+
+### [2026-06-12 22:44:25]
+- PlayerMove에 CharacterController 기반 중력 이동을 복구하여 계단이나 단차에서 내려올 수 있도록 수정
+- CharacterController 중심 보정은 유지하여 시작 직후 바닥 아래로 빠지지 않도록 처리
+- PlayerMove 검증 테스트에 중력 적용, 접지 상태 보정, 수직 이동 조건 추가
