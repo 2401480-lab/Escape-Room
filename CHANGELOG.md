@@ -1,3 +1,15 @@
+### [2026-06-12 00:00:00]
+- Room02_Operating 폴더 신규 생성: 절규의 수술실 시나리오 전용 스크립트 작성
+- 네임스페이스 Room02Operating으로 분리 (Room01Conan과 독립)
+- 등장인물 변경: 봉태현/문수미/진세웅(범인) 반영
+- SuspectType enum 수정: BongTaehyeon / MoonSumi / JinSewoong
+- GamePhase enum 수정: LobbyPhase / MidPhase / FinalPhase 구역 구조 반영
+- 추리 팝업 내용 수정: 수술대 아래 흔적 + 독약 경로
+- 최종 추리 팝업 수정: 운동화/발가락 페인트 자국 결정적 증거
+- 엔딩 독백/자백 텍스트 수술실 버전으로 교체
+- NotebookUI 용의자 프로필 텍스트 수술실 버전으로 교체
+- RoomLoader.cs: Room02 씬 이름을 Scene_OperatingRoom으로 확정
+
 ### [2026-06-12 22:04:04]
 - 로컬 Unity 프로젝트를 원격 저장소 기준 young 브랜치에 연결하고 신규 에셋 및 프로젝트 설정 변경을 커밋 대상으로 정리
 - Unity 프로젝트에서 생성되는 로컬 IDE 설정 폴더가 커밋되지 않도록 .gitignore에 .vscode 제외 규칙 추가
