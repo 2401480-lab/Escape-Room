@@ -1,3 +1,13 @@
+### [2026-06-12 01:00:00]
+- 단서 목록 19개 확정 및 구역별 배분 완료
+  - 구역1 입구 로비: clue_newspaper, clue_visitor_log, clue_incident_report
+  - 구역2 복도/대기실: clue_cctv_memo, clue_staff_schedule, clue_broken_locker
+  - 구역3 병실: clue_hasho_photo, clue_hasho_diary, clue_medicine_bottle, clue_letter
+  - 구역4 보관실/분장실: clue_poison_bottle, clue_storage_log, clue_paint_can, clue_gloves
+  - 구역5 수술실: clue_shoe_print, clue_toe_print, clue_under_table_dust, clue_poison_glass, clue_yoanna_body
+- ClueDataGenerator.cs 에디터 스크립트 추가 (Tools > Room02 > Generate All Clue Assets)
+- RoomGameManager 단서 ID 목록 및 추리 팝업 텍스트 시나리오에 맞게 업데이트
+
 ### [2026-06-12 00:00:00]
 - Room02_Operating 폴더 신규 생성: 절규의 수술실 시나리오 전용 스크립트 작성
 - 네임스페이스 Room02Operating으로 분리 (Room01Conan과 독립)

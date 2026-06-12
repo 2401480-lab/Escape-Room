@@ -14,12 +14,35 @@ namespace Room02Operating
         public GamePhase currentPhase = GamePhase.Opening;
 
         [Header("단서 수집 추적")]
-        // 전반전 필수 단서 (입구+병실): 하시호 배경 파악
-        [SerializeField] private List<string> lobbyClueIDs;
-        // 중반전 필수 단서 (보관실+분장실): 범행 준비 증거
-        [SerializeField] private List<string> midClueIDs;
-        // 후반전 필수 단서 (수술실): 결정적 증거
-        [SerializeField] private List<string> finalClueIDs;
+        // 구역1~3 필수 단서: 입구/복도/병실 → 하시호 배경 파악 후 MidPhase 진입
+        // clue_newspaper, clue_visitor_log, clue_hasho_photo, clue_hasho_diary
+        [SerializeField] private List<string> lobbyClueIDs = new List<string>
+        {
+            "clue_newspaper",
+            "clue_visitor_log",
+            "clue_hasho_photo",
+            "clue_hasho_diary"
+        };
+
+        // 구역4 필수 단서: 보관실/분장실 → 범행 준비 증거 후 FinalPhase 진입
+        // clue_poison_bottle, clue_storage_log, clue_paint_can, clue_gloves
+        [SerializeField] private List<string> midClueIDs = new List<string>
+        {
+            "clue_poison_bottle",
+            "clue_storage_log",
+            "clue_paint_can",
+            "clue_gloves"
+        };
+
+        // 구역5 결정적 단서: 수술실 → 범인 특정
+        // clue_shoe_print, clue_toe_print, clue_under_table_dust, clue_poison_glass
+        [SerializeField] private List<string> finalClueIDs = new List<string>
+        {
+            "clue_shoe_print",
+            "clue_toe_print",
+            "clue_under_table_dust",
+            "clue_poison_glass"
+        };
 
         [Header("추리 팝업 참조")]
         [SerializeField] private DeductionPopup deductionPopup;
@@ -88,32 +111,32 @@ namespace Room02Operating
         void EnterMidPhase()  => currentPhase = GamePhase.MidPhase;
         void EnterFinalPhase() => currentPhase = GamePhase.FinalPhase;
 
-        // 추리 팝업 #1 — 수술대 아래 숨은 흔적 발견
+        // 추리 팝업 #1 — 독약 도난 + 분장실 페인트 연결
         void TryShowDeduction1()
         {
             if (_deduction1Shown) return;
-            if (_collectedClueIDs.Contains("clue_under_table_dust") &&
-                _collectedClueIDs.Contains("clue_shoe_print"))
+            if (_collectedClueIDs.Contains("clue_poison_bottle") &&
+                _collectedClueIDs.Contains("clue_storage_log"))
             {
                 _deduction1Shown = true;
                 deductionPopup?.Show(
                     "추리 팝업 #1",
-                    "수술대 아래에 누군가 숨어 있었던 흔적이 있다. 발버둥 치는 연기를 했던 것인가?"
+                    "보관실에서 독약이 사라졌다. 재고 기록에는 분명 있었는데... 누군가 미리 훔쳐간 것이다."
                 );
             }
         }
 
-        // 추리 팝업 #2 — 독약 경로 특정
+        // 추리 팝업 #2 — 페인트 + 장갑으로 수술실 잠입 준비 연결
         void TryShowDeduction2()
         {
             if (_deduction2Shown) return;
-            if (_collectedClueIDs.Contains("clue_poison_bottle") &&
-                _collectedClueIDs.Contains("clue_glass"))
+            if (_collectedClueIDs.Contains("clue_paint_can") &&
+                _collectedClueIDs.Contains("clue_gloves"))
             {
                 _deduction2Shown = true;
                 deductionPopup?.Show(
                     "추리 팝업 #2",
-                    "독약은 수술실 내부에서 준비되었다. 피해자는 자신이 독을 마신다는 것을 몰랐을 것이다."
+                    "페인트 작업용 장갑... 수술 당일 수술실 바닥에 페인트 칠이 있었다. 누군가 그 안에 숨기 위해 미리 준비한 것이다."
                 );
             }
         }
