@@ -44,7 +44,17 @@ foreach ($sceneName in $sceneNames) {
 
     Assert-True ($buildSettings -match [regex]::Escape("path: $buildPath")) "Build Settings missing $buildPath"
     Assert-True ($buildSettings -match [regex]::Escape("guid: $guid")) "Build Settings missing guid $guid for $buildPath"
+
+    $sceneText = Get-Content -LiteralPath $scenePath -Raw
+    foreach ($objectName in @('StageRoot', 'PlayerStart', 'Clues', 'Doors', 'Triggers')) {
+        Assert-True ($sceneText -match "m_Name:\s+$objectName(\r?\n|$)") "$buildPath missing GameObject $objectName"
+    }
 }
+
+$corridorScenePath = Join-Path $root 'Assets/Scenes/Scene_Corridor.unity'
+$corridorScene = Get-Content -LiteralPath $corridorScenePath -Raw
+Assert-True ($corridorScene -match 'm_Name:\s+SceneLoader(\r?\n|$)') 'Scene_Corridor.unity missing SceneLoader GameObject'
+Assert-True ($corridorScene -match 'm_Script: \{fileID: 11500000, guid: f806e1d33cfe47479f449022b037a9ca, type: 3\}') 'Scene_Corridor.unity missing SceneLoader component'
 
 $sceneLoaderPath = Join-Path $root 'Assets/_Shared/Scripts/SceneLoader.cs'
 Assert-True (Test-Path -LiteralPath $sceneLoaderPath) 'Missing SceneLoader script at Assets/_Shared/Scripts/SceneLoader.cs'
