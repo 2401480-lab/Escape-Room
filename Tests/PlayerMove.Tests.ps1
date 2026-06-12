@@ -21,7 +21,9 @@ $playerMove = Get-Content -LiteralPath $playerMovePath -Raw
 Assert-True ($playerMove -match '\[RequireComponent\(typeof\(CharacterController\)\)\]') 'PlayerMove must require CharacterController for collision-aware movement.'
 Assert-True ($playerMove -match 'CharacterController\s+\w+') 'PlayerMove must keep a CharacterController reference.'
 Assert-True ($playerMove -match 'AddComponent<CharacterController>\s*\(') 'PlayerMove must add CharacterController at runtime for existing scene objects.'
+Assert-True ($playerMove -match 'characterController\.center\s*=\s*new\s+Vector3\s*\(\s*0f\s*,\s*1f\s*,\s*0f\s*\)') 'Runtime CharacterController center must keep the controller bottom on the floor.'
 Assert-True ($playerMove -match '\.Move\s*\(') 'PlayerMove must move through CharacterController.Move().'
 Assert-True ($playerMove -notmatch 'transform\.position\s*\+=') 'PlayerMove must not bypass collisions with transform.position += movement.'
+Assert-True ($playerMove -notmatch 'gravity|verticalVelocity') 'PlayerMove must not force gravity before stage floors are finalized.'
 
 Write-Host 'PlayerMove collision checks passed.'

@@ -17,3 +17,8 @@
 - PlayerMove가 transform.position 직접 이동으로 콜라이더를 우회하던 문제를 CharacterController.Move 기반 이동으로 수정
 - 기존 씬의 플레이어 오브젝트에 CharacterController가 없어도 런타임에 자동 추가되도록 보강
 - PlayerMove 충돌 이동 방식을 검증하는 PowerShell 테스트 추가
+
+### [2026-06-12 22:41:54]
+- 플레이어가 시작하자마자 바닥 아래로 떨어지던 문제를 수정하기 위해 PlayerMove의 임시 중력 이동 제거
+- 런타임에 추가되는 CharacterController의 중심을 y=1로 설정하여 컨트롤러 하단이 바닥 높이에 맞도록 보정
+- PlayerMove 검증 테스트에 시작 낙하 방지 조건 추가
