@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 1367faadebc3d834cbe221db4860a608
+  productGUID: 6ea3f200701875b4fac0a5880e63cebb
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -915,11 +915,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: ed7f4d11-4866-4419-b44f-19bd8e06333c
+  cloudProjectId: a12e8df8-55e8-4cd2-bfc4-b31947b81e51
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: Escape-Room
-  organizationId: unity_2401480
+  organizationId: tjdud0760
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

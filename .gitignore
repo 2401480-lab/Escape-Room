@@ -11,6 +11,7 @@
 
 # VisualStudio 캐시
 .vs/
+.vscode/
 *.csproj
 *.sln
 *.suo
@@ -43,6 +44,7 @@ Assets/AlchemyLabProps/
 Assets/Fantasy Pixel Locks and Keys/
 Assets/Multistory Dungeons 2/
 Assets/TutorialInfo/
+Assets/TutorialInfo.meta
 
 # 빌드 결과물
 *.apk
