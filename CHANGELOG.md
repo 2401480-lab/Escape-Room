@@ -94,3 +94,8 @@
 - ChaseController 거리 이벤트와 연결되는 ProximityVignetteUI를 추가해 3m 이내 알파 0.3, 2m 이내 알파 0.6 붉은 화면 가장자리 효과를 표시
 - ClueJournalManager.OnClueAdded 이벤트를 구독하는 CluePickupPopupUI를 추가해 단서명과 증거 수집됨 문구를 2초 표시 후 페이드아웃하도록 구현
 - EndingUI 용의자 선택 흐름에 SuspectConfirmUI 확인 팝업을 추가하고 예 선택 시 ConfirmSuspect로 정답 및 오답 1회 제한 처리를 수행하도록 변경
+
+### [2026-06-13 20:38:45]
+- 공통 단서 에셋과 ClueInteractable 씬 배치가 연결되지 않아 F키 수집 반응이 없는 원인을 확인하고 ClueSceneSetupTool을 추가
+- Tools/Clues 메뉴에서 단서 에셋 생성 후 현재 씬 또는 3개 스테이지 씬 전체에 ClueInteractable, Collider, 표시용 MeshRenderer, 단서 UI 매니저를 자동 배치하도록 구현
+- ClueInteractable이 배치된 ClueData를 저널 정의에 등록하고 ClueJournalManager가 씬 전환 중 유지되도록 보강

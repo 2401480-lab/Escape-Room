@@ -15,7 +15,13 @@ namespace EscapeRoom
         private void Awake()
         {
             EnsurePromptText();
+            RegisterDefinition();
             HidePrompt();
+        }
+
+        private void Start()
+        {
+            RegisterDefinition();
         }
 
         private void OnDisable()
@@ -53,6 +59,14 @@ namespace EscapeRoom
             {
                 HidePrompt();
                 gameObject.SetActive(false);
+            }
+        }
+
+        private void RegisterDefinition()
+        {
+            if (clueData != null && ClueJournalManager.Instance != null)
+            {
+                ClueJournalManager.Instance.RegisterClueDefinition(clueData);
             }
         }
 

@@ -46,7 +46,10 @@ namespace EscapeRoom.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log($"[Clues] Story ClueData assets generated. Created: {created}, Updated: {updated}");
-            EditorUtility.DisplayDialog("단서 생성 완료", $"단서 에셋 생성 {created}개, 갱신 {updated}개 완료", "확인");
+            if (!Application.isBatchMode)
+            {
+                EditorUtility.DisplayDialog("단서 생성 완료", $"단서 에셋 생성 {created}개, 갱신 {updated}개 완료", "확인");
+            }
         }
 
         private static void EnsureFolders()
@@ -67,7 +70,7 @@ namespace EscapeRoom.Editor
             }
         }
 
-        private static ClueEntry[] GetEntries()
+        internal static ClueEntry[] GetEntries()
         {
             return new[]
             {
@@ -204,7 +207,7 @@ namespace EscapeRoom.Editor
             };
         }
 
-        private struct ClueEntry
+        internal readonly struct ClueEntry
         {
             public readonly string clueID;
             public readonly string fileName;
