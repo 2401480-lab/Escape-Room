@@ -43,6 +43,7 @@ namespace EscapeRoom
 
             chaseTimeRemaining = chaseTimer;
             ApplyAgentSpeed();
+            StoryProgressManager.Instance?.RegisterChaseController(this);
             if (startDisabled && navMeshAgent != null)
             {
                 navMeshAgent.enabled = false;
@@ -74,6 +75,11 @@ namespace EscapeRoom
             {
                 CatchPlayer();
             }
+        }
+
+        private void OnEnable()
+        {
+            StoryProgressManager.Instance?.RegisterChaseController(this);
         }
 
         public void StartChase()

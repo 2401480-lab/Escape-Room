@@ -1,0 +1,95 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace EscapeRoom
+{
+    public class TimerUI : MonoBehaviour
+    {
+        [SerializeField] private Canvas timerCanvas;
+        [SerializeField] private TextMeshProUGUI timerText;
+        [SerializeField] private Color deductionColor = Color.white;
+        [SerializeField] private Color chaseColor = Color.red;
+
+        private void Awake()
+        {
+            EnsureUI();
+        }
+
+        private void Update()
+        {
+            StoryProgressManager storyProgressManager = StoryProgressManager.Instance;
+            if (storyProgressManager == null)
+            {
+                return;
+            }
+
+            EnsureUI();
+            timerText.text = FormatTime(storyProgressManager.CurrentTimerRemaining);
+            timerText.color = storyProgressManager.IsChaseTimerActive ? chaseColor : deductionColor;
+        }
+
+        private void EnsureUI()
+        {
+            if (timerCanvas == null)
+            {
+                GameObject canvasObject = GameObject.Find("TimerCanvas");
+                if (canvasObject == null)
+                {
+                    canvasObject = new GameObject("TimerCanvas");
+                    timerCanvas = canvasObject.AddComponent<Canvas>();
+                    canvasObject.AddComponent<CanvasScaler>();
+                    canvasObject.AddComponent<GraphicRaycaster>();
+                }
+                else
+                {
+                    timerCanvas = canvasObject.GetComponent<Canvas>();
+                    if (timerCanvas == null)
+                    {
+                        timerCanvas = canvasObject.AddComponent<Canvas>();
+                    }
+                }
+            }
+
+            timerCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            if (timerText != null)
+            {
+                return;
+            }
+
+            GameObject textObject = GameObject.Find("TimerText");
+            if (textObject != null)
+            {
+                timerText = textObject.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (timerText == null)
+            {
+                textObject = new GameObject("TimerText");
+                textObject.transform.SetParent(timerCanvas.transform, false);
+                timerText = textObject.AddComponent<TextMeshProUGUI>();
+            }
+
+            timerText.text = FormatTime(0f);
+            timerText.fontSize = 32f;
+            timerText.alignment = TextAlignmentOptions.TopRight;
+            timerText.color = deductionColor;
+
+            RectTransform rect = timerText.rectTransform;
+            rect.anchorMin = new Vector2(1f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-32f, -24f);
+            rect.sizeDelta = new Vector2(180f, 48f);
+        }
+
+        private static string FormatTime(float seconds)
+        {
+            int totalSeconds = Mathf.Max(0, Mathf.FloorToInt(seconds));
+            int minutes = totalSeconds / 60;
+            int remainingSeconds = totalSeconds % 60;
+            return $"{minutes.ToString("D2")}:{remainingSeconds.ToString("D2")}";
+        }
+    }
+}

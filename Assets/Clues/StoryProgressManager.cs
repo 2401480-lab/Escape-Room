@@ -35,10 +35,15 @@ namespace EscapeRoom
         private readonly HashSet<string> collectedClueIDs = new HashSet<string>();
         private bool hasEscapeKey;
         private float deductionTimeRemaining;
+        private ChaseController chaseController;
 
         public StoryPhase CurrentPhase => currentPhase;
         public bool HasEscapeKey => hasEscapeKey;
         public float DeductionTimeRemaining => deductionTimeRemaining;
+        public bool IsChaseTimerActive => currentPhase == StoryPhase.ChaseEscape;
+        public float CurrentTimerRemaining => IsChaseTimerActive && chaseController != null
+            ? chaseController.ChaseTimeRemaining
+            : deductionTimeRemaining;
 
         private void Awake()
         {
@@ -130,6 +135,14 @@ namespace EscapeRoom
         public void BeginChase()
         {
             SetPhase(StoryPhase.ChaseEscape);
+        }
+
+        public void RegisterChaseController(ChaseController controller)
+        {
+            if (controller != null)
+            {
+                chaseController = controller;
+            }
         }
 
         public void MarkGameOver()
