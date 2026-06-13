@@ -40,6 +40,8 @@ namespace EscapeRoom.Editor
             // 런타임 매니저 확보
             EnsureRuntimeObject<ClueJournalManager>("ClueJournalManager");
             EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
+            EnsureRuntimeObject<TimerUI>("TimerUI");
+            EnsureRuntimeObject<SettingsUI>("SettingsUI");
 
             // PlayerStart 앞 2m 위치 계산
             GameObject ps = GameObject.Find("PlayerStart");
@@ -134,6 +136,8 @@ namespace EscapeRoom.Editor
             EnsureRuntimeObject<ClueJournalManager>("ClueJournalManager");
             EnsureRuntimeObject<ClueJournalUI>("ClueJournalUI");
             EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
+            EnsureRuntimeObject<TimerUI>("TimerUI");
+            EnsureRuntimeObject<SettingsUI>("SettingsUI");
 
             GameObject cluesRoot = EnsureRoot("Clues");
             int placed = 0;

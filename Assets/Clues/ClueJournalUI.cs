@@ -59,13 +59,46 @@ namespace EscapeRoom
         {
             if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Tab))
             {
-                Toggle();
+                ToggleEvidencePanel();
+            }
+
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                ToggleSuspectPanel();
             }
         }
 
         public void Toggle()
         {
-            SetOpen(panelRoot == null || !panelRoot.activeSelf);
+            ToggleEvidencePanel();
+        }
+
+        public void ToggleEvidencePanel()
+        {
+            bool shouldOpen = panelRoot == null || !panelRoot.activeSelf || !evidenceTabRoot.activeSelf;
+            OpenEvidencePanel();
+            SetOpen(shouldOpen);
+        }
+
+        public void ToggleSuspectPanel()
+        {
+            bool shouldOpen = panelRoot == null || !panelRoot.activeSelf || !suspectTabRoot.activeSelf;
+            OpenSuspectPanel();
+            SetOpen(shouldOpen);
+        }
+
+        public void OpenEvidencePanel()
+        {
+            EnsureUI();
+            ShowEvidenceTab();
+            SetOpen(true);
+        }
+
+        public void OpenSuspectPanel()
+        {
+            EnsureUI();
+            ShowSuspectTab();
+            SetOpen(true);
         }
 
         public void SetOpen(bool isOpen)
@@ -88,7 +121,7 @@ namespace EscapeRoom
                 return;
             }
 
-            ShowEvidenceTab();
+            OpenEvidencePanel();
             Canvas.ForceUpdateCanvases();
 
             float viewportHeight = evidenceScrollRect.viewport != null
@@ -122,36 +155,50 @@ namespace EscapeRoom
 
         private void EnsureUI()
         {
-            if (journalCanvas == null)
-            {
-                GameObject canvasObject = new GameObject("ClueJournalCanvas");
-                journalCanvas = canvasObject.AddComponent<Canvas>();
-                journalCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvasObject.AddComponent<CanvasScaler>();
-                canvasObject.AddComponent<GraphicRaycaster>();
-            }
-            else
-            {
-                journalCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            }
+            journalCanvas = EnsureHudCanvas();
 
             if (panelRoot != null)
             {
                 return;
             }
 
-            panelRoot = CreatePanel("ClueJournalPanel", journalCanvas.transform, new Color(0.05f, 0.05f, 0.06f, 0.92f)).gameObject;
+            CreateHudButtons(journalCanvas.transform);
+
+            panelRoot = CreatePanel("ClueJournalPanel", journalCanvas.transform, new Color(0.05f, 0.05f, 0.06f, 0.94f)).gameObject;
             RectTransform panelRect = (RectTransform)panelRoot.transform;
-            panelRect.anchorMin = Vector2.zero;
-            panelRect.anchorMax = Vector2.one;
-            panelRect.offsetMin = Vector2.zero;
-            panelRect.offsetMax = Vector2.zero;
+            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+            panelRect.pivot = new Vector2(0.5f, 0.5f);
+            panelRect.sizeDelta = new Vector2(860f, 620f);
+            panelRect.anchoredPosition = Vector2.zero;
 
             CreateHeader(panelRect);
             CreateChipBar(panelRect);
             CreateTabButtons(panelRect);
             CreateEvidenceTab(panelRect);
             CreateSuspectTab(panelRect);
+        }
+
+        private void CreateHudButtons(Transform parent)
+        {
+            RectTransform buttonBar = CreatePanel("HudLeftButtonBar", parent, new Color(0f, 0f, 0f, 0f));
+            buttonBar.anchorMin = new Vector2(0f, 1f);
+            buttonBar.anchorMax = new Vector2(0f, 1f);
+            buttonBar.pivot = new Vector2(0f, 1f);
+            buttonBar.anchoredPosition = new Vector2(24f, -24f);
+            buttonBar.sizeDelta = new Vector2(280f, 44f);
+
+            HorizontalLayoutGroup layout = buttonBar.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.childControlWidth = false;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.spacing = 8f;
+
+            Button evidenceButton = CreateButton("EvidenceHudButton", buttonBar, "수집 증거 (J)");
+            evidenceButton.onClick.AddListener(ToggleEvidencePanel);
+
+            Button suspectButton = CreateButton("SuspectHudButton", buttonBar, "용의자 수첩 (K)");
+            suspectButton.onClick.AddListener(ToggleSuspectPanel);
         }
 
         private void CreateHeader(RectTransform parent)
@@ -164,7 +211,7 @@ namespace EscapeRoom
             titleRect.offsetMin = new Vector2(32f, -74f);
             titleRect.offsetMax = new Vector2(-32f, -24f);
 
-            progressText = CreateText("ProgressText", parent, "진행도: 0 / 0", 20f, TextAlignmentOptions.Right);
+            progressText = CreateText("ProgressText", parent, "진행도 0 / 0", 20f, TextAlignmentOptions.Right);
             RectTransform progressRect = progressText.rectTransform;
             progressRect.anchorMin = new Vector2(0f, 1f);
             progressRect.anchorMax = new Vector2(1f, 1f);
@@ -245,6 +292,7 @@ namespace EscapeRoom
             layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
             layout.spacing = 12f;
+
             ContentSizeFitter fitter = evidenceContent.gameObject.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
@@ -307,7 +355,7 @@ namespace EscapeRoom
             IReadOnlyList<ClueData> allClues = journalManager.AllClues;
             int totalCount = allClues.Count;
             int collectedCount = journalManager.CollectedClues.Count;
-            progressText.text = $"진행도: {collectedCount} / {totalCount}";
+            progressText.text = $"진행도 {collectedCount} / {totalCount}";
 
             Dictionary<string, List<ClueData>> grouped = new Dictionary<string, List<ClueData>>();
             List<ClueData> keyClueSection = new List<ClueData>();
@@ -319,7 +367,7 @@ namespace EscapeRoom
                     continue;
                 }
 
-                string area = string.IsNullOrWhiteSpace(clueData.areaName) ? "미지정 구역" : clueData.areaName;
+                string area = string.IsNullOrWhiteSpace(clueData.areaName) ? "미지의 구역" : clueData.areaName;
                 if (!grouped.ContainsKey(area))
                 {
                     grouped.Add(area, new List<ClueData>());
@@ -429,6 +477,35 @@ namespace EscapeRoom
             }
         }
 
+        private static Canvas EnsureHudCanvas()
+        {
+            GameObject canvasObject = GameObject.Find("HUD_Canvas");
+            if (canvasObject == null)
+            {
+                canvasObject = new GameObject("HUD_Canvas");
+            }
+
+            Canvas canvas = canvasObject.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                canvas = canvasObject.AddComponent<Canvas>();
+            }
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            if (canvasObject.GetComponent<CanvasScaler>() == null)
+            {
+                canvasObject.AddComponent<CanvasScaler>();
+            }
+
+            if (canvasObject.GetComponent<GraphicRaycaster>() == null)
+            {
+                canvasObject.AddComponent<GraphicRaycaster>();
+            }
+
+            return canvas;
+        }
+
         private static RectTransform CreatePanel(string name, Transform parent, Color color)
         {
             GameObject go = new GameObject(name);
@@ -443,6 +520,7 @@ namespace EscapeRoom
             GameObject go = new GameObject(name);
             go.transform.SetParent(parent, false);
             TextMeshProUGUI tmp = go.AddComponent<TextMeshProUGUI>();
+            FontHelper.Apply(tmp);
             tmp.text = text;
             tmp.fontSize = fontSize;
             tmp.alignment = alignment;
@@ -455,11 +533,11 @@ namespace EscapeRoom
         {
             RectTransform rect = CreatePanel(name, parent, new Color(0.18f, 0.2f, 0.25f, 0.95f));
             LayoutElement element = rect.gameObject.AddComponent<LayoutElement>();
-            element.preferredWidth = 160f;
-            element.preferredHeight = 34f;
+            element.preferredWidth = 132f;
+            element.preferredHeight = 38f;
 
             Button button = rect.gameObject.AddComponent<Button>();
-            TextMeshProUGUI label = CreateText("Label", rect, text, 18f, TextAlignmentOptions.Center);
+            TextMeshProUGUI label = CreateText("Label", rect, text, 17f, TextAlignmentOptions.Center);
             label.rectTransform.anchorMin = Vector2.zero;
             label.rectTransform.anchorMax = Vector2.one;
             label.rectTransform.offsetMin = Vector2.zero;

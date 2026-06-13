@@ -10,6 +10,8 @@ namespace EscapeRoom
         [SerializeField] private TextMeshProUGUI timerText;
         [SerializeField] private Color deductionColor = Color.white;
         [SerializeField] private Color chaseColor = Color.red;
+        [SerializeField] private Color urgentColor = Color.red;
+        [SerializeField] private float urgentThresholdSeconds = 180f;
 
         private void Awake()
         {
@@ -26,17 +28,17 @@ namespace EscapeRoom
 
             EnsureUI();
             timerText.text = FormatTime(storyProgressManager.CurrentTimerRemaining);
-            timerText.color = storyProgressManager.IsChaseTimerActive ? chaseColor : deductionColor;
+            timerText.color = GetTimerColor(storyProgressManager);
         }
 
         private void EnsureUI()
         {
             if (timerCanvas == null)
             {
-                GameObject canvasObject = GameObject.Find("TimerCanvas");
+                GameObject canvasObject = GameObject.Find("HUD_Canvas");
                 if (canvasObject == null)
                 {
-                    canvasObject = new GameObject("TimerCanvas");
+                    canvasObject = new GameObject("HUD_Canvas");
                     timerCanvas = canvasObject.AddComponent<Canvas>();
                     canvasObject.AddComponent<CanvasScaler>();
                     canvasObject.AddComponent<GraphicRaycaster>();
@@ -75,13 +77,26 @@ namespace EscapeRoom
             timerText.fontSize = 32f;
             timerText.alignment = TextAlignmentOptions.TopRight;
             timerText.color = deductionColor;
+            FontHelper.Apply(timerText);
 
             RectTransform rect = timerText.rectTransform;
             rect.anchorMin = new Vector2(1f, 1f);
             rect.anchorMax = new Vector2(1f, 1f);
             rect.pivot = new Vector2(1f, 1f);
-            rect.anchoredPosition = new Vector2(-32f, -24f);
+            rect.anchoredPosition = new Vector2(-92f, -24f);
             rect.sizeDelta = new Vector2(180f, 48f);
+        }
+
+        private Color GetTimerColor(StoryProgressManager storyProgressManager)
+        {
+            if (storyProgressManager.IsChaseTimerActive)
+            {
+                return chaseColor;
+            }
+
+            return storyProgressManager.CurrentTimerRemaining <= urgentThresholdSeconds
+                ? urgentColor
+                : deductionColor;
         }
 
         private static string FormatTime(float seconds)

@@ -23,7 +23,7 @@ namespace EscapeRoom
 
         [Header("타이머")]
         [SerializeField] private bool useDeductionTimer = true;
-        [SerializeField] private float deductionTimer = 900f;
+        [SerializeField] private float deductionTimer = 1200f;
 
         [Header("이벤트")]
         public UnityEvent<StoryPhase> OnPhaseChanged;

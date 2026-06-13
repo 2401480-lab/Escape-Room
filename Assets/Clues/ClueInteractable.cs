@@ -9,7 +9,7 @@ namespace EscapeRoom
         [SerializeField] private float interactDistance = 4f;
         [SerializeField] private TextMeshProUGUI promptText;
 
-        private const string PromptMessage = "[F] 증거 수집";
+        private const string PromptMessage = "[F] 조사하기";
         private static ClueInteractable currentTarget; // 현재 Raycast가 가리키는 단서
 
         private void Awake()
@@ -127,11 +127,11 @@ namespace EscapeRoom
                 }
             }
 
-            GameObject canvasObject = GameObject.Find("CluePromptCanvas");
+            GameObject canvasObject = GameObject.Find("HUD_Canvas");
             Canvas canvas;
             if (canvasObject == null)
             {
-                canvasObject = new GameObject("CluePromptCanvas");
+                canvasObject = new GameObject("HUD_Canvas");
                 canvas = canvasObject.AddComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 canvasObject.AddComponent<UnityEngine.UI.CanvasScaler>();

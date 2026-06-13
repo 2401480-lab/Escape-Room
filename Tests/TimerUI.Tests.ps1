@@ -26,11 +26,13 @@ Assert-True ($timerUI -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*1f\s*,\s*1f\s
 Assert-True ($timerUI -match 'FormatTime\s*\(' -and $timerUI -match 'Mathf\.FloorToInt' -and $timerUI -match '"D2"') 'TimerUI must format the timer as MM:SS.'
 Assert-True ($timerUI -match 'deductionColor\s*=\s*Color\.white') 'TimerUI must display deduction timer in white.'
 Assert-True ($timerUI -match 'chaseColor\s*=\s*Color\.red') 'TimerUI must display chase timer in red.'
+Assert-True ($timerUI -match 'urgentThresholdSeconds\s*=\s*180f' -and $timerUI -match 'urgentColor\s*=\s*Color\.red') 'TimerUI must turn red when 3 minutes or less remain.'
 Assert-True ($timerUI -match 'StoryProgressManager\.Instance' -and $timerUI -match 'CurrentTimerRemaining') 'TimerUI must read timer values from StoryProgressManager.'
 Assert-True ($timerUI -match 'IsChaseTimerActive') 'TimerUI must switch color when the chase timer is active.'
 
 Assert-True ($storyManager -match 'CurrentTimerRemaining') 'StoryProgressManager must expose the current timer value for UI.'
 Assert-True ($storyManager -match 'IsChaseTimerActive') 'StoryProgressManager must expose whether the chase timer is active.'
+Assert-True ($storyManager -match 'deductionTimer\s*=\s*1200f') 'StoryProgressManager deduction timer must start at 20:00.'
 Assert-True ($storyManager -match 'RegisterChaseController\s*\(') 'StoryProgressManager must allow ChaseController to register its timer.'
 Assert-True ($storyManager -match 'DeductionTimerExpired' -and $storyManager -match 'PlayGameOver\s*\(\s*GameOverReason\.DeductionTimerExpired\s*\)') 'Deduction timer expiry must activate GameOverUI.'
 Assert-True ($chase -match 'RegisterChaseController\s*\(\s*this\s*\)') 'ChaseController must register with StoryProgressManager for TimerUI.'
