@@ -33,7 +33,14 @@ namespace EscapeRoom
             MeshRenderer mr = player.GetComponent<MeshRenderer>();
             if (mr != null) mr.enabled = false;
 
-            // PlayerMove 추가 (CharacterController도 자동 추가됨)
+            // CharacterController 먼저 추가 후 에디터에서 미리 center 설정
+            CharacterController cc = player.AddComponent<CharacterController>();
+            cc.center = new Vector3(0f, 1f, 0f);
+            cc.height = 2f;
+            cc.radius = 0.5f;
+            cc.skinWidth = 0.08f;
+
+            // PlayerMove 추가
             player.AddComponent<PlayerMove>();
 
             // ── Main Camera를 Player 자식으로 ────────────────────────

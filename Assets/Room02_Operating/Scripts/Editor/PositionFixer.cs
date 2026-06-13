@@ -82,7 +82,7 @@ namespace EscapeRoom
             Debug.Log($"[Room02] 안전망 바닥 콜라이더 생성 Y={floorY - 0.05f:F2}");
         }
 
-        static void FixClues(float floorY)
+        static void FixClues(float globalFloorY)
         {
             GameObject cluesRoot = GameObject.Find("Clues");
             if (cluesRoot == null)
@@ -97,19 +97,26 @@ namespace EscapeRoom
                 if (child == cluesRoot.transform) continue;
                 if (child.GetComponent<ClueInteractable>() == null) continue;
 
-                // 책상/선반 위 단서는 바닥+1.1, 바닥 단서는 바닥+0.05
-                float offsetY = child.name.ToLower().Contains("bloodstain") ||
-                                child.name.ToLower().Contains("footprint") ||
-                                child.name.ToLower().Contains("under") ? 0.05f : 1.1f;
+                // 바닥 단서 vs 선반 위 단서 구분
+                bool isFloorLevel = child.name.ToLower().Contains("bloodstain") ||
+                                    child.name.ToLower().Contains("footprint") ||
+                                    child.name.ToLower().Contains("under");
+                float desiredOffset = isFloorLevel ? 0.05f : 1.1f;
+
+                // 이 큐브 바로 위에서 Raycast → 각자 바닥 높이 찾기
+                Vector3 rayOrigin = new Vector3(child.position.x, child.position.y + 30f, child.position.z);
+                float localFloor = globalFloorY;
+                if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 100f))
+                    localFloor = hit.point.y;
 
                 Vector3 pos = child.position;
-                pos.y = floorY + offsetY;
+                pos.y = localFloor + desiredOffset;
                 child.position = pos;
                 EditorUtility.SetDirty(child.gameObject);
                 count++;
             }
 
-            Debug.Log($"[Room02] 큐브 {count}개 위치 조정 완료.");
+            Debug.Log($"[Room02] 큐브 {count}개 개별 위치 조정 완료.");
         }
     }
 }
