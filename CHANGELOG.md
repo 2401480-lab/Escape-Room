@@ -1,3 +1,10 @@
+### [2026-06-13 01:00:00]
+- SceneUISetup.cs 에디터 스크립트 추가 (Tools > Room02 > Setup Scene UI)
+- HUD_Canvas 생성: ScreenSpaceOverlay, ScaleWithScreenSize 1920x1080
+- TimerUI, ProximityVignetteUI, CluePickupPopupUI, SuspectConfirmUI, InteractionPromptUI 자동 배치
+- 기존 씬 오브젝트(StoryProgressManager 등) 참조 자동 연결
+- 중복 실행 방지 (HUD_Canvas 존재 시 스킵)
+
 ### [2026-06-13 00:00:00]
 - 단서 전면 확장: 19개 → 26개, 시나리오 흐름 5단계로 재구성
   - StoryPhase: cast_notice, memorial_frame, visitor_log, security_log, hasho_will, ward_calendar
