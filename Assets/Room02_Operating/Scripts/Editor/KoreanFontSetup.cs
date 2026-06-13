@@ -26,13 +26,36 @@ namespace EscapeRoom
             TMP_FontAsset existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetPath);
             if (existing == null)
             {
-                // Dynamic 아틀라스 방식 — 기본 오버로드 사용 (Unity 6 호환)
                 TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(ttf);
-
                 fontAsset.name = "MalgunGothic_TMP";
+
+                // 메인 에셋 먼저 저장
                 AssetDatabase.CreateAsset(fontAsset, AssetPath);
+
+                // atlas texture를 서브에셋으로 저장 (없으면 런타임에 파괴됨)
+                if (fontAsset.atlasTextures != null)
+                {
+                    foreach (Texture2D tex in fontAsset.atlasTextures)
+                    {
+                        if (tex != null)
+                        {
+                            tex.name = "Atlas";
+                            AssetDatabase.AddObjectToAsset(tex, fontAsset);
+                        }
+                    }
+                }
+
+                // material도 서브에셋으로 저장
+                if (fontAsset.material != null)
+                {
+                    fontAsset.material.name = "Material";
+                    AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
+                }
+
+                EditorUtility.SetDirty(fontAsset);
                 AssetDatabase.SaveAssets();
-                existing = fontAsset;
+                AssetDatabase.Refresh();
+                existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetPath);
                 Debug.Log("[Room02] 맑은 고딕 TMP 폰트 에셋 생성 완료.");
             }
             else
@@ -40,33 +63,52 @@ namespace EscapeRoom
                 Debug.Log("[Room02] 기존 맑은 고딕 TMP 폰트 에셋 재사용.");
             }
 
-            // ── 3. TMP Settings 기본 폰트로 등록 ─────────────────────────────
+            // ── 3. 기본 폰트(LiberationSans)의 Fallback에 맑은 고딕 추가 ──────
+            //    기본 폰트를 교체하면 기존 UI가 깨지므로 Fallback 방식 사용
+            //    영문·기호 → LiberationSans, 한글 → MalgunGothic(fallback)
             TMP_Settings settings = Resources.Load<TMP_Settings>("TMP Settings");
             if (settings != null)
             {
-                SerializedObject so = new SerializedObject(settings);
-                SerializedProperty prop = so.FindProperty("m_defaultFontAsset");
-                if (prop != null)
+                SerializedObject settingsSO = new SerializedObject(settings);
+                SerializedProperty defaultFontProp = settingsSO.FindProperty("m_defaultFontAsset");
+                TMP_FontAsset defaultFont = defaultFontProp?.objectReferenceValue as TMP_FontAsset;
+
+                if (defaultFont != null)
                 {
-                    prop.objectReferenceValue = existing;
-                    so.ApplyModifiedProperties();
-                    EditorUtility.SetDirty(settings);
-                    AssetDatabase.SaveAssets();
-                    Debug.Log("[Room02] TMP 기본 폰트를 맑은 고딕으로 변경 완료.");
+                    SerializedObject fontSO = new SerializedObject(defaultFont);
+                    SerializedProperty fallbackList = fontSO.FindProperty("m_FallbackFontAssetTable");
+                    if (fallbackList != null)
+                    {
+                        // 이미 추가됐는지 확인
+                        bool alreadyAdded = false;
+                        for (int i = 0; i < fallbackList.arraySize; i++)
+                        {
+                            if (fallbackList.GetArrayElementAtIndex(i).objectReferenceValue == existing)
+                            {
+                                alreadyAdded = true;
+                                break;
+                            }
+                        }
+
+                        if (!alreadyAdded)
+                        {
+                            fallbackList.arraySize++;
+                            fallbackList.GetArrayElementAtIndex(fallbackList.arraySize - 1).objectReferenceValue = existing;
+                            fontSO.ApplyModifiedProperties();
+                            EditorUtility.SetDirty(defaultFont);
+                            AssetDatabase.SaveAssets();
+                            Debug.Log("[Room02] LiberationSans Fallback에 맑은 고딕 추가 완료.");
+                        }
+                    }
                 }
-            }
-            else
-            {
-                Debug.LogWarning("[Room02] TMP Settings를 찾을 수 없습니다. 수동으로 설정하세요.");
             }
 
             EditorUtility.DisplayDialog("완료",
                 "한글 폰트 세팅 완료!\n\n" +
                 "• 폰트: 맑은 고딕 (malgun.ttf)\n" +
-                "• 방식: Dynamic Atlas (런타임 한글 자동 렌더)\n" +
-                "• TMP 기본 폰트로 등록\n\n" +
-                "기존 TextMeshPro 오브젝트는 Inspector에서\n" +
-                "Font Asset → MalgunGothic_TMP 로 변경하면 됩니다.", "확인");
+                "• 방식: LiberationSans Fallback 추가\n" +
+                "  (영문은 기존 폰트, 한글은 자동 전환)\n\n" +
+                "플레이하면 한글이 정상 출력됩니다.", "확인");
         }
     }
 }
