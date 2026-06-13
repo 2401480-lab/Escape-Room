@@ -57,13 +57,29 @@ namespace EscapeRoom
                 return;
             }
 
-            // CharacterController 높이 절반만큼 올려서 바닥에 딱 붙이기
-            CharacterController cc = player.GetComponent<CharacterController>();
-            float halfHeight = cc != null ? cc.height * 0.5f : 1f;
-            player.transform.position = new Vector3(0f, floorY + halfHeight, 0f);
+            // CC center가 (0,1,0)이므로 player.y = floorY 이면 CC 바닥 = floorY
+            player.transform.position = new Vector3(0f, floorY, 0f);
+
+            // 바닥 감지 실패(floorY=0)한 경우 안전망으로 투명 Floor 평면 추가
+            EnsureFloorCollider(floorY);
 
             EditorUtility.SetDirty(player);
             Debug.Log($"[Room02] Player 위치 → Y: {player.transform.position.y:F2}");
+        }
+
+        // 건물 콜라이더가 없는 경우 대비해 보이지 않는 바닥 콜라이더 생성
+        static void EnsureFloorCollider(float floorY)
+        {
+            if (GameObject.Find("_FloorCollider") != null) return;
+
+            GameObject floor = new GameObject("_FloorCollider");
+            Undo.RegisterCreatedObjectUndo(floor, "Create FloorCollider");
+            floor.transform.position = new Vector3(0f, floorY - 0.05f, 0f);
+
+            BoxCollider box = floor.AddComponent<BoxCollider>();
+            box.size = new Vector3(200f, 0.1f, 200f);
+            EditorUtility.SetDirty(floor);
+            Debug.Log($"[Room02] 안전망 바닥 콜라이더 생성 Y={floorY - 0.05f:F2}");
         }
 
         static void FixClues(float floorY)
