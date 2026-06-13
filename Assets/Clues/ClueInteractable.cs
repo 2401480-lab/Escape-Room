@@ -6,16 +6,15 @@ namespace EscapeRoom
     public class ClueInteractable : MonoBehaviour
     {
         [SerializeField] public ClueData clueData;
-        [SerializeField] private float collectDistance = 3f;
+        [SerializeField] private float interactDistance = 4f;
         [SerializeField] private TextMeshProUGUI promptText;
-        [SerializeField] private Transform player;
 
         private const string PromptMessage = "[F] 증거 수집";
+        private static ClueInteractable currentTarget; // 현재 Raycast가 가리키는 단서
 
         private void Awake()
         {
             EnsurePromptText();
-            RegisterDefinition();
             HidePrompt();
         }
 
@@ -26,16 +25,16 @@ namespace EscapeRoom
 
         private void OnDisable()
         {
+            if (currentTarget == this) currentTarget = null;
             HidePrompt();
         }
 
         private void Update()
         {
-            if (clueData == null || ClueJournalManager.Instance == null)
-            {
-                HidePrompt();
-                return;
-            }
+            if (clueData == null) return;
+
+            // ClueJournalManager가 없으면 자동 생성 시도
+            if (ClueJournalManager.Instance == null) return;
 
             if (ClueJournalManager.Instance.HasClue(clueData))
             {
@@ -43,13 +42,32 @@ namespace EscapeRoom
                 return;
             }
 
-            Transform target = GetPlayerTransform();
-            bool inRange = target != null && Vector3.Distance(target.position, transform.position) <= collectDistance;
-            SetPromptVisible(inRange);
-
-            if (inRange && Input.GetKeyDown(KeyCode.F))
+            // Raycast: 카메라 정면에 이 오브젝트가 있는지 확인 (문 열기와 동일 방식)
+            Camera cam = Camera.main;
+            bool aimed = false;
+            if (cam != null)
             {
-                CollectClue();
+                Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+                if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
+                {
+                    aimed = (hit.collider != null && hit.collider.gameObject == gameObject);
+                }
+            }
+
+            if (aimed)
+            {
+                currentTarget = this;
+                SetPromptVisible(true);
+                if (Input.GetKeyDown(KeyCode.F))
+                    CollectClue();
+            }
+            else
+            {
+                if (currentTarget == this)
+                {
+                    currentTarget = null;
+                    SetPromptVisible(false);
+                }
             }
         }
 
@@ -65,34 +83,7 @@ namespace EscapeRoom
         private void RegisterDefinition()
         {
             if (clueData != null && ClueJournalManager.Instance != null)
-            {
                 ClueJournalManager.Instance.RegisterClueDefinition(clueData);
-            }
-        }
-
-        private Transform GetPlayerTransform()
-        {
-            if (player != null)
-            {
-                return player;
-            }
-
-            // 카메라 부모(Player 루트)를 기준으로 거리 계산 — 눈높이 1.7m 오차 방지
-            Camera mainCamera = Camera.main;
-            if (mainCamera != null)
-            {
-                Transform camParent = mainCamera.transform.parent;
-                player = camParent != null ? camParent : mainCamera.transform;
-                return player;
-            }
-
-            GameObject taggedPlayer = GameObject.FindGameObjectWithTag("Player");
-            if (taggedPlayer != null)
-            {
-                player = taggedPlayer.transform;
-            }
-
-            return player;
         }
 
         private void EnsurePromptText()
