@@ -31,10 +31,21 @@ namespace EscapeRoom
 
         private void Update()
         {
-            if (clueData == null) return;
+            // clueData 없으면 콘솔에 경고
+            if (clueData == null)
+            {
+                if (Input.GetKeyDown(KeyCode.F))
+                    Debug.LogWarning($"[ClueInteractable] {name}: clueData가 null입니다. Inspector에서 ClueData 연결 확인!");
+                return;
+            }
 
-            // ClueJournalManager가 없으면 자동 생성 시도
-            if (ClueJournalManager.Instance == null) return;
+            // ClueJournalManager 없으면 자동 생성
+            if (ClueJournalManager.Instance == null)
+            {
+                Debug.LogWarning("[ClueInteractable] ClueJournalManager 없음 — 자동 생성");
+                new GameObject("ClueJournalManager").AddComponent<ClueJournalManager>();
+                RegisterDefinition();
+            }
 
             if (ClueJournalManager.Instance.HasClue(clueData))
             {
@@ -49,9 +60,12 @@ namespace EscapeRoom
             {
                 Ray ray = new Ray(cam.transform.position, cam.transform.forward);
                 if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
-                {
-                    aimed = (hit.collider != null && hit.collider.gameObject == gameObject);
-                }
+                    aimed = hit.collider != null && hit.collider.gameObject == gameObject;
+            }
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.F))
+                    Debug.LogWarning("[ClueInteractable] Camera.main이 null입니다!");
             }
 
             if (aimed)
@@ -59,7 +73,10 @@ namespace EscapeRoom
                 currentTarget = this;
                 SetPromptVisible(true);
                 if (Input.GetKeyDown(KeyCode.F))
+                {
+                    Debug.Log($"[ClueInteractable] F키 수집 시도: {clueData.clueName}");
                     CollectClue();
+                }
             }
             else
             {
@@ -75,8 +92,13 @@ namespace EscapeRoom
         {
             if (ClueJournalManager.Instance != null && ClueJournalManager.Instance.AddClue(clueData))
             {
+                Debug.Log($"[ClueInteractable] 수집 완료: {clueData.clueName}");
                 HidePrompt();
                 gameObject.SetActive(false);
+            }
+            else
+            {
+                Debug.LogWarning($"[ClueInteractable] AddClue 실패: {clueData?.clueName}");
             }
         }
 
