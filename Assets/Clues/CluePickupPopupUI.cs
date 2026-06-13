@@ -14,6 +14,7 @@ namespace EscapeRoom
         [SerializeField] private float fadeDuration = 0.4f;
 
         private Coroutine fadeRoutine;
+        private bool subscribed;
 
         private void Awake()
         {
@@ -21,20 +22,27 @@ namespace EscapeRoom
             popupGroup.alpha = 0f;
         }
 
-        private void OnEnable()
+        private void OnEnable()  { TrySubscribe(); }
+        private void OnDisable() { Unsubscribe(); }
+
+        private void Update()
         {
-            if (ClueJournalManager.Instance != null)
-            {
-                ClueJournalManager.Instance.OnClueAdded += ShowCluePopup;
-            }
+            // ClueJournalManager가 나중에 생성됐을 때 구독 재시도
+            if (!subscribed) TrySubscribe();
         }
 
-        private void OnDisable()
+        private void TrySubscribe()
         {
-            if (ClueJournalManager.Instance != null)
-            {
-                ClueJournalManager.Instance.OnClueAdded -= ShowCluePopup;
-            }
+            if (subscribed || ClueJournalManager.Instance == null) return;
+            ClueJournalManager.Instance.OnClueAdded += ShowCluePopup;
+            subscribed = true;
+        }
+
+        private void Unsubscribe()
+        {
+            if (!subscribed || ClueJournalManager.Instance == null) return;
+            ClueJournalManager.Instance.OnClueAdded -= ShowCluePopup;
+            subscribed = false;
         }
 
         private void ShowCluePopup(ClueData clueData)

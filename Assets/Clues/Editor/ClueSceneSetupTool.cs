@@ -31,13 +31,9 @@ namespace EscapeRoom.Editor
                 Undo.RegisterCreatedObjectUndo(cluesRoot, "Create Clues Root");
             }
 
-            // ClueJournalManager 확보
-            if (Object.FindObjectOfType<ClueJournalManager>() == null)
-            {
-                GameObject jm = new GameObject("ClueJournalManager");
-                Undo.RegisterCreatedObjectUndo(jm, "Create ClueJournalManager");
-                jm.AddComponent<ClueJournalManager>();
-            }
+            // 런타임 매니저 확보
+            EnsureRuntimeObject<ClueJournalManager>("ClueJournalManager");
+            EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
 
             // PlayerStart 앞 2m 위치 계산
             GameObject ps = GameObject.Find("PlayerStart");
