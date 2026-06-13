@@ -62,20 +62,33 @@ namespace EscapeRoom.Editor
                 mr.sharedMaterial = mat;
             }
 
-            // ClueInteractable + ClueData 연결
+            // ClueInteractable + ClueData 연결 (첫 번째 에셋 자동 사용)
+            ClueAssetGenerator.GenerateStoryClueAssets();
+            AssetDatabase.Refresh();
+
             ClueInteractable interactable = cube.AddComponent<ClueInteractable>();
-            ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Clues/Normal/cast_notice.asset");
-            if (asset == null)
+
+            // GetEntries()로 첫 번째 일반 단서 에셋 경로를 정확히 가져옴
+            ClueData asset = null;
+            foreach (ClueAssetGenerator.ClueEntry e in ClueAssetGenerator.GetEntries())
             {
-                // asset이 없으면 생성
-                ClueAssetGenerator.GenerateStoryClueAssets();
-                asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Clues/Normal/cast_notice.asset");
+                if (e.category != ClueCategory.KeyClue)
+                {
+                    asset = AssetDatabase.LoadAssetAtPath<ClueData>($"Assets/Clues/Normal/{e.fileName}.asset");
+                    if (asset != null) break;
+                }
             }
+
             if (asset != null)
             {
                 var so = new SerializedObject(interactable);
                 so.FindProperty("clueData").objectReferenceValue = asset;
                 so.ApplyModifiedProperties();
+                Debug.Log($"[Clues] 테스트 큐브에 ClueData 연결: {asset.clueName}");
+            }
+            else
+            {
+                Debug.LogError("[Clues] ClueData 에셋을 찾지 못했습니다. Tools > Clues > Generate All Clue Assets 먼저 실행하세요.");
             }
 
             EditorUtility.SetDirty(cube);
