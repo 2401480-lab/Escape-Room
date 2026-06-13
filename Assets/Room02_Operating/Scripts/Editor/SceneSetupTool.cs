@@ -1,217 +1,236 @@
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.UI;
 using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Room02Operating
 {
     public static class SceneSetupTool
     {
-        private const string CLUE_PATH = "Assets/Room02_Operating/ScriptableObjects";
+        private const string CluePath = "Assets/Room02_Operating/ScriptableObjects";
 
-        // ── 복도 씬 세팅 ──────────────────────────────────────────────────
         [MenuItem("Tools/Room02/Setup Corridor Scene")]
         public static void SetupCorridor()
         {
             SetupManagers();
             SetupUI();
-            SetupCorridorClues();
-            Debug.Log("[Room02] 복도 씬 세팅 완료.");
-            EditorUtility.DisplayDialog("완료", "복도 씬 세팅 완료!\n\n남은 작업:\n- UI 오브젝트 Inspector 연결\n- Clue 오브젝트 위치 조정\n- HoverDetector Layer 설정", "확인");
+            SetupLobbyClues();
+            SetupCorridorWaitingClues();
+            SetupWardClues();
+            Debug.Log("[Room02] 복도/입구/병실 구역 단서 세팅 완료.");
+            EditorUtility.DisplayDialog("완료", "복도 씬에 입구 로비, 대기실, 병실 구역 단서 세팅 완료!", "확인");
         }
 
-        // ── 수술실 씬 세팅 ────────────────────────────────────────────────
-        [MenuItem("Tools/Room02/Setup OperatingRoom Scene")]
-        public static void SetupOperatingRoom()
-        {
-            SetupManagers();
-            SetupUI();
-            SetupOperatingRoomClues();
-            Debug.Log("[Room02] 수술실 씬 세팅 완료.");
-            EditorUtility.DisplayDialog("완료", "수술실 씬 세팅 완료!", "확인");
-        }
-
-        // ── 분장실 씬 세팅 ────────────────────────────────────────────────
         [MenuItem("Tools/Room02/Setup DressingRoom Scene")]
         public static void SetupDressingRoom()
         {
             SetupManagers();
             SetupUI();
-            SetupDressingRoomClues();
-            Debug.Log("[Room02] 분장실 씬 세팅 완료.");
-            EditorUtility.DisplayDialog("완료", "분장실 씬 세팅 완료!", "확인");
+            SetupStorageClues();
+            SetupMakeupClues();
+            Debug.Log("[Room02] 보관실/분장실 구역 단서 세팅 완료.");
+            EditorUtility.DisplayDialog("완료", "분장실 씬에 보관실, 분장실 구역 단서 세팅 완료!", "확인");
         }
 
-        // ═════════════════════════════════════════════════════════════════
-        // 공통: 매니저 오브젝트 생성
-        // ═════════════════════════════════════════════════════════════════
-        static void SetupManagers()
+        [MenuItem("Tools/Room02/Setup OperatingRoom Scene")]
+        public static void SetupOperatingRoom()
+        {
+            SetupManagers();
+            SetupUI();
+            SetupOperatingZoneClues();
+            Debug.Log("[Room02] 수술실 구역 단서 세팅 완료.");
+            EditorUtility.DisplayDialog("완료", "수술실 씬에 수술 전실, 수술실 본실, 관찰실 단서 세팅 완료!", "확인");
+        }
+
+        private static void SetupManagers()
         {
             EnsureGameObject("RoomGameManager", go =>
             {
                 if (go.GetComponent<RoomGameManager>() == null)
+                {
                     go.AddComponent<RoomGameManager>();
+                }
             });
         }
 
-        // ═════════════════════════════════════════════════════════════════
-        // 공통: UI Canvas + 각 패널 생성
-        // ═════════════════════════════════════════════════════════════════
-        static void SetupUI()
+        private static void SetupUI()
         {
-            // ── Canvas ─────────────────────────────────────────────────
-            var canvas = EnsureGameObject("UI_Canvas", go =>
+            GameObject canvas = EnsureGameObject("UI_Canvas", go =>
             {
                 if (go.GetComponent<Canvas>() == null)
                 {
-                    var c = go.AddComponent<Canvas>();
+                    Canvas c = go.AddComponent<Canvas>();
                     c.renderMode = RenderMode.ScreenSpaceOverlay;
                     go.AddComponent<CanvasScaler>();
                     go.AddComponent<GraphicRaycaster>();
                 }
             });
 
-            // ── HoverText ──────────────────────────────────────────────
             EnsureChild(canvas, "HoverText", go =>
             {
                 if (go.GetComponent<TextMeshProUGUI>() == null)
                 {
-                    var tmp = go.AddComponent<TextMeshProUGUI>();
+                    TextMeshProUGUI tmp = go.AddComponent<TextMeshProUGUI>();
                     tmp.text = "";
                     tmp.fontSize = 24;
                     tmp.alignment = TextAlignmentOptions.Center;
-                    var rect = go.GetComponent<RectTransform>();
+
+                    RectTransform rect = go.GetComponent<RectTransform>();
                     rect.anchorMin = new Vector2(0.5f, 0.5f);
                     rect.anchorMax = new Vector2(0.5f, 0.5f);
                     rect.sizeDelta = new Vector2(400, 50);
                     rect.anchoredPosition = new Vector2(0, -80);
                 }
+
                 go.SetActive(false);
             });
 
-            // ── CluePanel ──────────────────────────────────────────────
             EnsureChild(canvas, "CluePanel", go =>
             {
                 if (go.GetComponent<CluePanel>() == null)
+                {
                     go.AddComponent<CluePanel>();
+                }
+
                 go.SetActive(false);
             });
 
-            // ── DeductionPopup ─────────────────────────────────────────
             EnsureChild(canvas, "DeductionPopup", go =>
             {
                 if (go.GetComponent<DeductionPopup>() == null)
+                {
                     go.AddComponent<DeductionPopup>();
+                }
+
                 go.SetActive(false);
             });
 
-            // ── NotebookUI ─────────────────────────────────────────────
             EnsureChild(canvas, "NotebookUI", go =>
             {
                 if (go.GetComponent<NotebookUI>() == null)
+                {
                     go.AddComponent<NotebookUI>();
+                }
+
                 go.SetActive(false);
             });
 
-            // ── SuspectSelection ───────────────────────────────────────
             EnsureChild(canvas, "SuspectSelection", go =>
             {
                 if (go.GetComponent<SuspectSelection>() == null)
+                {
                     go.AddComponent<SuspectSelection>();
+                }
+
                 go.SetActive(false);
             });
 
-            // ── InventoryBar ───────────────────────────────────────────
             EnsureChild(canvas, "InventoryBar", go =>
             {
                 if (go.GetComponent<InventoryManager>() == null)
+                {
                     go.AddComponent<InventoryManager>();
+                }
             });
 
-            // ── HoverDetector를 Main Camera에 부착 ────────────────────
-            var cam = Camera.main;
+            Camera cam = Camera.main;
             if (cam != null && cam.GetComponent<HoverDetector>() == null)
             {
-                var hd = cam.gameObject.AddComponent<HoverDetector>();
-                Debug.Log("[Room02] HoverDetector → Main Camera 부착 완료. Inspector에서 HoverText 연결 필요.");
+                cam.gameObject.AddComponent<HoverDetector>();
+                Debug.Log("[Room02] HoverDetector를 Main Camera에 부착했습니다. Inspector에서 HoverText 연결 필요.");
             }
         }
 
-        // ═════════════════════════════════════════════════════════════════
-        // 복도 단서 오브젝트 (구역 2)
-        // ═════════════════════════════════════════════════════════════════
-        static void SetupCorridorClues()
+        private static void SetupLobbyClues()
         {
-            var cluesRoot = GameObject.Find("Clues");
+            GameObject root = EnsureClueGroup("01_Lobby_Reception");
+            CreateClueObject(root, "Clue_Cast_Notice", "clue_cast_notice", new Vector3(-4f, 1.2f, 2f));
+            CreateClueObject(root, "Clue_Memorial_Frame", "clue_memorial_frame", new Vector3(-2.5f, 1.4f, 2f));
+            CreateClueObject(root, "Clue_Visitor_Log", "clue_visitor_log", new Vector3(-1f, 1f, 1.5f));
+            CreateClueObject(root, "Clue_Security_Log", "clue_security_log", new Vector3(0.5f, 1f, 1.5f));
+        }
+
+        private static void SetupCorridorWaitingClues()
+        {
+            GameObject root = EnsureClueGroup("02_Corridor_Waiting_Nurse");
+            CreateClueObject(root, "Clue_Torn_Letter_Piece_A", "clue_torn_letter_piece_a", new Vector3(-3f, 1f, 5f));
+            CreateClueObject(root, "Clue_Torn_Letter_Piece_B", "clue_torn_letter_piece_b", new Vector3(3f, 1f, 5f));
+            CreateClueObject(root, "Clue_Yoanna_Note", "clue_yoanna_note", new Vector3(-1.5f, 1f, 6.5f));
+            CreateClueObject(root, "Clue_Nurse_Log", "clue_nurse_log", new Vector3(0f, 1f, 6.5f));
+            CreateClueObject(root, "Clue_CCTV_Memo", "clue_cctv_memo", new Vector3(1.5f, 1.2f, 6.5f));
+            CreateClueObject(root, "Clue_Phone_Memo", "clue_phone_memo", new Vector3(3f, 1f, 6.5f));
+        }
+
+        private static void SetupWardClues()
+        {
+            GameObject root = EnsureClueGroup("03_Ward_Isolation_Bathroom");
+            CreateClueObject(root, "Clue_Hasho_Will", "clue_hasho_will", new Vector3(-4f, 1f, 10f));
+            CreateClueObject(root, "Clue_Medical_Certificate", "clue_medical_certificate", new Vector3(-2.5f, 1f, 10f));
+            CreateClueObject(root, "Clue_Conversation_Memo_A", "clue_conversation_memo_a", new Vector3(-1f, 1f, 10f));
+            CreateClueObject(root, "Clue_Isolation_Bloodstain", "clue_isolation_bloodstain", new Vector3(0.5f, 0.05f, 10f));
+            CreateClueObject(root, "Clue_Sumi_Memo", "clue_sumi_memo", new Vector3(2f, 1f, 10f));
+            CreateClueObject(root, "Clue_Bong_Rebuttal", "clue_bong_rebuttal", new Vector3(3.5f, 1f, 10f));
+            CreateClueObject(root, "Clue_Ward_Calendar", "clue_ward_calendar", new Vector3(5f, 1.4f, 10f));
+        }
+
+        private static void SetupStorageClues()
+        {
+            GameObject root = EnsureClueGroup("04_Storage_Device_Locker");
+            CreateClueObject(root, "Clue_Poison_Ampoule", "clue_poison_ampoule", new Vector3(-3f, 1f, 2f));
+            CreateClueObject(root, "Clue_Hidden_Camera", "clue_hidden_camera", new Vector3(-1.5f, 1f, 2f));
+            CreateClueObject(root, "Clue_Jin_Sneakers", "clue_jin_sneakers", new Vector3(0f, 0.2f, 2f));
+            CreateClueObject(root, "Clue_Gloves", "clue_gloves", new Vector3(1.5f, 1f, 2f));
+            CreateClueObject(root, "Clue_Locked_Locker", "clue_locked_locker", new Vector3(3f, 1f, 2f));
+        }
+
+        private static void SetupMakeupClues()
+        {
+            GameObject root = EnsureClueGroup("05_Makeup_PropRoom");
+            CreateClueObject(root, "Clue_Paint_Footprints", "clue_paint_footprints", new Vector3(-2f, 0.05f, 5f));
+            CreateClueObject(root, "Clue_Makeup_Diary", "clue_makeup_diary", new Vector3(-0.5f, 1f, 5f));
+            CreateClueObject(root, "Clue_Mirror_Message", "clue_mirror_message", new Vector3(1f, 1.4f, 5f));
+            CreateClueObject(root, "Clue_Paint_Toolbox", "clue_paint_toolbox", new Vector3(2.5f, 0.5f, 5f));
+        }
+
+        private static void SetupOperatingZoneClues()
+        {
+            GameObject root = EnsureClueGroup("06_PreOp_Operating_Observation");
+            CreateClueObject(root, "Clue_Under_Table_Space", "clue_under_table_space", new Vector3(0f, 0.05f, 0f));
+            CreateClueObject(root, "Clue_Yoanna_Relic", "clue_yoanna_relic", new Vector3(1f, 1f, 0.5f));
+            CreateFinalTrigger(root, "EndingUI_Trigger", new Vector3(0f, 0.5f, 2f));
+        }
+
+        private static GameObject EnsureClueGroup(string groupName)
+        {
+            GameObject cluesRoot = GameObject.Find("Clues");
             if (cluesRoot == null)
             {
                 cluesRoot = new GameObject("Clues");
                 Undo.RegisterCreatedObjectUndo(cluesRoot, "Create Clues Root");
             }
 
-            CreateClueObject(cluesRoot, "Clue_CCTV_Memo",       "clue_cctv_memo",      new Vector3(0, 1, 3));
-            CreateClueObject(cluesRoot, "Clue_Staff_Schedule",   "clue_staff_schedule", new Vector3(2, 1, 3));
-            CreateClueObject(cluesRoot, "Clue_Broken_Locker",    "clue_broken_locker",  new Vector3(-2, 1, 5));
+            return EnsureChild(cluesRoot, groupName, _ => { });
         }
 
-        // ═════════════════════════════════════════════════════════════════
-        // 수술실 단서 오브젝트 (구역 5 — 결정적 증거)
-        // ═════════════════════════════════════════════════════════════════
-        static void SetupOperatingRoomClues()
+        private static void CreateClueObject(GameObject parent, string goName, string clueID, Vector3 localPos)
         {
-            var cluesRoot = GameObject.Find("Clues");
-            if (cluesRoot == null)
+            GameObject existing = GameObject.Find(goName);
+            if (existing != null)
             {
-                cluesRoot = new GameObject("Clues");
-                Undo.RegisterCreatedObjectUndo(cluesRoot, "Create Clues Root");
+                return;
             }
 
-            CreateClueObject(cluesRoot, "Clue_Shoe_Print",        "clue_shoe_print",        new Vector3(0,   0.05f, 0));
-            CreateClueObject(cluesRoot, "Clue_Toe_Print",         "clue_toe_print",         new Vector3(0.3f,0.05f, 0.2f));
-            CreateClueObject(cluesRoot, "Clue_Under_Table_Dust",  "clue_under_table_dust",  new Vector3(0,   0.05f, -0.5f));
-            CreateClueObject(cluesRoot, "Clue_Poison_Glass",      "clue_poison_glass",      new Vector3(1,   1,    2));
-            CreateClueObject(cluesRoot, "Clue_Yoanna_Body",       "clue_yoanna_body",       new Vector3(0,   1,    0));
-        }
-
-        // ═════════════════════════════════════════════════════════════════
-        // 분장실 단서 오브젝트 (구역 4 일부)
-        // ═════════════════════════════════════════════════════════════════
-        static void SetupDressingRoomClues()
-        {
-            var cluesRoot = GameObject.Find("Clues");
-            if (cluesRoot == null)
-            {
-                cluesRoot = new GameObject("Clues");
-                Undo.RegisterCreatedObjectUndo(cluesRoot, "Create Clues Root");
-            }
-
-            CreateClueObject(cluesRoot, "Clue_Paint_Can",   "clue_paint_can",   new Vector3(1,  0, 2));
-            CreateClueObject(cluesRoot, "Clue_Gloves",      "clue_gloves",      new Vector3(-1, 1, 2));
-            CreateClueObject(cluesRoot, "Clue_Poison_Bottle","clue_poison_bottle",new Vector3(0, 1, 3));
-            CreateClueObject(cluesRoot, "Clue_Storage_Log", "clue_storage_log", new Vector3(2,  1, 1));
-        }
-
-        // ═════════════════════════════════════════════════════════════════
-        // 유틸
-        // ═════════════════════════════════════════════════════════════════
-        static void CreateClueObject(GameObject parent, string goName, string clueID, Vector3 localPos)
-        {
-            // 이미 있으면 스킵
-            var existing = GameObject.Find(goName);
-            if (existing != null) return;
-
-            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = goName;
             go.transform.SetParent(parent.transform);
             go.transform.localPosition = localPos;
             go.transform.localScale = Vector3.one * 0.2f;
 
-            // InteractableObject + ClueData 연결
-            var interactable = go.AddComponent<InteractableObject>();
-            var clueData = AssetDatabase.LoadAssetAtPath<ClueData>($"{CLUE_PATH}/{clueID}.asset");
+            InteractableObject interactable = go.AddComponent<InteractableObject>();
+            ClueData clueData = AssetDatabase.LoadAssetAtPath<ClueData>($"{CluePath}/{clueID}.asset");
             if (clueData != null)
             {
-                var so = new SerializedObject(interactable);
+                SerializedObject so = new SerializedObject(interactable);
                 so.FindProperty("clueData").objectReferenceValue = clueData;
                 so.ApplyModifiedProperties();
             }
@@ -220,30 +239,56 @@ namespace Room02Operating
                 Debug.LogWarning($"[Room02] ClueData 에셋 없음: {clueID}. 먼저 Generate All Clue Assets 실행 필요.");
             }
 
-            // Interactable 레이어 설정 (레이어 이름 "Interactable" 사전 생성 필요)
             int layer = LayerMask.NameToLayer("Interactable");
-            if (layer >= 0) go.layer = layer;
+            if (layer >= 0)
+            {
+                go.layer = layer;
+            }
 
             Undo.RegisterCreatedObjectUndo(go, $"Create {goName}");
             EditorUtility.SetDirty(go);
         }
 
-        static GameObject EnsureGameObject(string name, System.Action<GameObject> setup)
+        private static void CreateFinalTrigger(GameObject parent, string goName, Vector3 localPos)
         {
-            var go = GameObject.Find(name);
+            GameObject existing = GameObject.Find(goName);
+            if (existing != null)
+            {
+                return;
+            }
+
+            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.name = goName;
+            go.transform.SetParent(parent.transform);
+            go.transform.localPosition = localPos;
+            go.transform.localScale = new Vector3(1.5f, 1f, 1.5f);
+            Collider collider = go.GetComponent<Collider>();
+            if (collider != null)
+            {
+                collider.isTrigger = true;
+            }
+
+            Undo.RegisterCreatedObjectUndo(go, $"Create {goName}");
+            EditorUtility.SetDirty(go);
+        }
+
+        private static GameObject EnsureGameObject(string name, System.Action<GameObject> setup)
+        {
+            GameObject go = GameObject.Find(name);
             if (go == null)
             {
                 go = new GameObject(name);
                 Undo.RegisterCreatedObjectUndo(go, $"Create {name}");
             }
+
             setup(go);
             EditorUtility.SetDirty(go);
             return go;
         }
 
-        static GameObject EnsureChild(GameObject parent, string name, System.Action<GameObject> setup)
+        private static GameObject EnsureChild(GameObject parent, string name, System.Action<GameObject> setup)
         {
-            var t = parent.transform.Find(name);
+            Transform t = parent.transform.Find(name);
             GameObject go = t != null ? t.gameObject : null;
             if (go == null)
             {
@@ -251,6 +296,7 @@ namespace Room02Operating
                 go.transform.SetParent(parent.transform, false);
                 Undo.RegisterCreatedObjectUndo(go, $"Create {name}");
             }
+
             setup(go);
             EditorUtility.SetDirty(go);
             return go;

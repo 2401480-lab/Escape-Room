@@ -1,201 +1,253 @@
-using UnityEngine;
 using UnityEditor;
-using System.IO;
+using UnityEngine;
 
 namespace Room02Operating
 {
-    // Unity 상단 메뉴 Tools > Room02 > Generate All Clue Assets 클릭하면 전체 생성
+    // Unity 상단 메뉴 Tools > Room02 > Generate All Clue Assets 클릭하면 전체 생성/갱신
     public static class ClueDataGenerator
     {
-        private const string OUTPUT_PATH = "Assets/Room02_Operating/ScriptableObjects";
+        private const string OutputPath = "Assets/Room02_Operating/ScriptableObjects";
 
         [MenuItem("Tools/Room02/Generate All Clue Assets")]
         public static void GenerateAll()
         {
-            if (!AssetDatabase.IsValidFolder(OUTPUT_PATH))
-                AssetDatabase.CreateFolder("Assets/Room02_Operating", "ScriptableObjects");
-
-            var clues = new[]
-            {
-                // ── 구역 1: 입구 로비 (Gatehouse + DayRoom + VisitRoom) ──────────
-                new ClueEntry("clue_newspaper",
-                    "폐원 전 신문기사",
-                    "신문 기사",
-                    "낡은 신문 기사. '폐요양병원 환자 하시호 씨, 의문의 사망.' 사건의 시작을 알리는 기록이다.",
-                    "신문 기사 살펴보기",
-                    false),
-
-                new ClueEntry("clue_visitor_log",
-                    "방문자 명단",
-                    "방문자 명단",
-                    "수술 당일 병원 방문자 기록부. 진세웅의 이름이 적혀 있다. 방문 목적란은 비어 있다.",
-                    "방문자 명단 확인하기",
-                    true),
-
-                new ClueEntry("clue_incident_report",
-                    "사건 일지",
-                    "사건 일지",
-                    "병원 내부 사건 일지. 유안나가 집도한 수술 중 환자 사망 사례가 여럿 기재되어 있다. 하시호의 이름도 보인다.",
-                    "사건 일지 읽기",
-                    false),
-
-                // ── 구역 2: 복도/대기실 (HallDownstair + HallUpstair + DiningRoom) ──
-                new ClueEntry("clue_cctv_memo",
-                    "CCTV 사각지대 메모",
-                    "CCTV 메모",
-                    "손글씨로 적힌 메모. 수술실 쪽 복도 CCTV가 고장났다는 내용과 함께 수리 예정일이 적혀 있다. 범행 당일과 겹친다.",
-                    "메모 읽기",
-                    true),
-
-                new ClueEntry("clue_staff_schedule",
-                    "수술 당일 직원 배치표",
-                    "직원 배치표",
-                    "수술 당일 병원 직원 배치표. 수술실 보조 인원이 평소보다 적고, 진세웅의 이름은 없다.",
-                    "직원 배치표 확인하기",
-                    false),
-
-                new ClueEntry("clue_broken_locker",
-                    "부서진 락커",
-                    "부서진 락커",
-                    "복도 끝 락커 하나가 억지로 열린 흔적이 있다. 안에 병원 직원 가운이 한 벌 없어졌다.",
-                    "락커 조사하기",
-                    false),
-
-                // ── 구역 3: 병실 (Bedroom + SeclusionRoomA/B) ──────────────────
-                new ClueEntry("clue_hasho_photo",
-                    "하시호·진세웅 사진",
-                    "낡은 사진",
-                    "두 청년이 함께 찍은 오래된 사진. 뒷면에 '세웅아, 항상 고마워 — 시호'라고 적혀 있다.",
-                    "사진 살펴보기",
-                    true),
-
-                new ClueEntry("clue_hasho_diary",
-                    "하시호의 일기",
-                    "낡은 일기",
-                    "하시호의 일기. 마지막 페이지에 '유안나 선생이 내 상태를 숨기고 있다. 무섭다'는 내용이 담겨 있다.",
-                    "일기 읽기",
-                    true),
-
-                new ClueEntry("clue_medicine_bottle",
-                    "하시호 처방 약병",
-                    "약병",
-                    "하시호에게 처방된 약병. 복용량과 처방 기록이 조작된 흔적이 있다.",
-                    "약병 조사하기",
-                    false),
-
-                new ClueEntry("clue_letter",
-                    "진세웅이 쓴 편지",
-                    "편지",
-                    "진세웅이 하시호에게 쓴 미완성 편지. '네 원수는 내가 반드시...' 문장에서 끊겨 있다.",
-                    "편지 읽기",
-                    true),
-
-                // ── 구역 4: 보관실/분장실 (OfficeA + KitchenStock + ExamRoom) ──
-                new ClueEntry("clue_poison_bottle",
-                    "독약 보관 흔적",
-                    "빈 약품 보관함",
-                    "약품 보관함에 독성 물질 자리가 비어 있다. 재고 기록에는 분명히 존재했던 약품이다.",
-                    "보관함 조사하기",
-                    true),
-
-                new ClueEntry("clue_storage_log",
-                    "약품 재고 기록부",
-                    "재고 기록부",
-                    "약품 재고 기록부. 수술 전날 독성 약품 한 병이 반출 기록 없이 사라진 것이 확인된다.",
-                    "재고 기록 확인하기",
-                    true),
-
-                new ClueEntry("clue_paint_can",
-                    "페인트 통",
-                    "페인트 통",
-                    "수술실 바닥 도색에 사용된 페인트 통. 수술 당일 아직 완전히 건조되지 않은 상태였다.",
-                    "페인트 통 조사하기",
-                    false),
-
-                new ClueEntry("clue_gloves",
-                    "페인트 묻은 장갑",
-                    "작업용 장갑",
-                    "분장실 구석에서 발견된 장갑. 페인트가 묻어 있고, 바닥과 같은 색이다. 병원 직원용 장갑이 아니다.",
-                    "장갑 조사하기",
-                    true),
-
-                // ── 구역 5: 수술실 (Surgery + Morgue) ─ 결정적 증거 ──────────
-                new ClueEntry("clue_shoe_print",
-                    "운동화 페인트 자국",
-                    "운동화 자국",
-                    "수술대 아래 바닥에 찍힌 운동화 밑창 자국. 수술실 직원이 신는 슬리퍼가 아닌 일반 운동화다.",
-                    "발자국 조사하기",
-                    true),
-
-                new ClueEntry("clue_toe_print",
-                    "발가락 페인트 자국",
-                    "발가락 자국",
-                    "수술대 아래, 발가락 끝으로 버틴 흔적. 오랫동안 엎드려 숨어 있던 사람이 남긴 자국이다.",
-                    "흔적 자세히 보기",
-                    true),
-
-                new ClueEntry("clue_under_table_dust",
-                    "수술대 아래 먼지 흔적",
-                    "수술대 아래 흔적",
-                    "수술대 아래 먼지가 사람 형태로 쓸린 흔적. 성인 남성 한 명이 장시간 숨어 있었던 것으로 보인다.",
-                    "수술대 아래 조사하기",
-                    false),
-
-                new ClueEntry("clue_poison_glass",
-                    "독약 컵",
-                    "유리컵",
-                    "수술실 구석에서 발견된 유리컵. 바닥에 독성 잔여물이 남아 있다. 유안나가 마신 컵이다.",
-                    "컵 조사하기",
-                    true),
-
-                new ClueEntry("clue_yoanna_body",
-                    "유안나 시신",
-                    "피해자 유안나",
-                    "수술대 위에 쓰러진 유안나. 외상은 없으나 입 주변에 미세한 독성 반응이 보인다.",
-                    "피해자 살펴보기",
-                    false),
-            };
+            EnsureOutputFolder();
 
             int created = 0;
-            foreach (var entry in clues)
+            int updated = 0;
+
+            foreach (ClueEntry entry in GetClues())
             {
-                string assetPath = $"{OUTPUT_PATH}/{entry.clueID}.asset";
-                if (AssetDatabase.LoadAssetAtPath<ClueData>(assetPath) != null)
-                    continue;
+                string assetPath = $"{OutputPath}/{entry.clueID}.asset";
+                ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>(assetPath);
 
-                var asset = ScriptableObject.CreateInstance<ClueData>();
-                asset.clueID       = entry.clueID;
-                asset.displayName  = entry.displayName;
-                asset.description  = entry.description;
-                asset.hoverLabel   = entry.hoverLabel;
+                if (asset == null)
+                {
+                    asset = ScriptableObject.CreateInstance<ClueData>();
+                    AssetDatabase.CreateAsset(asset, assetPath);
+                    created++;
+                }
+                else
+                {
+                    updated++;
+                }
+
+                asset.clueID = entry.clueID;
+                asset.displayName = entry.displayName;
+                asset.description = entry.description;
+                asset.hoverLabel = entry.hoverLabel;
                 asset.isCollectable = entry.isCollectable;
-
-                AssetDatabase.CreateAsset(asset, assetPath);
-                created++;
+                EditorUtility.SetDirty(asset);
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"[Room02] ClueData 에셋 {created}개 생성 완료. (이미 존재하는 항목은 건너뜀)");
-            EditorUtility.DisplayDialog("완료", $"ClueData 에셋 {created}개 생성 완료!", "확인");
+            Debug.Log($"[Room02] ClueData 에셋 생성 {created}개, 갱신 {updated}개 완료.");
+            EditorUtility.DisplayDialog("완료", $"ClueData 에셋 생성 {created}개, 갱신 {updated}개 완료!", "확인");
+        }
+
+        private static void EnsureOutputFolder()
+        {
+            if (!AssetDatabase.IsValidFolder("Assets/Room02_Operating"))
+            {
+                AssetDatabase.CreateFolder("Assets", "Room02_Operating");
+            }
+
+            if (!AssetDatabase.IsValidFolder(OutputPath))
+            {
+                AssetDatabase.CreateFolder("Assets/Room02_Operating", "ScriptableObjects");
+            }
+        }
+
+        private static ClueEntry[] GetClues()
+        {
+            return new[]
+            {
+                new ClueEntry(
+                    "clue_cast_notice",
+                    "배역 안내문",
+                    "오늘 공연 참여자 명단. 유안나, 진세웅, 봉태현, 문수미, 하시호의 이름이 적혀 있다.",
+                    "배역 안내문 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_memorial_frame",
+                    "하시호 추모 액자",
+                    "하시호의 사진 아래에 '2년 전 이곳에서 수술 중 사망'이라는 문구가 남아 있다.",
+                    "추모 액자 살펴보기",
+                    true),
+                new ClueEntry(
+                    "clue_visitor_log",
+                    "방문객 기록부",
+                    "당일 입장 시간이 적힌 기록부. 진세웅이 다른 사람보다 유독 일찍 도착했다.",
+                    "방문객 기록 확인하기",
+                    true),
+                new ClueEntry(
+                    "clue_security_log",
+                    "경비 일지",
+                    "경비 일지에는 '수술실 구역 22:00 이후 출입 금지'라고 적혀 있다. 진세웅의 알리바이와 충돌한다.",
+                    "경비 일지 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_torn_letter_piece_a",
+                    "찢긴 편지 조각 A",
+                    "찢긴 편지의 앞부분. '내가 반드시...'라는 문장이 보인다.",
+                    "편지 조각 살펴보기",
+                    true),
+                new ClueEntry(
+                    "clue_torn_letter_piece_b",
+                    "찢긴 편지 조각 B",
+                    "찢긴 편지의 뒷부분. 합치면 '내가 반드시 복수하겠다 — 세웅'이 된다.",
+                    "편지 조각 살펴보기",
+                    true),
+                new ClueEntry(
+                    "clue_yoanna_note",
+                    "유안나의 메모지",
+                    "'봉태현, 당신 그날 어디 있었어?' 유안나의 필체로 적혀 있어 봉태현을 의심하게 만든다.",
+                    "메모지 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_nurse_log",
+                    "간호사실 일지",
+                    "당일 마취약 재고가 한 병 부족하다는 기록. 독약이 준비됐다는 복선이다.",
+                    "간호사실 일지 확인하기",
+                    true),
+                new ClueEntry(
+                    "clue_cctv_memo",
+                    "대기실 CCTV 메모",
+                    "'카메라 고장 중 — 수리 예정'이라는 안내문. 누군가 사각지대를 미리 알고 있었다.",
+                    "CCTV 메모 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_phone_memo",
+                    "공중전화 메모지",
+                    "'세웅아, 하시호는 잊어. 이미 지난 일이야 — 수미'라고 적힌 메모다.",
+                    "공중전화 메모 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_hasho_will",
+                    "하시호 유서",
+                    "'내 죽음은 의료 과실이 아니야. 나는 살해당한 거야.' 사건의 의미를 바꾸는 문장이다.",
+                    "하시호 유서 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_medical_certificate",
+                    "하시호 진단서",
+                    "하시호의 사인은 수술 중 심정지. 담당의에는 봉태현의 이름이 적혀 있다.",
+                    "진단서 확인하기",
+                    true),
+                new ClueEntry(
+                    "clue_conversation_memo_a",
+                    "대화 메모 A",
+                    "'태현 씨, 당신이 하시호를 죽인 거 알아. 당신이 실수한 거잖아.' 유안나가 남긴 메모다.",
+                    "대화 메모 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_isolation_bloodstain",
+                    "격리 병실 혈흔",
+                    "소품 박스 뒤에 말라붙은 작은 혈흔이 있다. 오래된 사건의 흔적처럼 보인다.",
+                    "혈흔 조사하기",
+                    false),
+                new ClueEntry(
+                    "clue_sumi_memo",
+                    "수미의 메모",
+                    "'세웅이가 이상해. 뭔가 계획하고 있는 것 같아.' 문수미의 필체다.",
+                    "수미의 메모 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_bong_rebuttal",
+                    "봉태현의 반박문",
+                    "'나는 최선을 다했다. 하시호의 죽음은 불가항력이었다.' 봉태현이 남긴 변호문이다.",
+                    "반박문 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_ward_calendar",
+                    "병실 달력",
+                    "2년 전 날짜에는 '하시호 수술일', 오늘 날짜에는 '오늘'이라고 표시되어 있다.",
+                    "병실 달력 확인하기",
+                    true),
+                new ClueEntry(
+                    "clue_poison_ampoule",
+                    "독약 앰플",
+                    "라벨 없는 약병. 간호사실 일지의 부족한 마취약 기록과 연결된다.",
+                    "독약 앰플 조사하기",
+                    true),
+                new ClueEntry(
+                    "clue_hidden_camera",
+                    "소형 카메라",
+                    "수술실 방향으로 고정된 카메라. 저장된 영상은 삭제되어 있다.",
+                    "소형 카메라 확인하기",
+                    true),
+                new ClueEntry(
+                    "clue_jin_sneakers",
+                    "진세웅의 운동화",
+                    "운동화 밑창 발가락 쪽에만 흰 페인트가 묻어 있다.",
+                    "운동화 조사하기",
+                    true),
+                new ClueEntry(
+                    "clue_gloves",
+                    "장갑",
+                    "독약 앰플 옆에 있던 장갑. 손가락 끝에는 페인트 흔적이 없다.",
+                    "장갑 조사하기",
+                    true),
+                new ClueEntry(
+                    "clue_locked_locker",
+                    "잠긴 사물함",
+                    "비밀번호가 걸린 사물함. 내부에는 진세웅의 리허설 스케줄표가 들어 있다.",
+                    "잠긴 사물함 확인하기",
+                    true),
+                new ClueEntry(
+                    "clue_paint_footprints",
+                    "바닥 페인트 자국",
+                    "분장실에서 수술대 아래 방향으로 이어지는 흰 페인트 발자국이다.",
+                    "페인트 발자국 조사하기",
+                    true),
+                new ClueEntry(
+                    "clue_makeup_diary",
+                    "분장 일기장",
+                    "진세웅의 필체. '유안나가 모든 걸 망쳐놨어. 하시호 형은 그 때문에 죽은 거야.'",
+                    "분장 일기장 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_mirror_message",
+                    "거울 메모",
+                    "립스틱으로 '봐, 결국 네 차례야 — 세웅'이라고 적혀 있다.",
+                    "거울 메모 읽기",
+                    true),
+                new ClueEntry(
+                    "clue_paint_toolbox",
+                    "분장 도구함",
+                    "도구함 안에 흰 페인트 튜브가 있다. 운동화와 발자국의 페인트 색과 같다.",
+                    "분장 도구함 열기",
+                    true),
+                new ClueEntry(
+                    "clue_under_table_space",
+                    "수술대 하부 공간",
+                    "성인 한 명이 숨을 수 있는 공간. 바닥 긁힌 자국과 페인트 방향이 일치한다.",
+                    "수술대 아래 조사하기",
+                    true),
+                new ClueEntry(
+                    "clue_yoanna_relic",
+                    "유안나의 유품",
+                    "독약 앰플과 동일 성분의 빈 병이 수술대 옆에 놓여 있다.",
+                    "유안나의 유품 확인하기",
+                    true),
+            };
         }
 
         private struct ClueEntry
         {
             public string clueID;
             public string displayName;
-            public string shortName;
             public string description;
             public string hoverLabel;
-            public bool   isCollectable;
+            public bool isCollectable;
 
-            public ClueEntry(string id, string display, string shortName, string desc, string hover, bool collect)
+            public ClueEntry(string id, string display, string desc, string hover, bool collect)
             {
-                clueID       = id;
-                displayName  = display;
-                this.shortName = shortName;
-                description  = desc;
-                hoverLabel   = hover;
+                clueID = id;
+                displayName = display;
+                description = desc;
+                hoverLabel = hover;
                 isCollectable = collect;
             }
         }

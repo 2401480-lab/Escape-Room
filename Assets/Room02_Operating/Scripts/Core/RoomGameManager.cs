@@ -5,7 +5,7 @@ using UnityEngine.Events;
 namespace Room02Operating
 {
     // 절규의 수술실 진행 상태 관리
-    // 구역: 입구 로비 → 복도/대기실 → 병실 → 보관실 → 분장실 → 수술실(엔딩)
+    // 흐름: 사건 파악 -> 봉태현 미스디렉션 -> 진세웅 동기 -> 물증 연결 -> 범인 선택
     public class RoomGameManager : MonoBehaviour
     {
         public static RoomGameManager Instance { get; private set; }
@@ -13,35 +13,57 @@ namespace Room02Operating
         [Header("진행 단계")]
         public GamePhase currentPhase = GamePhase.Opening;
 
-        [Header("단서 수집 추적")]
-        // 구역1~3 필수 단서: 입구/복도/병실 → 하시호 배경 파악 후 MidPhase 진입
-        // clue_newspaper, clue_visitor_log, clue_hasho_photo, clue_hasho_diary
-        [SerializeField] private List<string> lobbyClueIDs = new List<string>
+        [Header("사건 파악 단서")]
+        [SerializeField] private List<string> storyClueIDs = new List<string>
         {
-            "clue_newspaper",
+            "clue_cast_notice",
+            "clue_memorial_frame",
             "clue_visitor_log",
-            "clue_hasho_photo",
-            "clue_hasho_diary"
+            "clue_security_log",
+            "clue_hasho_will",
+            "clue_ward_calendar"
         };
 
-        // 구역4 필수 단서: 보관실/분장실 → 범행 준비 증거 후 FinalPhase 진입
-        // clue_poison_bottle, clue_storage_log, clue_paint_can, clue_gloves
-        [SerializeField] private List<string> midClueIDs = new List<string>
+        [Header("봉태현 미스디렉션 단서")]
+        [SerializeField] private List<string> misdirectionClueIDs = new List<string>
         {
-            "clue_poison_bottle",
-            "clue_storage_log",
-            "clue_paint_can",
-            "clue_gloves"
+            "clue_yoanna_note",
+            "clue_nurse_log",
+            "clue_medical_certificate",
+            "clue_conversation_memo_a",
+            "clue_isolation_bloodstain",
+            "clue_bong_rebuttal"
         };
 
-        // 구역5 결정적 단서: 수술실 → 범인 특정
-        // clue_shoe_print, clue_toe_print, clue_under_table_dust, clue_poison_glass
+        [Header("진세웅 동기 단서")]
+        [SerializeField] private List<string> motiveClueIDs = new List<string>
+        {
+            "clue_torn_letter_piece_a",
+            "clue_torn_letter_piece_b",
+            "clue_cctv_memo",
+            "clue_phone_memo",
+            "clue_sumi_memo",
+            "clue_makeup_diary",
+            "clue_mirror_message"
+        };
+
+        [Header("범행 물증 단서")]
+        [SerializeField] private List<string> evidenceClueIDs = new List<string>
+        {
+            "clue_poison_ampoule",
+            "clue_hidden_camera",
+            "clue_jin_sneakers",
+            "clue_gloves",
+            "clue_locked_locker",
+            "clue_paint_footprints",
+            "clue_paint_toolbox"
+        };
+
+        [Header("수술실 최종 단서")]
         [SerializeField] private List<string> finalClueIDs = new List<string>
         {
-            "clue_shoe_print",
-            "clue_toe_print",
-            "clue_under_table_dust",
-            "clue_poison_glass"
+            "clue_under_table_space",
+            "clue_yoanna_relic"
         };
 
         [Header("추리 팝업 참조")]
@@ -55,23 +77,30 @@ namespace Room02Operating
         public UnityEvent OnRoomCleared;
         public UnityEvent OnRoomFailed;
 
-        private HashSet<string> _collectedClueIDs = new HashSet<string>();
-        private bool _deduction1Shown;
-        private bool _deduction2Shown;
+        private readonly HashSet<string> _collectedClueIDs = new HashSet<string>();
+        private bool _storyPopupShown;
+        private bool _misdirectionPopupShown;
+        private bool _motivePopupShown;
+        private bool _evidencePopupShown;
         private bool _finalDeductionShown;
 
-        void Awake()
+        private void Awake()
         {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             Instance = this;
         }
 
-        void Start()
+        private void Start()
         {
             StartOpening();
         }
 
-        void StartOpening()
+        private void StartOpening()
         {
             currentPhase = GamePhase.Opening;
             notebookUI?.OpenNotebook();
@@ -80,84 +109,153 @@ namespace Room02Operating
         public void CloseOpeningNotebook()
         {
             notebookUI?.CloseNotebook();
-            currentPhase = GamePhase.LobbyPhase;
+            currentPhase = GamePhase.StoryPhase;
         }
 
         public void RegisterClueFound(string clueID)
         {
-            if (_collectedClueIDs.Contains(clueID)) return;
+            if (string.IsNullOrEmpty(clueID) || _collectedClueIDs.Contains(clueID))
+            {
+                return;
+            }
+
             _collectedClueIDs.Add(clueID);
             CheckPhaseProgression();
         }
 
-        void CheckPhaseProgression()
+        private void CheckPhaseProgression()
         {
+            TryShowStoryPopup();
+            TryShowMisdirectionPopup();
+            TryShowMotivePopup();
+            TryShowEvidencePopup();
+
             switch (currentPhase)
             {
-                case GamePhase.LobbyPhase:
-                    if (HasAllClues(lobbyClueIDs)) EnterMidPhase();
+                case GamePhase.StoryPhase:
+                    if (HasAllClues(storyClueIDs))
+                    {
+                        currentPhase = GamePhase.MisdirectionPhase;
+                    }
                     break;
-                case GamePhase.MidPhase:
-                    TryShowDeduction1();
-                    TryShowDeduction2();
-                    if (HasAllClues(midClueIDs)) EnterFinalPhase();
+                case GamePhase.MisdirectionPhase:
+                    if (HasAllClues(misdirectionClueIDs))
+                    {
+                        currentPhase = GamePhase.MotivePhase;
+                    }
+                    break;
+                case GamePhase.MotivePhase:
+                    if (HasAllClues(motiveClueIDs))
+                    {
+                        currentPhase = GamePhase.EvidencePhase;
+                    }
+                    break;
+                case GamePhase.EvidencePhase:
+                    if (HasAllClues(evidenceClueIDs))
+                    {
+                        currentPhase = GamePhase.FinalPhase;
+                    }
                     break;
                 case GamePhase.FinalPhase:
                     TryShowFinalDeduction();
                     break;
             }
+
+            if (currentPhase == GamePhase.FinalPhase)
+            {
+                TryShowFinalDeduction();
+            }
         }
 
-        void EnterMidPhase()  => currentPhase = GamePhase.MidPhase;
-        void EnterFinalPhase() => currentPhase = GamePhase.FinalPhase;
-
-        // 추리 팝업 #1 — 독약 도난 + 분장실 페인트 연결
-        void TryShowDeduction1()
+        private void TryShowStoryPopup()
         {
-            if (_deduction1Shown) return;
-            if (_collectedClueIDs.Contains("clue_poison_bottle") &&
-                _collectedClueIDs.Contains("clue_storage_log"))
+            if (_storyPopupShown || !HasAllClues(storyClueIDs))
             {
-                _deduction1Shown = true;
+                return;
+            }
+
+            _storyPopupShown = true;
+            deductionPopup?.Show(
+                "사건 파악",
+                "하시호는 단순한 사고로 죽은 것이 아니다. 2년 전 수술과 오늘 공연은 같은 장소에서 다시 이어지고 있다."
+            );
+        }
+
+        private void TryShowMisdirectionPopup()
+        {
+            if (_misdirectionPopupShown)
+            {
+                return;
+            }
+
+            if (_collectedClueIDs.Contains("clue_medical_certificate") &&
+                _collectedClueIDs.Contains("clue_conversation_memo_a") &&
+                _collectedClueIDs.Contains("clue_bong_rebuttal"))
+            {
+                _misdirectionPopupShown = true;
                 deductionPopup?.Show(
-                    "추리 팝업 #1",
-                    "보관실에서 독약이 사라졌다. 재고 기록에는 분명 있었는데... 누군가 미리 훔쳐간 것이다."
+                    "봉태현 의심",
+                    "진단서와 유안나의 메모는 봉태현을 가리킨다. 하지만 반박문은 그가 무언가를 숨겼다기보다 누명을 두려워했다는 쪽에 가깝다."
                 );
             }
         }
 
-        // 추리 팝업 #2 — 페인트 + 장갑으로 수술실 잠입 준비 연결
-        void TryShowDeduction2()
+        private void TryShowMotivePopup()
         {
-            if (_deduction2Shown) return;
-            if (_collectedClueIDs.Contains("clue_paint_can") &&
-                _collectedClueIDs.Contains("clue_gloves"))
+            if (_motivePopupShown)
             {
-                _deduction2Shown = true;
+                return;
+            }
+
+            if (_collectedClueIDs.Contains("clue_torn_letter_piece_a") &&
+                _collectedClueIDs.Contains("clue_torn_letter_piece_b") &&
+                _collectedClueIDs.Contains("clue_makeup_diary"))
+            {
+                _motivePopupShown = true;
                 deductionPopup?.Show(
-                    "추리 팝업 #2",
-                    "페인트 작업용 장갑... 수술 당일 수술실 바닥에 페인트 칠이 있었다. 누군가 그 안에 숨기 위해 미리 준비한 것이다."
+                    "진세웅의 동기",
+                    "찢긴 편지와 분장 일기장은 같은 방향을 가리킨다. 진세웅은 유안나가 하시호를 죽음으로 몰았다고 믿고 있었다."
                 );
             }
         }
 
-        // 최종 추리 팝업 — 운동화+발가락 페인트 자국으로 범인 특정
-        void TryShowFinalDeduction()
+        private void TryShowEvidencePopup()
         {
-            if (_finalDeductionShown) return;
-            if (HasAllClues(finalClueIDs))
+            if (_evidencePopupShown)
             {
-                _finalDeductionShown = true;
+                return;
+            }
+
+            if (_collectedClueIDs.Contains("clue_poison_ampoule") &&
+                _collectedClueIDs.Contains("clue_jin_sneakers") &&
+                _collectedClueIDs.Contains("clue_paint_footprints") &&
+                _collectedClueIDs.Contains("clue_under_table_space"))
+            {
+                _evidencePopupShown = true;
                 deductionPopup?.Show(
-                    "최종 추리 팝업",
-                    "운동화 페인트 자국과 발가락 페인트 자국... 수술대 아래에 숨어 있었던 사람은 단 한 명이다.",
-                    OnFinalDeductionClosed,
-                    isFinal: true
+                    "물증 연결",
+                    "독약, 운동화, 페인트 발자국, 수술대 아래 공간이 하나로 이어진다. 범인은 먼저 숨어 있다가 유안나를 기다렸다."
                 );
             }
         }
 
-        void OnFinalDeductionClosed()
+        private void TryShowFinalDeduction()
+        {
+            if (_finalDeductionShown || !HasAllClues(finalClueIDs))
+            {
+                return;
+            }
+
+            _finalDeductionShown = true;
+            deductionPopup?.Show(
+                "최종 추리",
+                "수술대 아래 숨을 수 있는 공간과 유안나의 유품이 범행 과정을 완성한다. 이제 범인을 선택해야 한다.",
+                OnFinalDeductionClosed,
+                isFinal: true
+            );
+        }
+
+        private void OnFinalDeductionClosed()
         {
             currentPhase = GamePhase.SuspectSelection;
             suspectSelection?.Show();
@@ -177,30 +275,41 @@ namespace Room02Operating
             }
         }
 
-        bool HasAllClues(List<string> requiredIDs)
+        private bool HasAllClues(List<string> requiredIDs)
         {
-            foreach (var id in requiredIDs)
-                if (!_collectedClueIDs.Contains(id)) return false;
+            foreach (string id in requiredIDs)
+            {
+                if (!_collectedClueIDs.Contains(id))
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
 
-        public bool IsClueCollected(string clueID) => _collectedClueIDs.Contains(clueID);
+        public bool IsClueCollected(string clueID)
+        {
+            return _collectedClueIDs.Contains(clueID);
+        }
     }
 
     public enum GamePhase
     {
         Opening,
-        LobbyPhase,     // 입구 로비 + 복도/대기실 + 병실
-        MidPhase,       // 보관실 + 분장실
-        FinalPhase,     // 수술실
+        StoryPhase,
+        MisdirectionPhase,
+        MotivePhase,
+        EvidencePhase,
+        FinalPhase,
         SuspectSelection,
         Ending
     }
 
     public enum SuspectType
     {
-        BongTaehyeon,   // 봉태현
-        MoonSumi,       // 문수미
-        JinSewoong      // 진세웅 (범인)
+        BongTaehyeon,
+        MoonSumi,
+        JinSewoong
     }
 }
