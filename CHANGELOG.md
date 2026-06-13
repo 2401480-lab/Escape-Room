@@ -1,3 +1,10 @@
+### [2026-06-13 22:00:00]
+- ShowSceneSetup 에디터 스크립트 추가 (Tools > Room02 > Convert Show Scene to Game)
+  - Show.unity 기존 데모 Capsule 제거, CharacterController 기반 Player로 교체
+  - 카메라 눈높이 1.7m 적용, HUD_Canvas·TimerUI·단서팝업 자동 생성
+  - 노란색 테스트 단서 큐브 1개 배치 (F키 수집 테스트용)
+  - Show.unity 기존 라이팅·건물·Light Probe 그대로 유지
+
 ### [2026-06-13 21:30:00]
 - SceneLightingSetup 에디터 스크립트 추가 (Tools > Room02 > Setup Scene Lighting)
   - Ambient Mode를 Flat + 거의 검정으로 설정 (Show.unity와 동일)
