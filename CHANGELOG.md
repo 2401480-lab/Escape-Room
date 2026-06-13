@@ -1,3 +1,7 @@
+### [2026-06-13 02:00:00]
+- Scene_Corridor, Scene_DressingRoom, Scene_OperatingRoom 세 씬에 HUD_Canvas 배치 완료
+- TimerUI, ProximityVignetteUI, CluePickupPopupUI, SuspectConfirmUI, InteractionPromptUI 생성 확인
+
 ### [2026-06-13 01:00:00]
 - SceneUISetup.cs 에디터 스크립트 추가 (Tools > Room02 > Setup Scene UI)
 - HUD_Canvas 생성: ScreenSpaceOverlay, ScaleWithScreenSize 1920x1080
