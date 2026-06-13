@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uBB38\uC218\uBBF8\uC758\uBA54\uBAA8"
+  m_EditorClassIdentifier: 
+  clueID: normal_sumi_memo
+  clueName: "\uBB38\uC218\uBBF8\uC758 \uBA54\uBAA8"
+  description: "'\uC138\uC6C5\uC774\uAC00 \uC774\uC0C1\uD574. \uBB54\uAC00 \uACC4\uD68D\uD558\uACE0
+    \uC788\uB294 \uAC83 \uAC19\uC544 \u2014 \uC218\uBBF8'."
+  meaning: "\uC9C4\uC138\uC6C5 \uC758\uC2EC \uBCF5\uC120. \uC8FC\uBCC0\uC778\uB3C4
+    \uB208\uCE58\uCC58\uC74C."
+  areaName: Hallway
+  category: 0
+  isRequired: 0

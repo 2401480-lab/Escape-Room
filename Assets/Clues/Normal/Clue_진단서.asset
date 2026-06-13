@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uC9C4\uB2E8\uC11C"
+  m_EditorClassIdentifier: 
+  clueID: normal_medical_certificate
+  clueName: "\uC9C4\uB2E8\uC11C"
+  description: "\uD558\uC2DC\uD638 \uC0AC\uC778: \uC218\uC220 \uC911 \uC2EC\uC815\uC9C0.
+    \uB2F4\uB2F9\uC758: \uBD09\uD0DC\uD604."
+  meaning: "\uBD09\uD0DC\uD604 \uC758\uC2EC \uAC15\uD654. \uBBF8\uC2A4\uB514\uB809\uC158
+    \uD575\uC2EC."
+  areaName: Ward
+  category: 0
+  isRequired: 0

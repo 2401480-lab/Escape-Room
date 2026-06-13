@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -33,32 +32,6 @@ namespace EscapeRoom.Editor
             if (!Application.isBatchMode)
             {
                 EditorUtility.DisplayDialog("단서 씬 세팅 완료", $"{scene.name} 단서 {placed}개 세팅 완료", "확인");
-            }
-        }
-
-        [MenuItem("Tools/Clues/Setup All Stage Clues")]
-        public static void SetupAllStageClues()
-        {
-            ClueAssetGenerator.GenerateStoryClueAssets();
-
-            foreach (string scenePath in new[]
-            {
-                "Assets/Scenes/Scene_Corridor.unity",
-                "Assets/Scenes/Scene_DressingRoom.unity",
-                "Assets/Scenes/Scene_OperatingRoom.unity"
-            })
-            {
-                Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-                int placed = SetupScene(scene.name);
-                Debug.Log($"[Clues] {scene.name} clue scene wiring complete. Placed/updated: {placed}");
-                EditorSceneManager.SaveScene(scene);
-            }
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            if (!Application.isBatchMode)
-            {
-                EditorUtility.DisplayDialog("단서 전체 세팅 완료", "3개 스테이지 씬 단서 세팅 완료", "확인");
             }
         }
 

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uCD9C\uC785\uAE30\uB85D\uC0AD\uC81C\uD754\uC801"
+  m_EditorClassIdentifier: 
+  clueID: normal_deleted_entry_trace
+  clueName: "\uCD9C\uC785 \uAE30\uB85D \uC0AD\uC81C \uD754\uC801"
+  description: "2\uB144 \uC804 \uC218\uC220\uC77C \uB2F9\uC9C1 \uAE30\uB85D\uC774
+    \uC9C0\uC6CC\uC9C4 \uD754\uC801. \uB2F4\uB2F9: \uC624\uC138\uC9C4."
+  meaning: "\uC624\uC138\uC9C4\uC774 \uC9C4\uC138\uC6C5\uC5D0\uAC8C \uD611\uBC15\uB2F9\uD574
+    \uAE30\uB85D\uC744 \uC0AD\uC81C\uD588\uC74C \uD655\uC815."
+  areaName: Ward
+  category: 0
+  isRequired: 0

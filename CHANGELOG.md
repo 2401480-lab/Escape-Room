@@ -99,3 +99,8 @@
 - 공통 단서 에셋과 ClueInteractable 씬 배치가 연결되지 않아 F키 수집 반응이 없는 원인을 확인하고 ClueSceneSetupTool을 추가
 - Tools/Clues 메뉴에서 단서 에셋 생성 후 현재 씬 또는 3개 스테이지 씬 전체에 ClueInteractable, Collider, 표시용 MeshRenderer, 단서 UI 매니저를 자동 배치하도록 구현
 - ClueInteractable이 배치된 ClueData를 저널 정의에 등록하고 ClueJournalManager가 씬 전환 중 유지되도록 보강
+
+### [2026-06-13 20:45:51]
+- Tools/Clues/Setup All Stage Clues 메뉴가 현재 작업 씬을 전환하며 저장할 수 있는 위험을 제거하고 현재 씬 단서 세팅 메뉴만 유지
+- 잘못 생성된 3개 스테이지 씬 변경분을 git 상태에서 복구하고 단서 ScriptableObject 에셋 31개만 프로젝트 에셋으로 보존
+- ClueSceneWiring 테스트에 자동 씬 전환 및 저장 금지와 생성된 일반 단서 28개, 열쇠 단서 3개 존재 검사를 추가

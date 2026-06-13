@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uBC14\uB2E5\uD398\uC778\uD2B8\uC790\uAD6D"
+  m_EditorClassIdentifier: 
+  clueID: normal_paint_footprints
+  clueName: "\uBC14\uB2E5 \uD398\uC778\uD2B8 \uC790\uAD6D"
+  description: "\uC218\uC220\uB300 \uBC29\uD5A5\uC73C\uB85C \uC774\uC5B4\uC9C4 \uD770
+    \uD398\uC778\uD2B8 \uBC1C\uC790\uAD6D."
+  meaning: "\uD575\uC2EC \uBB3C\uC99D B. \uC6B4\uB3D9\uD654\uC640 \uC5F0\uACB0."
+  areaName: DressingRoom
+  category: 0
+  isRequired: 1

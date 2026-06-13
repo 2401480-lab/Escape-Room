@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uCD94\uBAA8\uC561\uC790"
+  m_EditorClassIdentifier: 
+  clueID: normal_memorial_frame
+  clueName: "\uCD94\uBAA8 \uC561\uC790"
+  description: "\u6545 \uD558\uC2DC\uD638 \u2014 2\uB144 \uC804 \uC774 \uBCD1\uC6D0
+    \uC218\uC220\uC2E4\uC5D0\uC11C \uC228\uC9C0\uB2E4."
+  meaning: "\uC0AC\uAC74\uC758 \uBC1C\uB2E8. \uD558\uC2DC\uD638\uC758 \uC8FD\uC74C\uC774
+    \uC774\uBC88 \uC0AC\uAC74\uACFC \uC5F0\uACB0\uB418\uB294 \uBCF5\uC120."
+  areaName: Lobby
+  category: 0
+  isRequired: 0

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "KeyClue_\uC9C4\uC138\uC6C5\uC758\uCABD\uC9C0"
+  m_EditorClassIdentifier: 
+  clueID: key_clue_coldest_place
+  clueName: "\uC9C4\uC138\uC6C5\uC758 \uCABD\uC9C0"
+  description: "'\uC544\uBB34\uB3C4 \uCC3E\uC9C0 \uBABB\uD560 \uACF3\uC5D0 \uB480\uB2E4.
+    \uC81C\uC77C \uCC28\uAC00\uC6B4 \uACF3.'"
+  meaning: "\uD0C8\uCD9C \uC5F4\uC1E0\uAC00 \uCC28\uAC00\uC6B4 \uACF3\uC5D0 \uC228\uACA8\uC838
+    \uC788\uC74C."
+  areaName: Ward
+  category: 1
+  isRequired: 1

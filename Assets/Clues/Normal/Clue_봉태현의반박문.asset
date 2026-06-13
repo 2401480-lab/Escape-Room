@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uBD09\uD0DC\uD604\uC758\uBC18\uBC15\uBB38"
+  m_EditorClassIdentifier: 
+  clueID: normal_bong_rebuttal
+  clueName: "\uBD09\uD0DC\uD604\uC758 \uBC18\uBC15\uBB38"
+  description: "'\uB098\uB294 \uCD5C\uC120\uC744 \uB2E4\uD588\uB2E4. \uD558\uC2DC\uD638\uC758
+    \uC8FD\uC74C\uC740 \uBD88\uAC00\uD56D\uB825\uC774\uC5C8\uB2E4.'"
+  meaning: "\uBD09\uD0DC\uD604\uC774 \uBC94\uC778\uC774 \uC544\uB2D8\uC744 \uC554\uC2DC\uD558\uB294
+    \uBCF5\uC120."
+  areaName: Ward
+  category: 0
+  isRequired: 0

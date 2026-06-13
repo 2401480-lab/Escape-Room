@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uAC04\uD638\uC0AC\uC2E4\uC7AC\uACE0\uC77C\uC9C0"
+  m_EditorClassIdentifier: 
+  clueID: normal_nurse_inventory_log
+  clueName: "\uAC04\uD638\uC0AC\uC2E4 \uC7AC\uACE0 \uC77C\uC9C0"
+  description: "\uB2F9\uC77C \uB9C8\uCDE8\uC57D 1\uBCD1 \uBD80\uC871 \uAE30\uB85D."
+  meaning: "\uB3C5\uC57D \uC570\uD50C\uACFC \uC5F0\uACB0. \uC9C4\uC138\uC6C5\uC774
+    \uC0AC\uC804\uC5D0 \uBE7C\uB3CC\uB9B0 \uAC83."
+  areaName: OperatingRoom
+  category: 0
+  isRequired: 0

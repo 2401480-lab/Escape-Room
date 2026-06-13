@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uC720\uC548\uB098\uC758\uC720\uD488"
+  m_EditorClassIdentifier: 
+  clueID: normal_yoanna_relic
+  clueName: "\uC720\uC548\uB098\uC758 \uC720\uD488"
+  description: "\uB3C5\uC57D \uC570\uD50C\uACFC \uB3D9\uC77C \uC131\uBD84 \uBE48
+    \uBCD1. \uC218\uC220\uB300 \uC606\uC5D0 \uB193\uC5EC \uC788\uC74C."
+  meaning: "\uBC94\uD589 \uC644\uC131 \uC99D\uAC70."
+  areaName: OperatingRoom
+  category: 0
+  isRequired: 0

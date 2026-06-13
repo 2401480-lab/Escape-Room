@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
+  m_Name: "Clue_\uBCD1\uC2E4\uB2EC\uB825"
+  m_EditorClassIdentifier: 
+  clueID: normal_ward_calendar
+  clueName: "\uBCD1\uC2E4 \uB2EC\uB825"
+  description: "2\uB144 \uC804 \uB0A0\uC9DC\uC5D0 \uD558\uC2DC\uD638 \uC218\uC220\uC77C
+    \uD45C\uC2DC, \uC624\uB298 \uB0A0\uC9DC\uC5D0 \uBCC4\uD45C."
+  meaning: "\uC9C4\uC138\uC6C5\uC774 2\uB144\uC744 \uAE30\uB2E4\uB824\uC628 \uBCF5\uC218\uC784\uC744
+    \uC554\uC2DC."
+  areaName: Ward
+  category: 0
+  isRequired: 0
