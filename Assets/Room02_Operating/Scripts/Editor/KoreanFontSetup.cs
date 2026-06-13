@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.TextCore;
 
 namespace EscapeRoom
 {
@@ -27,16 +26,8 @@ namespace EscapeRoom
             TMP_FontAsset existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(AssetPath);
             if (existing == null)
             {
-                // Dynamic 아틀라스 방식 — 글자를 처음 사용할 때 자동 추가
-                TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(
-                    ttf,
-                    samplingPointSize: 90,
-                    padding: 9,
-                    packingMode: GlyphRenderMode.SDFAA,
-                    atlasWidth: 1024,
-                    atlasHeight: 1024,
-                    AtlasPopulationMode.Dynamic,
-                    enableMultiAtlasSupport: true);
+                // Dynamic 아틀라스 방식 — 기본 오버로드 사용 (Unity 6 호환)
+                TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(ttf);
 
                 fontAsset.name = "MalgunGothic_TMP";
                 AssetDatabase.CreateAsset(fontAsset, AssetPath);
