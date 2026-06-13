@@ -1,3 +1,15 @@
+### [2026-06-13 00:00:00]
+- 단서 전면 확장: 19개 → 26개, 시나리오 흐름 5단계로 재구성
+  - StoryPhase: cast_notice, memorial_frame, visitor_log, security_log, hasho_will, ward_calendar
+  - MisdirectionPhase: yoanna_note, nurse_log, medical_certificate, conversation_memo_a, isolation_bloodstain, bong_rebuttal
+  - MotivePhase: torn_letter_piece_a/b, cctv_memo, phone_memo, sumi_memo, makeup_diary, mirror_message
+  - EvidencePhase: poison_ampoule, hidden_camera, jin_sneakers, gloves, locked_locker, paint_footprints, paint_toolbox
+  - FinalPhase: under_table_space, yoanna_relic
+- RoomGameManager 페이즈 5단계로 재설계 (StoryPhase → MisdirectionPhase → MotivePhase → EvidencePhase → FinalPhase)
+- 추리 팝업 5개로 확장 (봉태현 미스디렉션 팝업 추가)
+- SceneSetupTool 구역별 그룹화 (01~06 네이밍) 및 EndingUI_Trigger 추가
+- ClueDataGenerator 전체 갱신 지원 (기존 에셋 덮어쓰기)
+
 ### [2026-06-12 01:00:00]
 - 단서 목록 19개 확정 및 구역별 배분 완료
   - 구역1 입구 로비: clue_newspaper, clue_visitor_log, clue_incident_report
