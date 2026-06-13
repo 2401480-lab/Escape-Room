@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+using EscapeRoom.Editor;
 
 namespace EscapeRoom
 {
