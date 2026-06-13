@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -228,11 +228,11 @@ namespace EscapeRoom
             ClueInteractable interactable = cube.AddComponent<ClueInteractable>();
 
             // ClueData 로드 (없으면 생성)
-            ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Clues/Normal/cast_notice.asset");
+            ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Room02_Operating/Clues/Normal/Clue_배역안내문.asset");
             if (asset == null)
             {
                 ClueAssetGenerator.GenerateStoryClueAssets();
-                asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Clues/Normal/cast_notice.asset");
+                asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Room02_Operating/Clues/Normal/Clue_배역안내문.asset");
             }
             if (asset != null)
             {

@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $operatingScenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
@@ -6,8 +6,8 @@ $corridorScenePath = Join-Path $root 'Assets/Scenes/Scene_Corridor.unity'
 $dressingScenePath = Join-Path $root 'Assets/Scenes/Scene_DressingRoom.unity'
 $sceneLoaderPath = Join-Path $root 'Assets/_Shared/Scripts/SceneLoader.cs'
 $sceneLoaderMetaPath = Join-Path $root 'Assets/_Shared/Scripts/SceneLoader.cs.meta'
-$zoneManagerPath = Join-Path $root 'Assets/Clues/ZoneManager.cs'
-$zoneDoorPath = Join-Path $root 'Assets/Clues/ZoneDoorActivator.cs'
+$zoneManagerPath = Join-Path $root 'Assets/Room02_Operating/Clues/ZoneManager.cs'
+$zoneDoorPath = Join-Path $root 'Assets/Room02_Operating/Clues/ZoneDoorActivator.cs'
 $buildSettingsPath = Join-Path $root 'ProjectSettings/EditorBuildSettings.asset'
 
 function Assert-True {

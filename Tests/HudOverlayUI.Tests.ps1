@@ -1,12 +1,12 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$settingsPath = Join-Path $root 'Assets/Clues/SettingsUI.cs'
-$journalPath = Join-Path $root 'Assets/Clues/ClueJournalUI.cs'
-$timerPath = Join-Path $root 'Assets/Clues/TimerUI.cs'
-$interactablePath = Join-Path $root 'Assets/Clues/ClueInteractable.cs'
-$bootstrapperPath = Join-Path $root 'Assets/Clues/HudRuntimeBootstrapper.cs'
-$setupPath = Join-Path $root 'Assets/Clues/Editor/ClueSceneSetupTool.cs'
+$settingsPath = Join-Path $root 'Assets/Room02_Operating/Clues/SettingsUI.cs'
+$journalPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalUI.cs'
+$timerPath = Join-Path $root 'Assets/Room02_Operating/Clues/TimerUI.cs'
+$interactablePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueInteractable.cs'
+$bootstrapperPath = Join-Path $root 'Assets/Room02_Operating/Clues/HudRuntimeBootstrapper.cs'
+$setupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
 $scenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
 
 function Assert-True {

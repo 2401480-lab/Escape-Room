@@ -1,11 +1,11 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$vignettePath = Join-Path $root 'Assets/Clues/ProximityVignetteUI.cs'
-$popupPath = Join-Path $root 'Assets/Clues/CluePickupPopupUI.cs'
-$confirmPath = Join-Path $root 'Assets/Clues/SuspectConfirmUI.cs'
-$endingPath = Join-Path $root 'Assets/Clues/EndingUI.cs'
-$chasePath = Join-Path $root 'Assets/Clues/ChaseController.cs'
+$vignettePath = Join-Path $root 'Assets/Room02_Operating/Clues/ProximityVignetteUI.cs'
+$popupPath = Join-Path $root 'Assets/Room02_Operating/Clues/CluePickupPopupUI.cs'
+$confirmPath = Join-Path $root 'Assets/Room02_Operating/Clues/SuspectConfirmUI.cs'
+$endingPath = Join-Path $root 'Assets/Room02_Operating/Clues/EndingUI.cs'
+$chasePath = Join-Path $root 'Assets/Room02_Operating/Clues/ChaseController.cs'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)

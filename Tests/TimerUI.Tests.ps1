@@ -1,18 +1,18 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$timerUIPath = Join-Path $root 'Assets/Clues/TimerUI.cs'
-$storyManagerPath = Join-Path $root 'Assets/Clues/StoryProgressManager.cs'
-$chasePath = Join-Path $root 'Assets/Clues/ChaseController.cs'
+$timerUIPath = Join-Path $root 'Assets/Room02_Operating/Clues/TimerUI.cs'
+$storyManagerPath = Join-Path $root 'Assets/Room02_Operating/Clues/StoryProgressManager.cs'
+$chasePath = Join-Path $root 'Assets/Room02_Operating/Clues/ChaseController.cs'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
     if (-not $Condition) { throw $Message }
 }
 
-Assert-True (Test-Path -LiteralPath $timerUIPath) 'Missing Assets/Clues/TimerUI.cs'
-Assert-True (Test-Path -LiteralPath $storyManagerPath) 'Missing Assets/Clues/StoryProgressManager.cs'
-Assert-True (Test-Path -LiteralPath $chasePath) 'Missing Assets/Clues/ChaseController.cs'
+Assert-True (Test-Path -LiteralPath $timerUIPath) 'Missing Assets/Room02_Operating/Clues/TimerUI.cs'
+Assert-True (Test-Path -LiteralPath $storyManagerPath) 'Missing Assets/Room02_Operating/Clues/StoryProgressManager.cs'
+Assert-True (Test-Path -LiteralPath $chasePath) 'Missing Assets/Room02_Operating/Clues/ChaseController.cs'
 
 $timerUI = Get-Content -LiteralPath $timerUIPath -Raw -Encoding UTF8
 $storyManager = Get-Content -LiteralPath $storyManagerPath -Raw -Encoding UTF8

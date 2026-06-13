@@ -1,14 +1,14 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$assetGeneratorPath = Join-Path $root 'Assets/Clues/Editor/ClueAssetGenerator.cs'
-$sceneSetupPath = Join-Path $root 'Assets/Clues/Editor/ClueSceneSetupTool.cs'
-$interactablePath = Join-Path $root 'Assets/Clues/ClueInteractable.cs'
-$managerPath = Join-Path $root 'Assets/Clues/ClueJournalManager.cs'
-$popupMetaPath = Join-Path $root 'Assets/Clues/CluePickupPopupUI.cs.meta'
-$sceneSetupMetaPath = Join-Path $root 'Assets/Clues/Editor/ClueSceneSetupTool.cs.meta'
-$normalCluePath = Join-Path $root 'Assets/Clues/Normal'
-$keyCluePath = Join-Path $root 'Assets/Clues/KeyClue'
+$assetGeneratorPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueAssetGenerator.cs'
+$sceneSetupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
+$interactablePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueInteractable.cs'
+$managerPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalManager.cs'
+$popupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/CluePickupPopupUI.cs.meta'
+$sceneSetupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs.meta'
+$normalCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/Normal'
+$keyCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/KeyClue'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -31,7 +31,7 @@ $manager = Get-Content -LiteralPath $managerPath -Raw -Encoding UTF8
 
 Assert-True ($assetGenerator -match 'GetEntries\s*\(\s*\)') 'ClueAssetGenerator must expose clue entries to the scene setup tool.'
 Assert-True ($assetGenerator -match 'internal\s+readonly\s+struct\s+ClueEntry') 'Clue entries must be shareable with editor setup.'
-Assert-True ($sceneSetup -match 'MenuItem\("Tools/Clues/Setup Current Stage Clues"\)') 'Scene setup tool must expose a current-scene clue setup menu.'
+Assert-True ($sceneSetup -match 'MenuItem\("Tools/Room02/Clues/Setup Current Stage Clues"\)') 'Scene setup tool must expose a current-scene clue setup menu.'
 Assert-True ($sceneSetup -notmatch 'SetupAllStageClues' -and $sceneSetup -notmatch 'EditorSceneManager') 'Scene setup must not switch or save scenes automatically.'
 Assert-True ($sceneSetup -match 'GenerateStoryClueAssets\s*\(') 'Scene setup must generate missing ClueData assets before wiring scene objects.'
 Assert-True ($sceneSetup -match 'Scene_OperatingRoom') 'Scene setup must support the integrated stage scene.'

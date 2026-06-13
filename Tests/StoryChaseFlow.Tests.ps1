@@ -1,16 +1,16 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$storyManagerPath = Join-Path $root 'Assets/Clues/StoryProgressManager.cs'
-$lockSystemPath = Join-Path $root 'Assets/Clues/LockSystem.cs'
-$endingUIPath = Join-Path $root 'Assets/Clues/EndingUI.cs'
-$silhouettePath = Join-Path $root 'Assets/Clues/SilhouetteController.cs'
-$chasePath = Join-Path $root 'Assets/Clues/ChaseController.cs'
-$exitDoorPath = Join-Path $root 'Assets/Clues/EscapeExitDoor.cs'
-$gameOverPath = Join-Path $root 'Assets/Clues/GameOverUI.cs'
-$clueDataPath = Join-Path $root 'Assets/Clues/ClueData.cs'
-$journalManagerPath = Join-Path $root 'Assets/Clues/ClueJournalManager.cs'
-$journalUIPath = Join-Path $root 'Assets/Clues/ClueJournalUI.cs'
+$storyManagerPath = Join-Path $root 'Assets/Room02_Operating/Clues/StoryProgressManager.cs'
+$lockSystemPath = Join-Path $root 'Assets/Room02_Operating/Clues/LockSystem.cs'
+$endingUIPath = Join-Path $root 'Assets/Room02_Operating/Clues/EndingUI.cs'
+$silhouettePath = Join-Path $root 'Assets/Room02_Operating/Clues/SilhouetteController.cs'
+$chasePath = Join-Path $root 'Assets/Room02_Operating/Clues/ChaseController.cs'
+$exitDoorPath = Join-Path $root 'Assets/Room02_Operating/Clues/EscapeExitDoor.cs'
+$gameOverPath = Join-Path $root 'Assets/Room02_Operating/Clues/GameOverUI.cs'
+$clueDataPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueData.cs'
+$journalManagerPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalManager.cs'
+$journalUIPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalUI.cs'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)

@@ -153,6 +153,11 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 03:07:33]
+- Room02 전용 기능으로 관리되도록 기존 Assets/Clues 폴더 전체를 Assets/Room02_Operating/Clues 경로로 이동하고 Unity GUID를 유지
+- 단서 생성기, 단서 배치 도구, HUD/타이머/추격/엔딩 관련 테스트 경로를 Room02 기준으로 수정
+- Room02 단서 생성기가 더 이상 공용 Assets/Clues 폴더를 재생성하지 않도록 경로 생성 로직과 검증 테스트 보강
+
 ### [2026-06-14 03:02:19]
 - 특정 씬에 UI 오브젝트가 배치되어 있지 않아도 게임 실행 시 HUD_Canvas, 타이머, 수집 증거, 용의자 수첩, 설정 UI가 자동 생성되도록 HudRuntimeBootstrapper 추가
 - 현재 작업 중인 씬에서 바로 Play를 눌러도 HUD 버튼이 동작하도록 EventSystem과 InputSystemUIInputModule 자동 생성 처리 추가

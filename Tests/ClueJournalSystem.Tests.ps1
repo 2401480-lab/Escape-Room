@@ -1,10 +1,10 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$clueDataPath = Join-Path $root 'Assets/Clues/ClueData.cs'
-$managerPath = Join-Path $root 'Assets/Clues/ClueJournalManager.cs'
-$interactablePath = Join-Path $root 'Assets/Clues/ClueInteractable.cs'
-$uiPath = Join-Path $root 'Assets/Clues/ClueJournalUI.cs'
+$clueDataPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueData.cs'
+$managerPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalManager.cs'
+$interactablePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueInteractable.cs'
+$uiPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalUI.cs'
 
 function Assert-True {
     param(
@@ -17,10 +17,10 @@ function Assert-True {
     }
 }
 
-Assert-True (Test-Path -LiteralPath $clueDataPath) 'Missing Assets/Clues/ClueData.cs'
-Assert-True (Test-Path -LiteralPath $managerPath) 'Missing Assets/Clues/ClueJournalManager.cs'
-Assert-True (Test-Path -LiteralPath $interactablePath) 'Missing Assets/Clues/ClueInteractable.cs'
-Assert-True (Test-Path -LiteralPath $uiPath) 'Missing Assets/Clues/ClueJournalUI.cs'
+Assert-True (Test-Path -LiteralPath $clueDataPath) 'Missing Assets/Room02_Operating/Clues/ClueData.cs'
+Assert-True (Test-Path -LiteralPath $managerPath) 'Missing Assets/Room02_Operating/Clues/ClueJournalManager.cs'
+Assert-True (Test-Path -LiteralPath $interactablePath) 'Missing Assets/Room02_Operating/Clues/ClueInteractable.cs'
+Assert-True (Test-Path -LiteralPath $uiPath) 'Missing Assets/Room02_Operating/Clues/ClueJournalUI.cs'
 
 $clueData = Get-Content -LiteralPath $clueDataPath -Raw -Encoding UTF8
 $manager = Get-Content -LiteralPath $managerPath -Raw -Encoding UTF8

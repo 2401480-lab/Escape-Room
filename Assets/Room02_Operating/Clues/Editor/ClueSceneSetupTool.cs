@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,7 +18,7 @@ namespace EscapeRoom.Editor
         };
 
         // ─── 테스트: 단서 큐브 1개만 배치 ────────────────────────────────────
-        [MenuItem("Tools/Clues/Place Single Test Clue")]
+        [MenuItem("Tools/Room02/Clues/Place Single Test Clue")]
         public static void PlaceSingleTestClue()
         {
             // Clues 루트 아래 기존 큐브 전부 제거
@@ -78,7 +78,7 @@ namespace EscapeRoom.Editor
             {
                 if (e.category != ClueCategory.KeyClue)
                 {
-                    asset = AssetDatabase.LoadAssetAtPath<ClueData>($"Assets/Clues/Normal/{e.fileName}.asset");
+                    asset = AssetDatabase.LoadAssetAtPath<ClueData>($"Assets/Room02_Operating/Clues/Normal/{e.fileName}.asset");
                     if (asset != null) break;
                 }
             }
@@ -101,7 +101,7 @@ namespace EscapeRoom.Editor
                 $"테스트 큐브 1개 배치 완료!\n\n위치: {spawnPos}\n단서: cast_notice\n\nCtrl+S 저장 후 플레이해서\nF키 테스트!", "확인");
         }
 
-        [MenuItem("Tools/Clues/Setup Current Stage Clues")]
+        [MenuItem("Tools/Room02/Clues/Setup Current Stage Clues")]
         public static void SetupCurrentStageClues()
         {
             ClueAssetGenerator.GenerateStoryClueAssets();
@@ -243,7 +243,7 @@ namespace EscapeRoom.Editor
 
         private static ClueData LoadClueAsset(ClueAssetGenerator.ClueEntry entry)
         {
-            string folder = entry.category == ClueCategory.KeyClue ? "Assets/Clues/KeyClue" : "Assets/Clues/Normal";
+            string folder = entry.category == ClueCategory.KeyClue ? "Assets/Room02_Operating/Clues/KeyClue" : "Assets/Room02_Operating/Clues/Normal";
             return AssetDatabase.LoadAssetAtPath<ClueData>($"{folder}/{entry.fileName}.asset");
         }
 

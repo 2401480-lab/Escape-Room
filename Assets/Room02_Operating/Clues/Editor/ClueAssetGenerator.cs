@@ -1,14 +1,14 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace EscapeRoom.Editor
 {
     public static class ClueAssetGenerator
     {
-        private const string NormalPath = "Assets/Clues/Normal";
-        private const string KeyCluePath = "Assets/Clues/KeyClue";
+        private const string NormalPath = "Assets/Room02_Operating/Clues/Normal";
+        private const string KeyCluePath = "Assets/Room02_Operating/Clues/KeyClue";
 
-        [MenuItem("Tools/Clues/Generate Story Clue Assets")]
+        [MenuItem("Tools/Room02/Clues/Generate Story Clue Assets")]
         public static void GenerateStoryClueAssets()
         {
             EnsureFolders();
@@ -54,19 +54,19 @@ namespace EscapeRoom.Editor
 
         private static void EnsureFolders()
         {
-            if (!AssetDatabase.IsValidFolder("Assets/Clues"))
+            if (!AssetDatabase.IsValidFolder("Assets/Room02_Operating/Clues"))
             {
-                AssetDatabase.CreateFolder("Assets", "Clues");
+                AssetDatabase.CreateFolder("Assets/Room02_Operating", "Clues");
             }
 
             if (!AssetDatabase.IsValidFolder(NormalPath))
             {
-                AssetDatabase.CreateFolder("Assets/Clues", "Normal");
+                AssetDatabase.CreateFolder("Assets/Room02_Operating/Clues", "Normal");
             }
 
             if (!AssetDatabase.IsValidFolder(KeyCluePath))
             {
-                AssetDatabase.CreateFolder("Assets/Clues", "KeyClue");
+                AssetDatabase.CreateFolder("Assets/Room02_Operating/Clues", "KeyClue");
             }
         }
 

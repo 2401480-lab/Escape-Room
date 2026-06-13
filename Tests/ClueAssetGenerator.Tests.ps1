@@ -1,8 +1,10 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$clueDataPath = Join-Path $root 'Assets/Clues/ClueData.cs'
-$generatorPath = Join-Path $root 'Assets/Clues/Editor/ClueAssetGenerator.cs'
+$clueDataPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueData.cs'
+$generatorPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueAssetGenerator.cs'
+$legacyPathText = 'Assets/' + 'Clues'
+$legacyCluesPath = Join-Path $root $legacyPathText
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -11,6 +13,7 @@ function Assert-True {
 
 Assert-True (Test-Path -LiteralPath $clueDataPath) 'Missing ClueData.cs'
 Assert-True (Test-Path -LiteralPath $generatorPath) 'Missing ClueAssetGenerator.cs'
+Assert-True (-not (Test-Path -LiteralPath $legacyCluesPath)) 'Room02 clue files must not be created under the legacy clue folder.'
 
 $clueData = Get-Content -LiteralPath $clueDataPath -Raw -Encoding UTF8
 $generator = Get-Content -LiteralPath $generatorPath -Raw -Encoding UTF8
@@ -19,9 +22,10 @@ Assert-True ($clueData -match 'bool\s+isRequired\s*;') 'ClueData must include bo
 Assert-True ($clueData -match 'string\s+areaName\s*;') 'ClueData must keep zone/areaName.'
 
 Assert-True ($generator -match 'AssetDatabase\.CreateAsset') 'Generator must create ScriptableObject assets with AssetDatabase.CreateAsset.'
-Assert-True ($generator -match 'Assets/Clues/Normal') 'Generator must create normal clue assets under Assets/Clues/Normal.'
-Assert-True ($generator -match 'Assets/Clues/KeyClue') 'Generator must create key clue assets under Assets/Clues/KeyClue.'
-Assert-True ($generator -match 'MenuItem\("Tools/Clues/Generate Story Clue Assets"\)') 'Generator must expose the requested editor menu.'
+Assert-True ($generator -match 'Assets/Room02_Operating/Clues/Normal') 'Generator must create normal clue assets under Assets/Room02_Operating/Clues/Normal.'
+Assert-True ($generator -match 'Assets/Room02_Operating/Clues/KeyClue') 'Generator must create key clue assets under Assets/Room02_Operating/Clues/KeyClue.'
+Assert-True ($generator -notmatch $legacyPathText -and $generator -notmatch 'CreateFolder\("Assets",\s*"Clues"\)') 'Generator must not recreate legacy clue folders.'
+Assert-True ($generator -match 'MenuItem\("Tools/Room02/Clues/Generate Story Clue Assets"\)') 'Generator must expose the requested editor menu.'
 Assert-True ($generator -notmatch 'new\s+GameObject') 'Generator must not create scene objects.'
 
 $entries = [regex]::Matches($generator, 'new\s+ClueEntry\s*\(')
