@@ -1,3 +1,9 @@
+### [2026-06-13 23:00:00]
+- 한글 폰트 지원 추가: malgun.ttf(맑은 고딕)를 Assets/Fonts/에 복사
+- KoreanFontSetup 에디터 스크립트 추가 (Tools > Room02 > Setup Korean Font)
+  - Dynamic Atlas TMP 폰트 에셋 자동 생성 (MalgunGothic_TMP.asset)
+  - TMP Settings 기본 폰트로 자동 등록
+
 ### [2026-06-13 22:00:00]
 - ShowSceneSetup 에디터 스크립트 추가 (Tools > Room02 > Convert Show Scene to Game)
   - Show.unity 기존 데모 Capsule 제거, CharacterController 기반 Player로 교체
