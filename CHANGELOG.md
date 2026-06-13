@@ -1,3 +1,12 @@
+### [2026-06-13 21:30:00]
+- SceneLightingSetup 에디터 스크립트 추가 (Tools > Room02 > Setup Scene Lighting)
+  - Ambient Mode를 Flat + 거의 검정으로 설정 (Show.unity와 동일)
+  - Directional Light 강도 0.15, 차가운 파란색으로 조정
+  - 복도 PointLight 4개 자동 생성 (_CorridorLights 루트)
+- ClueSceneSetupTool에 단일 테스트 큐브 배치 메뉴 추가 (Tools > Clues > Place Single Test Clue)
+  - 기존 Clues 루트 큐브 전부 삭제 후 PlayerStart 앞 2m에 1개 배치
+  - cast_notice ClueData 자동 연결, F키 수집 테스트용
+
 ### [2026-06-13 02:00:00]
 - Scene_Corridor, Scene_DressingRoom, Scene_OperatingRoom 세 씬에 HUD_Canvas 배치 완료
 - TimerUI, ProximityVignetteUI, CluePickupPopupUI, SuspectConfirmUI, InteractionPromptUI 생성 확인

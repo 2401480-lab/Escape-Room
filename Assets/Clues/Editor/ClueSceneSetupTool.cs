@@ -11,6 +11,72 @@ namespace EscapeRoom.Editor
         private static readonly HashSet<string> DressingRoomZones = new HashSet<string> { "Storage", "DressingRoom" };
         private static readonly HashSet<string> OperatingRoomZones = new HashSet<string> { "OperatingRoom" };
 
+        // ─── 테스트: 단서 큐브 1개만 배치 ────────────────────────────────────
+        [MenuItem("Tools/Clues/Place Single Test Clue")]
+        public static void PlaceSingleTestClue()
+        {
+            // Clues 루트 아래 기존 큐브 전부 제거
+            GameObject cluesRoot = GameObject.Find("Clues");
+            if (cluesRoot != null)
+            {
+                var children = new System.Collections.Generic.List<GameObject>();
+                foreach (Transform t in cluesRoot.transform)
+                    children.Add(t.gameObject);
+                foreach (var c in children)
+                    Undo.DestroyObjectImmediate(c);
+            }
+            else
+            {
+                cluesRoot = new GameObject("Clues");
+                Undo.RegisterCreatedObjectUndo(cluesRoot, "Create Clues Root");
+            }
+
+            // ClueJournalManager 확보
+            if (Object.FindObjectOfType<ClueJournalManager>() == null)
+            {
+                GameObject jm = new GameObject("ClueJournalManager");
+                Undo.RegisterCreatedObjectUndo(jm, "Create ClueJournalManager");
+                jm.AddComponent<ClueJournalManager>();
+            }
+
+            // PlayerStart 앞 2m 위치 계산
+            GameObject ps = GameObject.Find("PlayerStart");
+            Vector3 spawnPos = ps != null
+                ? ps.transform.position + ps.transform.forward * 2f + Vector3.up * 0.15f
+                : new Vector3(0f, 0.15f, 2f);
+
+            // 큐브 생성
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.name = "TestClue_cast_notice";
+            cube.transform.SetParent(cluesRoot.transform);
+            cube.transform.position = spawnPos;
+            cube.transform.localScale = new Vector3(0.28f, 0.08f, 0.2f);
+            Undo.RegisterCreatedObjectUndo(cube, "Create TestClue");
+
+            // ClueInteractable + ClueData 연결
+            ClueInteractable interactable = cube.AddComponent<ClueInteractable>();
+            ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Clues/Normal/cast_notice.asset");
+            if (asset == null)
+            {
+                // asset이 없으면 생성
+                ClueAssetGenerator.GenerateStoryClueAssets();
+                asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Clues/Normal/cast_notice.asset");
+            }
+            if (asset != null)
+            {
+                var so = new SerializedObject(interactable);
+                so.FindProperty("clueData").objectReferenceValue = asset;
+                so.ApplyModifiedProperties();
+            }
+
+            EditorUtility.SetDirty(cube);
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+
+            EditorUtility.DisplayDialog("완료",
+                $"테스트 큐브 1개 배치 완료!\n\n위치: {spawnPos}\n단서: cast_notice\n\nCtrl+S 저장 후 플레이해서\nF키 테스트!", "확인");
+        }
+
         [MenuItem("Tools/Clues/Setup Current Stage Clues")]
         public static void SetupCurrentStageClues()
         {
