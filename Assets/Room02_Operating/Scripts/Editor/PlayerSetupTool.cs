@@ -48,7 +48,7 @@ namespace EscapeRoom
             if (mainCam != null)
             {
                 Undo.SetTransformParent(mainCam.transform, player.transform, "Parent Camera to Player");
-                mainCam.transform.localPosition = new Vector3(0f, 0.7f, 0f);
+                mainCam.transform.localPosition = new Vector3(0f, 1.7f, 0f);
                 mainCam.transform.localRotation = Quaternion.identity;
             }
             else
@@ -60,7 +60,7 @@ namespace EscapeRoom
                 camGo.AddComponent<Camera>();
                 camGo.AddComponent<AudioListener>();
                 camGo.transform.SetParent(player.transform);
-                camGo.transform.localPosition = new Vector3(0f, 0.7f, 0f);
+                camGo.transform.localPosition = new Vector3(0f, 1.7f, 0f);
                 camGo.transform.localRotation = Quaternion.identity;
             }
 
