@@ -310,8 +310,15 @@ namespace EscapeRoom
             progressText.text = $"진행도: {collectedCount} / {totalCount}";
 
             Dictionary<string, List<ClueData>> grouped = new Dictionary<string, List<ClueData>>();
+            List<ClueData> keyClueSection = new List<ClueData>();
             foreach (ClueData clueData in allClues)
             {
+                if (clueData.category == ClueCategory.KeyClue)
+                {
+                    keyClueSection.Add(clueData);
+                    continue;
+                }
+
                 string area = string.IsNullOrWhiteSpace(clueData.areaName) ? "미지정 구역" : clueData.areaName;
                 if (!grouped.ContainsKey(area))
                 {
@@ -319,6 +326,15 @@ namespace EscapeRoom
                 }
 
                 grouped[area].Add(clueData);
+            }
+
+            if (keyClueSection.Count > 0)
+            {
+                CreateAreaHeader("열쇠 단서");
+                foreach (ClueData clueData in keyClueSection)
+                {
+                    CreateClueCard(clueData, journalManager.HasClue(clueData));
+                }
             }
 
             foreach (KeyValuePair<string, List<ClueData>> group in grouped)

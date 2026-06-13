@@ -69,3 +69,8 @@
 - EscapeRoom 네임스페이스 기반 공통 단서 데이터, 저널 매니저, 단서 상호작용, 단서 저널 UI 시스템 추가
 - J키와 Tab키로 열고 닫는 증거 저널 UI를 구현하고 수집 증거 탭, 용의자 수첩 탭, 구역별 미획득 표시와 진행도 표시를 구성
 - 단서 상호작용은 2m 이내 E키 수집 방식으로 구현하고 CursorController 및 Time.timeScale 변경 없이 독립 동작하도록 검증 테스트 추가
+
+### [2026-06-13 19:59:27]
+- 5단계 스토리 진행을 관리하는 StoryProgressManager를 추가하고 진범 인식, 열쇠 단서 수집, 범인 선택, 추격 탈출 단계를 구성
+- LockSystem, EndingUI, SilhouetteController, ChaseController, EscapeExitDoor, GameOverUI를 추가해 열쇠 획득, 오답 실패, 정답 추격, 탈출 성공과 실패 분기를 구현
+- ClueData와 ClueJournalManager에 열쇠 단서 구분을 추가하고 ClueJournalUI에서 열쇠 단서를 별도 섹션으로 표시하도록 확장

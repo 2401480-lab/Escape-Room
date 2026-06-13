@@ -11,12 +11,14 @@ namespace EscapeRoom
         [SerializeField] private List<ClueData> allClues = new List<ClueData>();
 
         private readonly List<ClueData> collectedClues = new List<ClueData>();
+        private readonly List<ClueData> keyClues = new List<ClueData>();
 
         public event Action OnCluesChanged;
         public event Action<ClueData> OnClueAdded;
 
         public IReadOnlyList<ClueData> AllClues => allClues;
         public IReadOnlyList<ClueData> CollectedClues => collectedClues;
+        public IReadOnlyList<ClueData> KeyClues => keyClues;
 
         private void Awake()
         {
@@ -37,6 +39,11 @@ namespace EscapeRoom
             }
 
             collectedClues.Add(clueData);
+            if (clueData.category == ClueCategory.KeyClue && !keyClues.Contains(clueData))
+            {
+                keyClues.Add(clueData);
+            }
+
             if (!allClues.Contains(clueData))
             {
                 allClues.Add(clueData);
