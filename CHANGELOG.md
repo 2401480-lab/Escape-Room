@@ -74,3 +74,8 @@
 - 5단계 스토리 진행을 관리하는 StoryProgressManager를 추가하고 진범 인식, 열쇠 단서 수집, 범인 선택, 추격 탈출 단계를 구성
 - LockSystem, EndingUI, SilhouetteController, ChaseController, EscapeExitDoor, GameOverUI를 추가해 열쇠 획득, 오답 실패, 정답 추격, 탈출 성공과 실패 분기를 구현
 - ClueData와 ClueJournalManager에 열쇠 단서 구분을 추가하고 ClueJournalUI에서 열쇠 단서를 별도 섹션으로 표시하도록 확장
+
+### [2026-06-13 20:05:39]
+- Assets/Clues/Normal 및 Assets/Clues/KeyClue 경로에 28개 일반 단서와 3개 열쇠 단서를 일괄 생성하는 ClueAssetGenerator 에디터 메뉴 추가
+- ClueData에 필수 단서 여부를 저장하는 isRequired 필드를 추가하고 단서 생성기에서 이름, 설명, 의미, 구역, 분류, 필수 여부를 모두 설정하도록 구현
+- 생성되는 단서 ID를 StoryProgressManager의 진범 인식 및 열쇠 단서 진행 조건과 연결되도록 맞추고 검증 테스트 추가

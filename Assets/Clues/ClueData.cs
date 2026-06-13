@@ -11,6 +11,7 @@ namespace EscapeRoom
         public string meaning;
         public string areaName;
         public ClueCategory category = ClueCategory.General;
+        public bool isRequired;
     }
 
     public enum ClueCategory
