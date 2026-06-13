@@ -89,3 +89,8 @@
 - 우측 상단에 MM:SS 형식으로 표시되는 TimerUI를 추가하고 Screen Space Overlay Canvas 자동 구성을 구현
 - StoryProgressManager에서 현재 타이머 값과 추격 타이머 활성 상태를 제공하도록 확장해 추리 타이머는 흰색, 추격 타이머는 붉은색으로 표시
 - ChaseController가 StoryProgressManager에 추격 타이머를 등록하도록 연결하고 추리 및 추격 타이머 만료 시 GameOverUI 활성화 흐름을 검증
+
+### [2026-06-13 20:21:39]
+- ChaseController 거리 이벤트와 연결되는 ProximityVignetteUI를 추가해 3m 이내 알파 0.3, 2m 이내 알파 0.6 붉은 화면 가장자리 효과를 표시
+- ClueJournalManager.OnClueAdded 이벤트를 구독하는 CluePickupPopupUI를 추가해 단서명과 증거 수집됨 문구를 2초 표시 후 페이드아웃하도록 구현
+- EndingUI 용의자 선택 흐름에 SuspectConfirmUI 확인 팝업을 추가하고 예 선택 시 ConfirmSuspect로 정답 및 오답 1회 제한 처리를 수행하도록 변경

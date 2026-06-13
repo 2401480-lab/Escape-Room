@@ -157,10 +157,18 @@ namespace EscapeRoom
 
         private void UpdateDangerFeedback(float distanceToPlayer)
         {
-            float intensity = distanceToPlayer <= nearVignetteDistance
-                ? Mathf.InverseLerp(nearVignetteDistance, catchDistance, distanceToPlayer)
-                : 0f;
-            OnVignetteChanged?.Invoke(intensity);
+            if (distanceToPlayer <= heartbeatDistance)
+            {
+                OnVignetteChanged?.Invoke(0.6f);
+            }
+            else if (distanceToPlayer <= nearVignetteDistance)
+            {
+                OnVignetteChanged?.Invoke(0.3f);
+            }
+            else
+            {
+                OnVignetteChanged?.Invoke(0f);
+            }
 
             if (distanceToPlayer <= heartbeatDistance && Time.time >= nextHeartbeatTime)
             {

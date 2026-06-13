@@ -12,11 +12,15 @@ namespace EscapeRoom
         [SerializeField] private ChaseController chaseController;
         [SerializeField] private SilhouetteController silhouetteController;
         [SerializeField] private GameOverUI gameOverUI;
+        [SerializeField] private SuspectConfirmUI suspectConfirmUI;
 
         public UnityEvent OnCorrectSuspectSelected;
         public UnityEvent OnWrongSuspectSelected;
         public UnityEvent OnBlackoutRequested;
         public UnityEvent OnJinMaterialized;
+
+        private SuspectChoice pendingSuspect;
+        private bool wrongAnswerUsed;
 
         private void Awake()
         {
@@ -41,22 +45,49 @@ namespace EscapeRoom
 
         public void ChooseJinSewoong()
         {
-            CorrectAnswer();
+            SelectSuspect(SuspectChoice.JinSewoong, "진세웅");
         }
 
         public void ChooseBongTaehyeon()
         {
-            WrongAnswer();
+            SelectSuspect(SuspectChoice.BongTaehyeon, "봉태현");
         }
 
         public void ChooseMoonSumi()
         {
-            WrongAnswer();
+            SelectSuspect(SuspectChoice.MoonSumi, "문수미");
         }
 
         public void ChooseOhSejin()
         {
-            WrongAnswer();
+            SelectSuspect(SuspectChoice.OhSejin, "오세진");
+        }
+
+        public void ConfirmSuspect(SuspectChoice suspect)
+        {
+            pendingSuspect = suspect;
+            if (pendingSuspect == SuspectChoice.JinSewoong)
+            {
+                CorrectAnswer();
+            }
+            else
+            {
+                WrongAnswer();
+            }
+        }
+
+        private void SelectSuspect(SuspectChoice suspect, string suspectName)
+        {
+            pendingSuspect = suspect;
+            SuspectConfirmUI targetConfirmUI = GetSuspectConfirmUI();
+            if (targetConfirmUI != null)
+            {
+                targetConfirmUI.Show(this, pendingSuspect, suspectName);
+            }
+            else
+            {
+                ConfirmSuspect(pendingSuspect);
+            }
         }
 
         private void CorrectAnswer()
@@ -72,6 +103,12 @@ namespace EscapeRoom
 
         private void WrongAnswer()
         {
+            if (wrongAnswerUsed)
+            {
+                return;
+            }
+
+            wrongAnswerUsed = true;
             Hide();
             OnWrongSuspectSelected?.Invoke();
             silhouetteController?.PlayJumpscare();
@@ -84,6 +121,24 @@ namespace EscapeRoom
         {
             ChaseController targetChase = chaseController != null ? chaseController : FindObjectOfType<ChaseController>();
             targetChase?.StartChase();
+        }
+
+        private SuspectConfirmUI GetSuspectConfirmUI()
+        {
+            if (suspectConfirmUI != null)
+            {
+                return suspectConfirmUI;
+            }
+
+            suspectConfirmUI = FindObjectOfType<SuspectConfirmUI>();
+            if (suspectConfirmUI != null)
+            {
+                return suspectConfirmUI;
+            }
+
+            GameObject confirmObject = new GameObject("SuspectConfirmUI");
+            suspectConfirmUI = confirmObject.AddComponent<SuspectConfirmUI>();
+            return suspectConfirmUI;
         }
 
         private void EnsureUI()
@@ -165,5 +220,13 @@ namespace EscapeRoom
             tmp.color = Color.white;
             return tmp;
         }
+    }
+
+    public enum SuspectChoice
+    {
+        JinSewoong,
+        BongTaehyeon,
+        MoonSumi,
+        OhSejin
     }
 }
