@@ -32,7 +32,7 @@ $manager = Get-Content -LiteralPath $managerPath -Raw -Encoding UTF8
 Assert-True ($assetGenerator -match 'GetEntries\s*\(\s*\)') 'ClueAssetGenerator must expose clue entries to the scene setup tool.'
 Assert-True ($assetGenerator -match 'internal\s+readonly\s+struct\s+ClueEntry') 'Clue entries must be shareable with editor setup.'
 Assert-True ($sceneSetup -match 'MenuItem\("Tools/Clues/Setup Current Stage Clues"\)') 'Scene setup tool must expose a current-scene clue setup menu.'
-Assert-True ($sceneSetup -notmatch 'SetupAllStageClues' -and $sceneSetup -notmatch 'EditorSceneManager\.OpenScene' -and $sceneSetup -notmatch 'EditorSceneManager\.SaveScene') 'Scene setup must not switch or save scenes automatically.'
+Assert-True ($sceneSetup -notmatch 'SetupAllStageClues' -and $sceneSetup -notmatch 'EditorSceneManager') 'Scene setup must not switch or save scenes automatically.'
 Assert-True ($sceneSetup -match 'GenerateStoryClueAssets\s*\(') 'Scene setup must generate missing ClueData assets before wiring scene objects.'
 Assert-True ($sceneSetup -match 'Scene_Corridor' -and $sceneSetup -match 'Scene_DressingRoom' -and $sceneSetup -match 'Scene_OperatingRoom') 'Scene setup must support all three stage scenes.'
 Assert-True ($sceneSetup -match 'AddComponent<ClueInteractable>\s*\(') 'Scene setup must place EscapeRoom.ClueInteractable components.'

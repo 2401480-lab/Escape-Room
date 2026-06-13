@@ -60,7 +60,6 @@ namespace EscapeRoom.Editor
                 placed++;
             }
 
-            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             return placed;
         }
 

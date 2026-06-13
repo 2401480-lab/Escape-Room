@@ -104,3 +104,7 @@
 - Tools/Clues/Setup All Stage Clues 메뉴가 현재 작업 씬을 전환하며 저장할 수 있는 위험을 제거하고 현재 씬 단서 세팅 메뉴만 유지
 - 잘못 생성된 3개 스테이지 씬 변경분을 git 상태에서 복구하고 단서 ScriptableObject 에셋 31개만 프로젝트 에셋으로 보존
 - ClueSceneWiring 테스트에 자동 씬 전환 및 저장 금지와 생성된 일반 단서 28개, 열쇠 단서 3개 존재 검사를 추가
+
+### [2026-06-13 20:50:42]
+- ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
+- ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
