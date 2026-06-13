@@ -21,7 +21,6 @@ namespace EscapeGame
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
 
         public void LoadOnboarding()    => SceneManager.LoadScene(ONBOARDING_SCENE);

@@ -7,9 +7,15 @@ namespace EscapeRoom.Editor
 {
     public static class ClueSceneSetupTool
     {
-        private static readonly HashSet<string> CorridorZones = new HashSet<string> { "Lobby", "Hallway", "Ward" };
-        private static readonly HashSet<string> DressingRoomZones = new HashSet<string> { "Storage", "DressingRoom" };
-        private static readonly HashSet<string> OperatingRoomZones = new HashSet<string> { "OperatingRoom" };
+        private static readonly HashSet<string> IntegratedZones = new HashSet<string>
+        {
+            "Lobby",
+            "Hallway",
+            "Ward",
+            "Storage",
+            "DressingRoom",
+            "OperatingRoom"
+        };
 
         // ─── 테스트: 단서 큐브 1개만 배치 ────────────────────────────────────
         [MenuItem("Tools/Clues/Place Single Test Clue")]
@@ -88,8 +94,6 @@ namespace EscapeRoom.Editor
             }
 
             EditorUtility.SetDirty(cube);
-            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
-                UnityEngine.SceneManagement.SceneManager.GetActiveScene());
 
             EditorUtility.DisplayDialog("완료",
                 $"테스트 큐브 1개 배치 완료!\n\n위치: {spawnPos}\n단서: cast_notice\n\nCtrl+S 저장 후 플레이해서\nF키 테스트!", "확인");
@@ -151,12 +155,8 @@ namespace EscapeRoom.Editor
         {
             switch (sceneName)
             {
-                case "Scene_Corridor":
-                    return CorridorZones;
-                case "Scene_DressingRoom":
-                    return DressingRoomZones;
                 case "Scene_OperatingRoom":
-                    return OperatingRoomZones;
+                    return IntegratedZones;
                 default:
                     return null;
             }

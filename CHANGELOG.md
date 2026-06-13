@@ -153,3 +153,7 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 01:56:25]
+- Scene_Corridor와 Scene_DressingRoom을 제거하고 Scene_OperatingRoom 하나로 통합하여 Build Settings에 단일 씬만 남기도록 정리
+- ZoneManager와 ZoneDoorActivator를 추가하여 씬 전환 대신 Zone_Lobby, Zone_Corridor, Zone_Ward, Zone_Storage, Zone_DressingRoom, Zone_OperatingRoom 활성화 방식으로 구역 전환 처리
+- SceneLoader와 DontDestroyOnLoad 사용을 제거하고 DoorInteractor가 문 열림 시 다음 구역을 활성화하도록 연결

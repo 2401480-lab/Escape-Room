@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EscapeRoom;
 using UnityEngine;
 
 namespace EscapeGame
@@ -99,6 +100,8 @@ namespace EscapeGame
 
             door.RotateAround(hingePoint, Vector3.up, openAngle * openDirection);
             openedDoors.Add(door);
+            ZoneDoorActivator zoneDoorActivator = door.GetComponentInParent<ZoneDoorActivator>();
+            zoneDoorActivator?.ActivateNextZone();
             SetCollidersEnabled(door, false);
         }
 

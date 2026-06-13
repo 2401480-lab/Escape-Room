@@ -29,7 +29,6 @@ namespace EscapeRoom
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
 
         public bool AddClue(ClueData clueData)

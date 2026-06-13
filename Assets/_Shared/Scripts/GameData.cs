@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace EscapeGame
 {
-    // 방 클리어 기록 전역 관리 — DontDestroyOnLoad
+    // 방 클리어 기록 전역 관리
     // 팀원들이 클리어 조건 추가 시 여기에 작성
     public class GameData : MonoBehaviour
     {
@@ -16,7 +16,6 @@ namespace EscapeGame
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
 
         public void SetRoomCleared(int roomNumber)
