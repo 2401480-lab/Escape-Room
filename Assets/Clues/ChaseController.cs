@@ -10,7 +10,12 @@ namespace EscapeRoom
         [SerializeField] private NavMeshAgent navMeshAgent;
         [SerializeField] private Transform player;
         [SerializeField] private Transform entranceExitDoor;
-        [SerializeField] private float catchDistance = 1.2f;
+        [SerializeField] private GameObject audioManagerObject;
+        [SerializeField] private float catchDistance = 1f;
+        [SerializeField] private float nearVignetteDistance = 3f;
+        [SerializeField] private float heartbeatDistance = 2f;
+        [SerializeField] private float chaseMoveSpeed = 3.8f;
+        [SerializeField] private float heartbeatCooldown = 1f;
         [SerializeField] private float chaseTimer = 120f;
         [SerializeField] private bool startDisabled = true;
 
@@ -18,9 +23,13 @@ namespace EscapeRoom
         public UnityEvent OnCaughtPlayer;
         public UnityEvent OnEscapeSucceeded;
         public UnityEvent OnChaseTimerExpired;
+        public UnityEvent OnBlackoutRequested;
+        public UnityEvent<float> OnVignetteChanged;
+        public UnityEvent OnHeartbeatRequested;
 
         private bool chasing;
         private float chaseTimeRemaining;
+        private float nextHeartbeatTime;
 
         public bool IsChasing => chasing;
         public float ChaseTimeRemaining => chaseTimeRemaining;
@@ -33,6 +42,7 @@ namespace EscapeRoom
             }
 
             chaseTimeRemaining = chaseTimer;
+            ApplyAgentSpeed();
             if (startDisabled && navMeshAgent != null)
             {
                 navMeshAgent.enabled = false;
@@ -50,6 +60,7 @@ namespace EscapeRoom
             if (target != null && navMeshAgent != null && navMeshAgent.enabled)
             {
                 navMeshAgent.SetDestination(target.position);
+                UpdateDangerFeedback(Vector3.Distance(transform.position, target.position));
             }
 
             chaseTimeRemaining -= Time.deltaTime;
@@ -59,7 +70,7 @@ namespace EscapeRoom
                 return;
             }
 
-            if (target != null && Vector3.Distance(transform.position, target.position) <= catchDistance)
+            if (target != null && Vector3.Distance(transform.position, target.position) < catchDistance)
             {
                 CatchPlayer();
             }
@@ -71,6 +82,7 @@ namespace EscapeRoom
             chaseTimeRemaining = chaseTimer;
             if (navMeshAgent != null)
             {
+                ApplyAgentSpeed();
                 navMeshAgent.enabled = true;
             }
 
@@ -84,6 +96,8 @@ namespace EscapeRoom
             {
                 navMeshAgent.ResetPath();
             }
+
+            OnVignetteChanged?.Invoke(0f);
         }
 
         public bool TryEscape()
@@ -104,6 +118,7 @@ namespace EscapeRoom
         private void CatchPlayer()
         {
             StopChase();
+            OnBlackoutRequested?.Invoke();
             OnCaughtPlayer?.Invoke();
             StoryProgressManager.Instance?.MarkGameOver();
             GameOverUI.Instance?.PlayGameOver(GameOverReason.CaughtDuringChase);
@@ -126,7 +141,43 @@ namespace EscapeRoom
 
             if (other.transform == GetPlayer() || other.CompareTag("Player"))
             {
-                CatchPlayer();
+                Transform target = GetPlayer();
+                if (target != null && Vector3.Distance(transform.position, target.position) < catchDistance)
+                {
+                    CatchPlayer();
+                }
+            }
+        }
+
+        private void UpdateDangerFeedback(float distanceToPlayer)
+        {
+            float intensity = distanceToPlayer <= nearVignetteDistance
+                ? Mathf.InverseLerp(nearVignetteDistance, catchDistance, distanceToPlayer)
+                : 0f;
+            OnVignetteChanged?.Invoke(intensity);
+
+            if (distanceToPlayer <= heartbeatDistance && Time.time >= nextHeartbeatTime)
+            {
+                PlayHeartbeat();
+                nextHeartbeatTime = Time.time + heartbeatCooldown;
+            }
+        }
+
+        private void PlayHeartbeat()
+        {
+            if (audioManagerObject != null)
+            {
+                audioManagerObject.SendMessage("PlayHeartbeat", SendMessageOptions.DontRequireReceiver);
+            }
+
+            OnHeartbeatRequested?.Invoke();
+        }
+
+        private void ApplyAgentSpeed()
+        {
+            if (navMeshAgent != null)
+            {
+                navMeshAgent.speed = chaseMoveSpeed;
             }
         }
 

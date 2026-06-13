@@ -10,7 +10,7 @@ namespace EscapeRoom
         [SerializeField] private TextMeshProUGUI promptText;
         [SerializeField] private Transform player;
 
-        private const string PromptMessage = "[E] 증거 수집";
+        private const string PromptMessage = "[F] 증거 수집";
 
         private void Awake()
         {
@@ -41,7 +41,7 @@ namespace EscapeRoom
             bool inRange = target != null && Vector3.Distance(target.position, transform.position) <= collectDistance;
             SetPromptVisible(inRange);
 
-            if (inRange && Input.GetKeyDown(KeyCode.E))
+            if (inRange && Input.GetKeyDown(KeyCode.F))
             {
                 CollectClue();
             }

@@ -33,7 +33,7 @@ function U {
     return -join ($CodePoints | ForEach-Object { [char] $_ })
 }
 
-$collectPrompt = '[E] ' + (U 0xC99D,0xAC70) + ' ' + (U 0xC218,0xC9D1)
+$collectPrompt = '[F] ' + (U 0xC99D,0xAC70) + ' ' + (U 0xC218,0xC9D1)
 $evidenceTab = U 0xC218,0xC9D1,0x0020,0xC99D,0xAC70
 $suspectTab = (U 0xC6A9,0xC758,0xC790) + ' ' + (U 0xC218,0xCCA9)
 $explorePlaceholder = (U 0xC774,0x0020,0xAD6C,0xC5ED,0xC744,0x0020,0xD0D0,0xC0C9,0xD558,0xBA74,0x0020,0xC99D,0xAC70,0xB97C,0x0020,0xC218,0xC9D1,0xD560,0x0020,0xC218,0x0020,0xC788,0xC2B5,0xB2C8,0xB2E4)
@@ -68,7 +68,8 @@ Assert-True ($interactable -match 'namespace\s+EscapeRoom') 'ClueInteractable mu
 Assert-True ($interactable -match 'class\s+ClueInteractable\s*:\s*MonoBehaviour') 'ClueInteractable must be a MonoBehaviour.'
 Assert-True ($interactable -match 'ClueData\s+clueData') 'ClueInteractable must expose a ClueData field.'
 Assert-True ($interactable -match 'collectDistance\s*=\s*2f') 'ClueInteractable must default to 2m collection range.'
-Assert-True ($interactable -match 'KeyCode\.E') 'ClueInteractable must collect with E.'
+Assert-True ($interactable -match 'KeyCode\.F') 'ClueInteractable must collect with F.'
+Assert-True ($interactable -notmatch 'KeyCode\.E') 'ClueInteractable must not consume E because E is reserved for doors.'
 Assert-True ($interactable.Contains($collectPrompt)) 'ClueInteractable must show the requested prompt text.'
 Assert-True ($interactable -match 'SetActive\s*\(\s*false\s*\)') 'ClueInteractable must disable the object after collection.'
 Assert-True ($interactable -match 'ClueJournalManager\.Instance\.AddClue') 'ClueInteractable must call ClueJournalManager.AddClue().'

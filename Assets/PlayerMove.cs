@@ -4,7 +4,8 @@ using EscapeGame;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour
 {
-    public float speed = 5f;
+    public float walkSpeed = 3f;
+    public float runSpeed = 5f;
     public float mouseSpeed = 2f;
     public float gravity = -9.81f;
 
@@ -36,9 +37,11 @@ public class PlayerMove : MonoBehaviour
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
+        bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        float currentSpeed = isRunning ? runSpeed : walkSpeed;
 
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
-        characterController.Move(move * speed * Time.deltaTime);
+        characterController.Move(move * currentSpeed * Time.deltaTime);
 
         if (characterController.isGrounded && verticalVelocity.y < 0f)
         {

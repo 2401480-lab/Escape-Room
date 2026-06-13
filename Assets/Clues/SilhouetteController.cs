@@ -9,6 +9,7 @@ namespace EscapeRoom
         [SerializeField] private Transform player;
         [SerializeField] private GameObject silhouetteObject;
         [SerializeField] private Animator silhouetteAnimator;
+        [SerializeField] private Collider[] silhouetteColliders;
 
         [Header("출현 지점")]
         [SerializeField] private Transform[] stageOneAppearPoints;
@@ -38,6 +39,7 @@ namespace EscapeRoom
             }
 
             SetVisible(false);
+            SetSilhouetteColliders(false);
         }
 
         private void OnEnable()
@@ -85,6 +87,7 @@ namespace EscapeRoom
         {
             currentStage = SilhouetteStage.StageOne;
             behindPlayer = false;
+            SetSilhouetteColliders(false);
             ScheduleNextAppearance();
         }
 
@@ -92,6 +95,7 @@ namespace EscapeRoom
         {
             currentStage = SilhouetteStage.StageTwo;
             behindPlayer = false;
+            SetSilhouetteColliders(false);
             ScheduleNextAppearance();
         }
 
@@ -99,6 +103,7 @@ namespace EscapeRoom
         {
             currentStage = SilhouetteStage.StageThree;
             behindPlayer = true;
+            SetSilhouetteColliders(false);
             SetVisible(true);
         }
 
@@ -106,6 +111,7 @@ namespace EscapeRoom
         {
             currentStage = SilhouetteStage.Chase;
             behindPlayer = false;
+            SetSilhouetteColliders(true);
             SetVisible(true);
             if (silhouetteAnimator != null)
             {
@@ -115,6 +121,7 @@ namespace EscapeRoom
 
         public void PlayJumpscare()
         {
+            SetSilhouetteColliders(false);
             SetVisible(true);
             OnJumpscareRequested?.Invoke();
             if (silhouetteAnimator != null)
@@ -215,6 +222,22 @@ namespace EscapeRoom
             if (silhouetteObject != null && silhouetteObject.activeSelf != isVisible)
             {
                 silhouetteObject.SetActive(isVisible);
+            }
+        }
+
+        private void SetSilhouetteColliders(bool enabled)
+        {
+            if (silhouetteColliders == null || silhouetteColliders.Length == 0)
+            {
+                silhouetteColliders = GetComponentsInChildren<Collider>(true);
+            }
+
+            foreach (Collider silhouetteCollider in silhouetteColliders)
+            {
+                if (silhouetteCollider != null)
+                {
+                    silhouetteCollider.enabled = enabled;
+                }
             }
         }
     }
