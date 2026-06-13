@@ -120,6 +120,7 @@ namespace EscapeRoom
             GameObject textObject = new GameObject("CluePickupPopupText");
             textObject.transform.SetParent(popupCanvas.transform, false);
             popupText = textObject.AddComponent<TextMeshProUGUI>();
+            FontHelper.Apply(popupText);
             popupText.fontSize = 26f;
             popupText.alignment = TextAlignmentOptions.Center;
             popupText.color = Color.white;
