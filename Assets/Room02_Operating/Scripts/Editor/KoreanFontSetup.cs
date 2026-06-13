@@ -29,28 +29,35 @@ namespace EscapeRoom
                 TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(ttf);
                 fontAsset.name = "MalgunGothic_TMP";
 
-                // 메인 에셋 먼저 저장
-                AssetDatabase.CreateAsset(fontAsset, AssetPath);
-
-                // atlas texture를 서브에셋으로 저장 (없으면 런타임에 파괴됨)
+                // HideAndDontSave 플래그 제거 — 이게 없으면 도메인 리로드 시 텍스처 소멸
+                fontAsset.hideFlags = HideFlags.None;
                 if (fontAsset.atlasTextures != null)
                 {
                     foreach (Texture2D tex in fontAsset.atlasTextures)
                     {
                         if (tex != null)
                         {
+                            tex.hideFlags = HideFlags.None;
                             tex.name = "Atlas";
-                            AssetDatabase.AddObjectToAsset(tex, fontAsset);
                         }
                     }
                 }
-
-                // material도 서브에셋으로 저장
                 if (fontAsset.material != null)
                 {
+                    fontAsset.material.hideFlags = HideFlags.None;
                     fontAsset.material.name = "Material";
-                    AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
                 }
+
+                // 메인 에셋 저장
+                AssetDatabase.CreateAsset(fontAsset, AssetPath);
+
+                // 텍스처·머티리얼을 서브에셋으로 등록
+                if (fontAsset.atlasTextures != null)
+                    foreach (Texture2D tex in fontAsset.atlasTextures)
+                        if (tex != null) AssetDatabase.AddObjectToAsset(tex, fontAsset);
+
+                if (fontAsset.material != null)
+                    AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
 
                 EditorUtility.SetDirty(fontAsset);
                 AssetDatabase.SaveAssets();
