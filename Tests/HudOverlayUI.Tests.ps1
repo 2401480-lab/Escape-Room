@@ -5,6 +5,7 @@ $settingsPath = Join-Path $root 'Assets/Clues/SettingsUI.cs'
 $journalPath = Join-Path $root 'Assets/Clues/ClueJournalUI.cs'
 $timerPath = Join-Path $root 'Assets/Clues/TimerUI.cs'
 $interactablePath = Join-Path $root 'Assets/Clues/ClueInteractable.cs'
+$bootstrapperPath = Join-Path $root 'Assets/Clues/HudRuntimeBootstrapper.cs'
 $setupPath = Join-Path $root 'Assets/Clues/Editor/ClueSceneSetupTool.cs'
 $scenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
 
@@ -18,7 +19,7 @@ function U {
     return -join ($CodePoints | ForEach-Object { [char] $_ })
 }
 
-foreach ($path in @($settingsPath, $journalPath, $timerPath, $interactablePath, $setupPath, $scenePath)) {
+foreach ($path in @($settingsPath, $journalPath, $timerPath, $interactablePath, $bootstrapperPath, $setupPath, $scenePath)) {
     Assert-True (Test-Path -LiteralPath $path) "Missing HUD file: $path"
 }
 
@@ -26,9 +27,10 @@ $settings = Get-Content -LiteralPath $settingsPath -Raw -Encoding UTF8
 $journal = Get-Content -LiteralPath $journalPath -Raw -Encoding UTF8
 $timer = Get-Content -LiteralPath $timerPath -Raw -Encoding UTF8
 $interactable = Get-Content -LiteralPath $interactablePath -Raw -Encoding UTF8
+$bootstrapper = Get-Content -LiteralPath $bootstrapperPath -Raw -Encoding UTF8
 $setup = Get-Content -LiteralPath $setupPath -Raw -Encoding UTF8
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
-$allHudCode = "$settings`n$journal`n$timer`n$interactable"
+$allHudCode = "$settings`n$journal`n$timer`n$interactable`n$bootstrapper"
 
 $investigatePrompt = '[F] ' + (U 0xC870,0xC0AC,0xD558,0xAE30)
 $settingsText = U 0xC124,0xC815
@@ -48,6 +50,10 @@ Assert-True ($journal -match 'KeyCode\.J' -and $journal -match 'KeyCode\.K') 'Cl
 Assert-True ($journal -match 'HUD_Canvas') 'ClueJournalUI must attach UI to HUD_Canvas.'
 Assert-True ($timer -match 'HUD_Canvas' -and $timer -match 'urgentThresholdSeconds\s*=\s*180f') 'TimerUI must live in HUD_Canvas and turn urgent after 3 minutes remain.'
 Assert-True ($interactable.Contains($investigatePrompt) -and $interactable -match 'HUD_Canvas') 'ClueInteractable must show [F] investigate on HUD_Canvas.'
+Assert-True ($bootstrapper -match 'RuntimeInitializeOnLoadMethod' -and $bootstrapper -match 'RuntimeInitializeLoadType\.AfterSceneLoad') 'HUD bootstrapper must run after any scene loads.'
+Assert-True ($bootstrapper -match 'EnsureRuntimeObject<ClueJournalUI>' -and $bootstrapper -match 'EnsureRuntimeObject<TimerUI>' -and $bootstrapper -match 'EnsureRuntimeObject<SettingsUI>') 'HUD bootstrapper must create missing HUD runtime UI objects in any played scene.'
+Assert-True ($bootstrapper -match 'EnsureRuntimeObject<StoryProgressManager>' -and $bootstrapper -match 'EnsureRuntimeObject<ClueJournalManager>') 'HUD bootstrapper must create required managers when testing a scene directly.'
+Assert-True ($bootstrapper -match 'InputSystemUIInputModule' -and $bootstrapper -match 'EventSystem') 'HUD bootstrapper must create an EventSystem for HUD buttons.'
 
 Assert-True ($setup -match 'EnsureRuntimeObject<SettingsUI>' -and $setup -match 'EnsureRuntimeObject<TimerUI>') 'Scene setup tool must ensure HUD runtime UI objects.'
 Assert-True ($scene -match 'm_Name:\s+SettingsUI' -and $scene -match '8b158d7cbad6487e9163f6a33c4797b7') 'Scene_OperatingRoom must contain SettingsUI runtime object.'

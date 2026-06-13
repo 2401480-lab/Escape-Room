@@ -153,6 +153,11 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 03:02:19]
+- 특정 씬에 UI 오브젝트가 배치되어 있지 않아도 게임 실행 시 HUD_Canvas, 타이머, 수집 증거, 용의자 수첩, 설정 UI가 자동 생성되도록 HudRuntimeBootstrapper 추가
+- 현재 작업 중인 씬에서 바로 Play를 눌러도 HUD 버튼이 동작하도록 EventSystem과 InputSystemUIInputModule 자동 생성 처리 추가
+- HUD 런타임 부트스트랩 검증 테스트를 추가하여 단일 통합 씬 외의 씬에서도 UI 생성 조건을 확인
+
 ### [2026-06-14 02:53:21]
 - HUD_Canvas 기준으로 우측 상단 타이머, 좌측 상단 수집 증거 버튼, 용의자 수첩 버튼, 우측 상단 설정 버튼을 생성하도록 UI 구조 개선
 - 수집 증거는 J/Tab, 용의자 수첩은 K, 설정 패널은 ESC로 열고 닫도록 연결하고 설정 패널에 볼륨/감도 및 조작법 탭 추가
