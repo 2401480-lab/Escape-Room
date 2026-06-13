@@ -6,7 +6,7 @@ namespace EscapeRoom
     public class ClueInteractable : MonoBehaviour
     {
         [SerializeField] public ClueData clueData;
-        [SerializeField] private float collectDistance = 2f;
+        [SerializeField] private float collectDistance = 3f;
         [SerializeField] private TextMeshProUGUI promptText;
         [SerializeField] private Transform player;
 
@@ -77,10 +77,12 @@ namespace EscapeRoom
                 return player;
             }
 
+            // 카메라 부모(Player 루트)를 기준으로 거리 계산 — 눈높이 1.7m 오차 방지
             Camera mainCamera = Camera.main;
             if (mainCamera != null)
             {
-                player = mainCamera.transform;
+                Transform camParent = mainCamera.transform.parent;
+                player = camParent != null ? camParent : mainCamera.transform;
                 return player;
             }
 

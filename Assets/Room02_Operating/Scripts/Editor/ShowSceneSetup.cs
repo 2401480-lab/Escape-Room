@@ -216,12 +216,12 @@ namespace EscapeRoom
             cube.transform.localScale = new Vector3(0.3f, 0.1f, 0.2f);
             Undo.RegisterCreatedObjectUndo(cube, "Create TestClue");
 
-            // Renderer 색상: 노란색으로 눈에 띄게
+            // Renderer 색상: 노란색으로 눈에 띄게 (기존 URP 머티리얼 복사 후 색 변경)
             MeshRenderer mr = cube.GetComponent<MeshRenderer>();
-            if (mr != null)
+            if (mr != null && mr.sharedMaterial != null)
             {
-                Material mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-                mat.color = new Color(1f, 0.9f, 0.2f); // 노란색
+                Material mat = new Material(mr.sharedMaterial);
+                mat.SetColor("_BaseColor", new Color(1f, 0.9f, 0.2f));
                 mr.sharedMaterial = mat;
             }
 

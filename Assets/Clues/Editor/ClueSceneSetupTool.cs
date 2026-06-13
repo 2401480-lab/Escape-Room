@@ -53,6 +53,15 @@ namespace EscapeRoom.Editor
             cube.transform.localScale = new Vector3(0.28f, 0.08f, 0.2f);
             Undo.RegisterCreatedObjectUndo(cube, "Create TestClue");
 
+            // 노란색으로 눈에 띄게 (URP 머티리얼 복사 후 색 변경)
+            MeshRenderer mr = cube.GetComponent<MeshRenderer>();
+            if (mr != null && mr.sharedMaterial != null)
+            {
+                Material mat = new Material(mr.sharedMaterial);
+                mat.SetColor("_BaseColor", new Color(1f, 0.9f, 0.2f));
+                mr.sharedMaterial = mat;
+            }
+
             // ClueInteractable + ClueData 연결
             ClueInteractable interactable = cube.AddComponent<ClueInteractable>();
             ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>("Assets/Clues/Normal/cast_notice.asset");
