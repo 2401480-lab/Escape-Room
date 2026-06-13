@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TextCore;
 
 namespace EscapeRoom
 {
@@ -31,7 +32,7 @@ namespace EscapeRoom
                     ttf,
                     samplingPointSize: 90,
                     padding: 9,
-                    packingMode: UnityEngine.TextCore.Text.GlyphRenderMode.SDFAA,
+                    packingMode: GlyphRenderMode.SDFAA,
                     atlasWidth: 1024,
                     atlasHeight: 1024,
                     AtlasPopulationMode.Dynamic,
