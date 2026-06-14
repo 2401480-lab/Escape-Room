@@ -29,6 +29,27 @@ namespace EscapeRoom.Editor
             }
         }
 
+        [MenuItem("Tools/Room02/Generate Clues Part2")]
+        public static void GenerateCluesPart2()
+        {
+            EnsureFolders();
+            int created = 0;
+            int updated = 0;
+
+            foreach (ClueEntry entry in GetPart2Entries())
+            {
+                CreateOrUpdateAsset(entry, NormalPath, $"{entry.clueID}.asset", ref created, ref updated);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[Clues] Part2 ClueData assets generated. Created: {created}, Updated: {updated}");
+            if (!Application.isBatchMode)
+            {
+                EditorUtility.DisplayDialog("Part2 단서 생성 완료", $"Part2 단서 에셋 생성 {created}개, 갱신 {updated}개 완료", "확인");
+            }
+        }
+
         [MenuItem("Tools/Room02/Clues/Generate Story Clue Assets")]
         public static void GenerateStoryClueAssets()
         {
@@ -273,6 +294,61 @@ namespace EscapeRoom.Editor
                     "문수미 필체. 세웅이가 이상해. 뭔가 계획하고 있는 것 같아.",
                     "장기 계획의 복선. 가까운 사람도 눈치챘다.",
                     "Hallway", ClueCategory.General, isRequired: false),
+            };
+        }
+
+        internal static ClueEntry[] GetPart2Entries()
+        {
+            return new[]
+            {
+                new ClueEntry("hasho_will", "hasho_will", "하시호 유서",
+                    "하시호 본인 필체. 내 죽음은 의료 과실이 아니야. 나는 살해당한 거야.",
+                    "스토리 최대 전환점. 공식 사인이 살인으로 뒤바뀐다.",
+                    "Ward", ClueCategory.General, isRequired: true),
+                new ClueEntry("medical_certificate", "medical_certificate", "진단서",
+                    "하시호 사인: 수술 중 심정지. 담당의: 봉태현.",
+                    "봉태현 미스디렉션 강화.",
+                    "Ward", ClueCategory.General, isRequired: false),
+                new ClueEntry("conversation_memo", "conversation_memo", "대화 메모",
+                    "유안나 필체. 태현 씨, 당신이 하시호를 죽인 거 알아.",
+                    "봉태현 미스디렉션 최고조.",
+                    "Ward", ClueCategory.General, isRequired: false),
+                new ClueEntry("bong_rebuttal", "bong_rebuttal", "봉태현의 반박문",
+                    "봉태현 자필. 나는 최선을 다했다. 하시호의 죽음은 불가항력이었다.",
+                    "봉태현이 범인이 아닐 수 있다는 첫 균열.",
+                    "Ward", ClueCategory.General, isRequired: false),
+                new ClueEntry("ward_calendar", "ward_calendar", "병실 달력",
+                    "2년 전 날짜에 하시호 수술일, 오늘 날짜에 별표.",
+                    "2년 전부터 오늘을 복수의 날로 정해뒀다. 장기 계획 확정.",
+                    "Ward", ClueCategory.General, isRequired: false),
+                new ClueEntry("oseojin_memo", "oseojin_memo", "오세진 협박 메모",
+                    "오세진 필체. 그 남자한테 협박당했다. 기록을 지우지 않으면 나도 죽인다고 했다.",
+                    "오세진은 공범이 아닌 피해자. 협박한 그 남자가 진세웅임을 암시.",
+                    "Ward", ClueCategory.General, isRequired: false),
+                new ClueEntry("record_deletion", "record_deletion", "출입 기록 삭제 흔적",
+                    "2년 전 수술일 당직 기록 삭제 흔적. 담당자 란에 오세진 이름 희미하게 남아있음.",
+                    "진세웅이 2년 전부터 증거를 지워왔다는 것.",
+                    "Ward", ClueCategory.General, isRequired: false),
+                new ClueEntry("poison_ampoule", "poison_ampoule", "독약 앰플",
+                    "라벨 없는 투명 약병.",
+                    "진세웅이 사전에 빼돌린 범행 도구. 재고 일지와 연결.",
+                    "Storage", ClueCategory.General, isRequired: true),
+                new ClueEntry("hidden_camera", "hidden_camera", "소형 카메라",
+                    "수술실 방향 고정 거치. 저장 영상 전부 삭제.",
+                    "범행 흔적을 지우기 위한 사전 조작 증거.",
+                    "Storage", ClueCategory.General, isRequired: false),
+                new ClueEntry("jin_sneakers", "jin_sneakers", "운동화",
+                    "밑창 흰 페인트가 발가락 쪽에만 묻어있다.",
+                    "핵심 물증 A. 엎드린 자세로 수술대 아래 숨은 증거.",
+                    "Storage", ClueCategory.General, isRequired: true),
+                new ClueEntry("gloves", "gloves", "장갑",
+                    "독약 앰플 옆 장갑. 손가락 끝 페인트 흔적 없음.",
+                    "장갑 착용으로 지문 없음.",
+                    "Storage", ClueCategory.General, isRequired: false),
+                new ClueEntry("locked_locker", "locked_locker", "잠긴 사물함 내부 서류",
+                    "코드 입력 해제 후 획득. 진세웅의 리허설 스케줄표.",
+                    "수술실에서 수차례 리허설했다는 증거.",
+                    "Storage", ClueCategory.General, isRequired: false),
             };
         }
 

@@ -153,6 +153,11 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 15:22:25]
+- Room02 Part2 단서 12개를 clueId.asset 파일명 규칙으로 생성하는 Tools/Room02/Generate Clues Part2 메뉴 추가
+- Ward와 Storage 구역 단서 설명, 의미, 필수 여부를 시나리오에 맞게 생성하도록 ClueAssetGenerator 확장
+- Part2 생성기 검증 테스트 추가
+
 ### [2026-06-14 15:16:25]
 - Room02 Part1 단서 9개를 clueId.asset 파일명 규칙으로 생성하는 Tools/Room02/Generate Clues Part1 메뉴 추가
 - Part1 단서 설명과 의미를 시나리오에 맞게 갱신하고 기존 ClueData ScriptableObject를 덮어쓰기 방식으로 갱신하도록 구현
