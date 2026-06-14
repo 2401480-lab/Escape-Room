@@ -242,3 +242,8 @@
 - 관리자용 단서 화살표가 Play 모드 Game 화면뿐 아니라 Unity Scene 편집 화면에서도 보이도록 Editor 전용 Gizmo와 단서명 라벨을 추가
 - Scene 뷰 표시 코드를 UNITY_EDITOR 조건으로 분리하여 빌드와 런타임 UI 동작에 영향이 없도록 처리
 - 단서 가이드 검증 테스트에 Scene 뷰 화살표와 라벨 생성 조건을 추가
+
+### [2026-06-14 18:00:09]
+- Scene_OperatingRoom에 Room02_BGM 오브젝트를 추가하고 Free Horror Ambience의 dk-theroom.aif를 배경음으로 연결
+- Room02BgmPlayer를 추가하여 시작 시 AudioSource를 구성하고 2D 루프 배경음이 낮은 볼륨으로 재생되도록 처리
+- Room02 배경음 오브젝트, 선택한 오디오 클립 참조, 루프 및 볼륨 설정을 검증하는 테스트 추가
