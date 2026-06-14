@@ -28,12 +28,16 @@ Assert-True ($generator -notmatch $legacyPathText -and $generator -notmatch 'Cre
 Assert-True ($generator -match 'MenuItem\("Tools/Room02/Clues/Generate Story Clue Assets"\)') 'Generator must expose the requested editor menu.'
 Assert-True ($generator -notmatch 'new\s+GameObject') 'Generator must not create scene objects.'
 
-$entries = [regex]::Matches($generator, 'new\s+ClueEntry\s*\(')
-$normalEntries = [regex]::Matches($generator, 'ClueCategory\.General,\s*isRequired:')
-$keyEntries = [regex]::Matches($generator, 'ClueCategory\.KeyClue,\s*isRequired:')
-$requiredTrue = [regex]::Matches($generator, 'isRequired:\s*true')
-$normalFileNames = [regex]::Matches($generator, '"Clue_[^"]+"')
-$keyFileNames = [regex]::Matches($generator, '"KeyClue_[^"]+"')
+$mainEntriesMatch = [regex]::Match($generator, 'internal\s+static\s+ClueEntry\[\]\s+GetEntries\s*\(\s*\).*?internal\s+static\s+ClueEntry\[\]\s+GetPart1Entries', 'Singleline')
+Assert-True ($mainEntriesMatch.Success) 'Generator must keep the main story entries separate from Part1 entries.'
+$mainEntriesSource = $mainEntriesMatch.Value
+
+$entries = [regex]::Matches($mainEntriesSource, 'new\s+ClueEntry\s*\(')
+$normalEntries = [regex]::Matches($mainEntriesSource, 'ClueCategory\.General,\s*isRequired:')
+$keyEntries = [regex]::Matches($mainEntriesSource, 'ClueCategory\.KeyClue,\s*isRequired:')
+$requiredTrue = [regex]::Matches($mainEntriesSource, 'isRequired:\s*true')
+$normalFileNames = [regex]::Matches($mainEntriesSource, '"Clue_[^"]+"')
+$keyFileNames = [regex]::Matches($mainEntriesSource, '"KeyClue_[^"]+"')
 
 Assert-True ($entries.Count -eq 31) "Generator must define 31 clue entries, found $($entries.Count)."
 Assert-True ($normalEntries.Count -eq 28) "Generator must define 28 normal clues, found $($normalEntries.Count)."

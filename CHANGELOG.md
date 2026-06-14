@@ -153,6 +153,11 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 15:16:25]
+- Room02 Part1 단서 9개를 clueId.asset 파일명 규칙으로 생성하는 Tools/Room02/Generate Clues Part1 메뉴 추가
+- Part1 단서 설명과 의미를 시나리오에 맞게 갱신하고 기존 ClueData ScriptableObject를 덮어쓰기 방식으로 갱신하도록 구현
+- 단서 획득 팝업에 단서 이름뿐 아니라 설명과 의미까지 표시되도록 개선
+
 ### [2026-06-14 14:56:09]
 - Room02 단서 박스 조사 프롬프트가 너무 넓게 뜨지 않도록 근접 표시 거리를 2.2m로 조정
 - 박스 선택은 360도 근접 후보 중 거리와 시야 방향을 함께 반영하되 가까이 있을 때만 활성화되도록 개선

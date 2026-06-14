@@ -47,7 +47,8 @@ Assert-True ($chase -match 'OnVignetteChanged\?\.Invoke\s*\(\s*0\.3f\s*\)' -and 
 Assert-True ($popup -match 'class\s+CluePickupPopupUI\s*:\s*MonoBehaviour') 'CluePickupPopupUI must be a MonoBehaviour.'
 Assert-True ($popup -match 'OnClueAdded\s*\+=' -and $popup -match 'OnClueAdded\s*-=' ) 'CluePickupPopupUI must subscribe and unsubscribe from ClueJournalManager.OnClueAdded.'
 Assert-True ($popup.Contains($evidenceCollected)) 'CluePickupPopupUI must show the collected evidence text.'
-Assert-True ($popup -match 'displayDuration\s*=\s*2f') 'CluePickupPopupUI must display for 2 seconds.'
+Assert-True ($popup -match 'clueData\.description' -and $popup -match 'clueData\.meaning') 'CluePickupPopupUI must show clue description and meaning when a clue is collected.'
+Assert-True ($popup -match 'displayDuration\s*=\s*3\.5f') 'CluePickupPopupUI must display long enough to read clue details.'
 Assert-True ($popup -match 'CanvasGroup' -and $popup -match 'alpha') 'CluePickupPopupUI must fade out through CanvasGroup alpha.'
 Assert-True ($popup -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*0\.5f\s*,\s*0f\s*\)' -and $popup -match 'anchorMax\s*=\s*new\s+Vector2\s*\(\s*0\.5f\s*,\s*0f\s*\)') 'CluePickupPopupUI must appear at bottom center.'
 

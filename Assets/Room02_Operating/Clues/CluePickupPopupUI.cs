@@ -10,7 +10,7 @@ namespace EscapeRoom
         [SerializeField] private Canvas popupCanvas;
         [SerializeField] private CanvasGroup popupGroup;
         [SerializeField] private TextMeshProUGUI popupText;
-        [SerializeField] private float displayDuration = 2f;
+        [SerializeField] private float displayDuration = 3.5f;
         [SerializeField] private float fadeDuration = 0.4f;
 
         private Coroutine fadeRoutine;
@@ -53,7 +53,7 @@ namespace EscapeRoom
             }
 
             EnsureUI();
-            popupText.text = $"{clueData.clueName}\n증거를 확보했다";
+            popupText.text = $"{clueData.clueName}\n증거를 확보했다\n{clueData.description}\n의미: {clueData.meaning}";
             if (fadeRoutine != null)
             {
                 StopCoroutine(fadeRoutine);
@@ -120,15 +120,15 @@ namespace EscapeRoom
             GameObject textObject = new GameObject("CluePickupPopupText");
             textObject.transform.SetParent(popupCanvas.transform, false);
             popupText = textObject.AddComponent<TextMeshProUGUI>();
-            HorrorUITheme.ApplyText(popupText, 26f, HorrorUITheme.SickYellow);
+            HorrorUITheme.ApplyText(popupText, 22f, HorrorUITheme.SickYellow);
             popupText.alignment = TextAlignmentOptions.Center;
 
             RectTransform rect = popupText.rectTransform;
             rect.anchorMin = new Vector2(0.5f, 0f);
             rect.anchorMax = new Vector2(0.5f, 0f);
             rect.pivot = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = new Vector2(0f, 150f);
-            rect.sizeDelta = new Vector2(620f, 64f);
+            rect.anchoredPosition = new Vector2(0f, 132f);
+            rect.sizeDelta = new Vector2(900f, 150f);
         }
     }
 }

@@ -8,6 +8,27 @@ namespace EscapeRoom.Editor
         private const string NormalPath = "Assets/Room02_Operating/Clues/Normal";
         private const string KeyCluePath = "Assets/Room02_Operating/Clues/KeyClue";
 
+        [MenuItem("Tools/Room02/Generate Clues Part1")]
+        public static void GenerateCluesPart1()
+        {
+            EnsureFolders();
+            int created = 0;
+            int updated = 0;
+
+            foreach (ClueEntry entry in GetPart1Entries())
+            {
+                CreateOrUpdateAsset(entry, NormalPath, $"{entry.clueID}.asset", ref created, ref updated);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[Clues] Part1 ClueData assets generated. Created: {created}, Updated: {updated}");
+            if (!Application.isBatchMode)
+            {
+                EditorUtility.DisplayDialog("Part1 단서 생성 완료", $"Part1 단서 에셋 생성 {created}개, 갱신 {updated}개 완료", "확인");
+            }
+        }
+
         [MenuItem("Tools/Room02/Clues/Generate Story Clue Assets")]
         public static void GenerateStoryClueAssets()
         {
@@ -19,28 +40,7 @@ namespace EscapeRoom.Editor
             foreach (ClueEntry entry in GetEntries())
             {
                 string folder = entry.category == ClueCategory.KeyClue ? KeyCluePath : NormalPath;
-                string assetPath = $"{folder}/{entry.fileName}.asset";
-                ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>(assetPath);
-
-                if (asset == null)
-                {
-                    asset = ScriptableObject.CreateInstance<ClueData>();
-                    AssetDatabase.CreateAsset(asset, assetPath);
-                    created++;
-                }
-                else
-                {
-                    updated++;
-                }
-
-                asset.clueID = entry.clueID;
-                asset.clueName = entry.clueName;
-                asset.description = entry.description;
-                asset.meaning = entry.meaning;
-                asset.areaName = entry.zone;
-                asset.category = entry.category;
-                asset.isRequired = entry.isRequired;
-                EditorUtility.SetDirty(asset);
+                CreateOrUpdateAsset(entry, folder, $"{entry.fileName}.asset", ref created, ref updated);
             }
 
             AssetDatabase.SaveAssets();
@@ -50,6 +50,32 @@ namespace EscapeRoom.Editor
             {
                 EditorUtility.DisplayDialog("단서 생성 완료", $"단서 에셋 생성 {created}개, 갱신 {updated}개 완료", "확인");
             }
+        }
+
+        private static void CreateOrUpdateAsset(ClueEntry entry, string folder, string fileName, ref int created, ref int updated)
+        {
+            string assetPath = $"{folder}/{fileName}";
+            ClueData asset = AssetDatabase.LoadAssetAtPath<ClueData>(assetPath);
+
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<ClueData>();
+                AssetDatabase.CreateAsset(asset, assetPath);
+                created++;
+            }
+            else
+            {
+                updated++;
+            }
+
+            asset.clueID = entry.clueID;
+            asset.clueName = entry.clueName;
+            asset.description = entry.description;
+            asset.meaning = entry.meaning;
+            asset.areaName = entry.zone;
+            asset.category = entry.category;
+            asset.isRequired = entry.isRequired;
+            EditorUtility.SetDirty(asset);
         }
 
         private static void EnsureFolders()
@@ -204,6 +230,49 @@ namespace EscapeRoom.Editor
                     "냉장 약품함 문에 열쇠로 긁힌 흔적. 자물쇠 없이 열림.",
                     "탈출 열쇠가 이 안에 있음 확정.",
                     "Storage", ClueCategory.KeyClue, isRequired: true),
+            };
+        }
+
+        internal static ClueEntry[] GetPart1Entries()
+        {
+            return new[]
+            {
+                new ClueEntry("cast_notice", "cast_notice", "배역 안내문",
+                    "오늘 공연 참여자 명단. 기획자 란에 진세웅 서명.",
+                    "공연 자체를 진세웅이 기획했다. 피해자를 이 장소에 불러모은 것이 계획의 일부.",
+                    "Lobby", ClueCategory.General, isRequired: false),
+                new ClueEntry("memorial_frame", "memorial_frame", "추모 액자",
+                    "故 하시호 — 2년 전 이 병원 수술실에서 숨지다.",
+                    "사건의 발단. 하시호의 죽음이 이번 사건의 근본 원인이다.",
+                    "Lobby", ClueCategory.General, isRequired: false),
+                new ClueEntry("security_log", "security_log", "경비 일지",
+                    "수술실 구역 22:00 이후 출입 금지. 오늘 날짜 기재.",
+                    "진세웅이 22:00 이후 수술실 구역에 있었다는 증거와 충돌. 알리바이 붕괴 복선.",
+                    "Lobby", ClueCategory.General, isRequired: false),
+                new ClueEntry("event_plan", "event_plan", "공연 기획서",
+                    "오늘 공연 시나리오 개요. 기획 총책임자: 진세웅 서명.",
+                    "진세웅이 이 자리 전체를 설계했음을 확정한다.",
+                    "Lobby", ClueCategory.General, isRequired: false),
+                new ClueEntry("torn_letter_a", "torn_letter_a", "찢긴 편지 조각 A",
+                    "반쪽짜리 편지. 내가 반드시 까지만 읽힌다.",
+                    "조각 B와 합쳐야 전문 완성.",
+                    "Hallway", ClueCategory.General, isRequired: false),
+                new ClueEntry("torn_letter_b", "torn_letter_b", "찢긴 편지 조각 B",
+                    "편지 나머지 반쪽. 복수하겠다 — 세웅.",
+                    "A+B 합치면 진세웅의 복수 동기가 본인 필체로 확정된다.",
+                    "Hallway", ClueCategory.General, isRequired: true),
+                new ClueEntry("yoanna_note", "yoanna_note", "메모지",
+                    "유안나 필체. 봉태현, 당신 그날 어디 있었어?",
+                    "봉태현 의심 유도. 미스디렉션 핵심 단서.",
+                    "Hallway", ClueCategory.General, isRequired: false),
+                new ClueEntry("cctv_memo", "cctv_memo", "대기실 CCTV 안내문",
+                    "카메라 고장 중 — 수리 예정.",
+                    "진세웅이 의도적으로 CCTV를 고장낸 것. 사전 준비 증거.",
+                    "Hallway", ClueCategory.General, isRequired: false),
+                new ClueEntry("sumi_memo", "sumi_memo", "문수미의 메모",
+                    "문수미 필체. 세웅이가 이상해. 뭔가 계획하고 있는 것 같아.",
+                    "장기 계획의 복선. 가까운 사람도 눈치챘다.",
+                    "Hallway", ClueCategory.General, isRequired: false),
             };
         }
 
