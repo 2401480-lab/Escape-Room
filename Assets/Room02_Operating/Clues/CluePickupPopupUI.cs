@@ -12,8 +12,8 @@ namespace EscapeRoom
         [SerializeField] private Image popupPanelImage;
         [SerializeField] private TextMeshProUGUI popupTitleText;
         [SerializeField] private TextMeshProUGUI popupBodyText;
-        [SerializeField] private float displayDuration = 3.5f;
-        [SerializeField] private float fadeDuration = 0.4f;
+        [SerializeField] private float displayDuration = 2f;
+        [SerializeField] private float fadeDuration = 0.5f;
 
         private Coroutine fadeRoutine;
         private bool subscribed;
@@ -21,8 +21,7 @@ namespace EscapeRoom
         private void Awake()
         {
             EnsureUI();
-            popupGroup.alpha = 0f;
-            popupGroup.blocksRaycasts = false;
+            HidePopupImmediate();
         }
 
         private void OnEnable()
@@ -32,6 +31,12 @@ namespace EscapeRoom
 
         private void OnDisable()
         {
+            if (fadeRoutine != null)
+            {
+                StopCoroutine(fadeRoutine);
+                fadeRoutine = null;
+            }
+
             Unsubscribe();
         }
 
@@ -78,6 +83,7 @@ namespace EscapeRoom
             if (fadeRoutine != null)
             {
                 StopCoroutine(fadeRoutine);
+                fadeRoutine = null;
             }
 
             fadeRoutine = StartCoroutine(ShowThenFade());
@@ -85,20 +91,49 @@ namespace EscapeRoom
 
         private IEnumerator ShowThenFade()
         {
+            SetPopupActive(true);
             popupGroup.alpha = 1f;
+            popupGroup.blocksRaycasts = false;
+            popupGroup.interactable = false;
             yield return new WaitForSeconds(displayDuration);
+
+            if (fadeDuration <= 0f)
+            {
+                HidePopupImmediate();
+                fadeRoutine = null;
+                yield break;
+            }
 
             float elapsed = 0f;
             while (elapsed < fadeDuration)
             {
                 elapsed += Time.deltaTime;
-                popupGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
+                popupGroup.alpha = Mathf.Lerp(1f, 0f, Mathf.Clamp01(elapsed / fadeDuration));
                 yield return null;
             }
 
-            popupGroup.alpha = 0f;
-            popupGroup.blocksRaycasts = false;
+            HidePopupImmediate();
             fadeRoutine = null;
+        }
+
+        private void HidePopupImmediate()
+        {
+            if (popupGroup != null)
+            {
+                popupGroup.alpha = 0f;
+                popupGroup.blocksRaycasts = false;
+                popupGroup.interactable = false;
+            }
+
+            SetPopupActive(false);
+        }
+
+        private void SetPopupActive(bool active)
+        {
+            if (popupPanelImage != null && popupPanelImage.gameObject != gameObject)
+            {
+                popupPanelImage.gameObject.SetActive(active);
+            }
         }
 
         private void EnsureUI()
