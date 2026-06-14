@@ -50,7 +50,9 @@ Assert-True ($popup.Contains($evidenceCollected)) 'CluePickupPopupUI must show t
 Assert-True ($popup -match 'clueData\.description' -and $popup -match 'clueData\.meaning') 'CluePickupPopupUI must show clue description and meaning when a clue is collected.'
 Assert-True ($popup -match 'displayDuration\s*=\s*3\.5f') 'CluePickupPopupUI must display long enough to read clue details.'
 Assert-True ($popup -match 'CanvasGroup' -and $popup -match 'alpha') 'CluePickupPopupUI must fade out through CanvasGroup alpha.'
-Assert-True ($popup -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*0\.5f\s*,\s*0f\s*\)' -and $popup -match 'anchorMax\s*=\s*new\s+Vector2\s*\(\s*0\.5f\s*,\s*0f\s*\)') 'CluePickupPopupUI must appear at bottom center.'
+Assert-True ($popup -match 'Image\s+popupPanelImage' -and $popup -match 'GameObject\s*\(\s*"CluePickupPopupPanel"\s*\)') 'CluePickupPopupUI must render a visible popup panel, not only floating text.'
+Assert-True ($popup -match 'TextMeshProUGUI\s+popupTitleText' -and $popup -match 'TextMeshProUGUI\s+popupBodyText') 'CluePickupPopupUI must separate the clue title and body text inside the popup window.'
+Assert-True ($popup -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*0\.5f\s*,\s*0\.5f\s*\)' -and $popup -match 'anchorMax\s*=\s*new\s+Vector2\s*\(\s*0\.5f\s*,\s*0\.5f\s*\)') 'CluePickupPopupUI must appear as a centered screen window.'
 
 Assert-True ($confirm -match 'class\s+SuspectConfirmUI\s*:\s*MonoBehaviour') 'SuspectConfirmUI must be a MonoBehaviour.'
 Assert-True ($confirm -match 'Show\s*\(\s*EndingUI\s+\w+\s*,\s*SuspectChoice\s+\w+\s*,\s*string\s+\w+\s*\)') 'SuspectConfirmUI must be callable from EndingUI with selected suspect.'

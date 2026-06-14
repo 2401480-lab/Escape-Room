@@ -207,3 +207,8 @@
 - Scene_Corridor와 Scene_DressingRoom을 제거하고 Scene_OperatingRoom 하나로 통합하여 Build Settings에 단일 씬만 남기도록 정리
 - ZoneManager와 ZoneDoorActivator를 추가하여 씬 전환 대신 Zone_Lobby, Zone_Corridor, Zone_Ward, Zone_Storage, Zone_DressingRoom, Zone_OperatingRoom 활성화 방식으로 구역 전환 처리
 - SceneLoader와 DontDestroyOnLoad 사용을 제거하고 DoorInteractor가 문 열림 시 다음 구역을 활성화하도록 연결
+
+### [2026-06-14 15:59:35]
+- Room02 통합 씬 Scene_OperatingRoom에 일반 단서 28개와 열쇠 단서 3개를 모두 ClueBoxInteractable 박스로 배치
+- 빈 clueData가 남아 있던 기존 단서 오브젝트를 제거하고 단서 배치 도구가 낡은 단서 오브젝트를 정리하도록 개선
+- 단서 획득 시 하단 텍스트 대신 중앙 화면창 형태의 팝업 패널로 단서명, 설명, 의미가 표시되도록 CluePickupPopupUI 개선

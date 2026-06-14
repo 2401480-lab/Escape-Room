@@ -153,7 +153,8 @@ namespace EscapeRoom.Editor
             EnsureRuntimeObject<SettingsUI>("SettingsUI");
 
             GameObject cluesRoot = EnsureRoot("Clues");
-            int placed = 0;
+            List<ClueAssetGenerator.ClueEntry> entriesToPlace = new List<ClueAssetGenerator.ClueEntry>();
+            HashSet<string> expectedNames = new HashSet<string>();
             foreach (ClueAssetGenerator.ClueEntry entry in ClueAssetGenerator.GetEntries())
             {
                 if (!zones.Contains(entry.zone))
@@ -161,11 +162,45 @@ namespace EscapeRoom.Editor
                     continue;
                 }
 
+                entriesToPlace.Add(entry);
+                expectedNames.Add($"Clue_{entry.clueID}");
+            }
+
+            RemoveStaleClueObjects(cluesRoot, expectedNames);
+
+            int placed = 0;
+            foreach (ClueAssetGenerator.ClueEntry entry in entriesToPlace)
+            {
                 CreateOrUpdateClueObject(cluesRoot, entry, placed);
                 placed++;
             }
 
             return placed;
+        }
+
+        private static void RemoveStaleClueObjects(GameObject cluesRoot, HashSet<string> expectedNames)
+        {
+            List<GameObject> staleObjects = new List<GameObject>();
+            foreach (Transform child in cluesRoot.transform)
+            {
+                if (!child.name.StartsWith("Clue_") && !child.name.StartsWith("TestClue"))
+                {
+                    continue;
+                }
+
+                bool isExpected = expectedNames.Contains(child.name);
+                bool hasBrokenData = child.GetComponent<ClueBoxInteractable>() != null
+                    && child.GetComponent<ClueBoxInteractable>().clueData == null;
+                if (!isExpected || hasBrokenData)
+                {
+                    staleObjects.Add(child.gameObject);
+                }
+            }
+
+            foreach (GameObject staleObject in staleObjects)
+            {
+                Undo.DestroyObjectImmediate(staleObject);
+            }
         }
 
         private static HashSet<string> GetZonesForScene(string sceneName)
@@ -209,7 +244,7 @@ namespace EscapeRoom.Editor
 
         private static void CreateOrUpdateClueObject(GameObject cluesRoot, ClueAssetGenerator.ClueEntry entry, int index)
         {
-            string objectName = $"Clue_{entry.fileName}";
+            string objectName = $"Clue_{entry.clueID}";
             Transform existing = cluesRoot.transform.Find(objectName);
             if (existing != null && existing.GetComponent<ClueBoxInteractable>() == null)
             {

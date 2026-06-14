@@ -9,6 +9,7 @@ $popupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/CluePickupPopupU
 $sceneSetupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs.meta'
 $normalCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/Normal'
 $keyCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/KeyClue'
+$operatingScenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -23,6 +24,7 @@ Assert-True (Test-Path -LiteralPath $popupMetaPath) 'Missing UI script meta file
 Assert-True (Test-Path -LiteralPath $sceneSetupMetaPath) 'Missing ClueSceneSetupTool.cs.meta; Unity editor scripts need committed .meta GUIDs.'
 Assert-True (Test-Path -LiteralPath $normalCluePath) 'Missing generated normal clue asset folder.'
 Assert-True (Test-Path -LiteralPath $keyCluePath) 'Missing generated key clue asset folder.'
+Assert-True (Test-Path -LiteralPath $operatingScenePath) 'Missing integrated Room02 operating scene.'
 
 $assetGenerator = Get-Content -LiteralPath $assetGeneratorPath -Raw -Encoding UTF8
 $sceneSetup = Get-Content -LiteralPath $sceneSetupPath -Raw -Encoding UTF8
@@ -49,5 +51,11 @@ $normalAssets = Get-ChildItem -LiteralPath $normalCluePath -Filter '*.asset' -Fi
 $keyAssets = Get-ChildItem -LiteralPath $keyCluePath -Filter '*.asset' -File
 Assert-True ($normalAssets.Count -eq 28) "Expected 28 generated normal clue assets, found $($normalAssets.Count)."
 Assert-True ($keyAssets.Count -eq 3) "Expected 3 generated key clue assets, found $($keyAssets.Count)."
+
+$scene = Get-Content -LiteralPath $operatingScenePath -Raw -Encoding UTF8
+$wiredClueCount = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*11400000')).Count
+$emptyClueRefs = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*0\}')).Count
+Assert-True ($wiredClueCount -eq 31) "Scene_OperatingRoom must contain all 31 wired clue boxes, found $wiredClueCount."
+Assert-True ($emptyClueRefs -eq 0) "Scene_OperatingRoom must not contain clue objects with empty clueData references, found $emptyClueRefs."
 
 Write-Host 'Clue scene wiring checks passed.'

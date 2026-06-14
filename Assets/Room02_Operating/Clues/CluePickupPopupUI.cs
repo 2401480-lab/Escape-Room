@@ -9,7 +9,9 @@ namespace EscapeRoom
     {
         [SerializeField] private Canvas popupCanvas;
         [SerializeField] private CanvasGroup popupGroup;
-        [SerializeField] private TextMeshProUGUI popupText;
+        [SerializeField] private Image popupPanelImage;
+        [SerializeField] private TextMeshProUGUI popupTitleText;
+        [SerializeField] private TextMeshProUGUI popupBodyText;
         [SerializeField] private float displayDuration = 3.5f;
         [SerializeField] private float fadeDuration = 0.4f;
 
@@ -20,27 +22,45 @@ namespace EscapeRoom
         {
             EnsureUI();
             popupGroup.alpha = 0f;
+            popupGroup.blocksRaycasts = false;
         }
 
-        private void OnEnable()  { TrySubscribe(); }
-        private void OnDisable() { Unsubscribe(); }
+        private void OnEnable()
+        {
+            TrySubscribe();
+        }
+
+        private void OnDisable()
+        {
+            Unsubscribe();
+        }
 
         private void Update()
         {
-            // ClueJournalManager가 나중에 생성됐을 때 구독 재시도
-            if (!subscribed) TrySubscribe();
+            if (!subscribed)
+            {
+                TrySubscribe();
+            }
         }
 
         private void TrySubscribe()
         {
-            if (subscribed || ClueJournalManager.Instance == null) return;
+            if (subscribed || ClueJournalManager.Instance == null)
+            {
+                return;
+            }
+
             ClueJournalManager.Instance.OnClueAdded += ShowCluePopup;
             subscribed = true;
         }
 
         private void Unsubscribe()
         {
-            if (!subscribed || ClueJournalManager.Instance == null) return;
+            if (!subscribed || ClueJournalManager.Instance == null)
+            {
+                return;
+            }
+
             ClueJournalManager.Instance.OnClueAdded -= ShowCluePopup;
             subscribed = false;
         }
@@ -53,7 +73,8 @@ namespace EscapeRoom
             }
 
             EnsureUI();
-            popupText.text = $"{clueData.clueName}\n증거를 확보했다\n{clueData.description}\n의미: {clueData.meaning}";
+            popupTitleText.text = clueData.clueName;
+            popupBodyText.text = $"증거를 확보했다\n\n{clueData.description}\n\n의미: {clueData.meaning}";
             if (fadeRoutine != null)
             {
                 StopCoroutine(fadeRoutine);
@@ -76,6 +97,7 @@ namespace EscapeRoom
             }
 
             popupGroup.alpha = 0f;
+            popupGroup.blocksRaycasts = false;
             fadeRoutine = null;
         }
 
@@ -102,33 +124,89 @@ namespace EscapeRoom
             }
 
             popupCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            popupCanvas.sortingOrder = 80;
+
+            CanvasScaler scaler = popupCanvas.GetComponent<CanvasScaler>();
+            if (scaler == null)
+            {
+                scaler = popupCanvas.gameObject.AddComponent<CanvasScaler>();
+            }
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            if (popupPanelImage == null)
+            {
+                Transform existingPanel = popupCanvas.transform.Find("CluePickupPopupPanel");
+                GameObject panelObject = existingPanel != null
+                    ? existingPanel.gameObject
+                    : new GameObject("CluePickupPopupPanel");
+
+                panelObject.transform.SetParent(popupCanvas.transform, false);
+                popupPanelImage = panelObject.GetComponent<Image>();
+                if (popupPanelImage == null)
+                {
+                    popupPanelImage = panelObject.AddComponent<Image>();
+                }
+
+                popupPanelImage.raycastTarget = false;
+                popupPanelImage.color = new Color(0.045f, 0.04f, 0.035f, 0.94f);
+            }
+
+            RectTransform panelRect = popupPanelImage.rectTransform;
+            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+            panelRect.pivot = new Vector2(0.5f, 0.5f);
+            panelRect.anchoredPosition = Vector2.zero;
+            panelRect.sizeDelta = new Vector2(780f, 360f);
 
             if (popupGroup == null)
             {
-                popupGroup = popupCanvas.GetComponent<CanvasGroup>();
+                popupGroup = popupPanelImage.GetComponent<CanvasGroup>();
                 if (popupGroup == null)
                 {
-                    popupGroup = popupCanvas.gameObject.AddComponent<CanvasGroup>();
+                    popupGroup = popupPanelImage.gameObject.AddComponent<CanvasGroup>();
                 }
             }
 
-            if (popupText != null)
+            popupGroup.blocksRaycasts = false;
+
+            if (popupTitleText == null)
             {
-                return;
+                popupTitleText = CreateText("CluePickupPopupTitle", popupPanelImage.transform, 32f, HorrorUITheme.SickYellow);
+                popupTitleText.fontStyle = FontStyles.Bold;
+                RectTransform titleRect = popupTitleText.rectTransform;
+                titleRect.anchorMin = new Vector2(0.5f, 1f);
+                titleRect.anchorMax = new Vector2(0.5f, 1f);
+                titleRect.pivot = new Vector2(0.5f, 1f);
+                titleRect.anchoredPosition = new Vector2(0f, -34f);
+                titleRect.sizeDelta = new Vector2(700f, 64f);
             }
 
-            GameObject textObject = new GameObject("CluePickupPopupText");
-            textObject.transform.SetParent(popupCanvas.transform, false);
-            popupText = textObject.AddComponent<TextMeshProUGUI>();
-            HorrorUITheme.ApplyText(popupText, 22f, HorrorUITheme.SickYellow);
-            popupText.alignment = TextAlignmentOptions.Center;
+            if (popupBodyText == null)
+            {
+                popupBodyText = CreateText("CluePickupPopupBody", popupPanelImage.transform, 22f, HorrorUITheme.TextMain);
+                RectTransform bodyRect = popupBodyText.rectTransform;
+                bodyRect.anchorMin = new Vector2(0.5f, 0.5f);
+                bodyRect.anchorMax = new Vector2(0.5f, 0.5f);
+                bodyRect.pivot = new Vector2(0.5f, 0.5f);
+                bodyRect.anchoredPosition = new Vector2(0f, -40f);
+                bodyRect.sizeDelta = new Vector2(680f, 230f);
+            }
+        }
 
-            RectTransform rect = popupText.rectTransform;
-            rect.anchorMin = new Vector2(0.5f, 0f);
-            rect.anchorMax = new Vector2(0.5f, 0f);
-            rect.pivot = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = new Vector2(0f, 132f);
-            rect.sizeDelta = new Vector2(900f, 150f);
+        private TextMeshProUGUI CreateText(string objectName, Transform parent, float fontSize, Color color)
+        {
+            GameObject textObject = new GameObject(objectName);
+            textObject.transform.SetParent(parent, false);
+
+            TextMeshProUGUI text = textObject.AddComponent<TextMeshProUGUI>();
+            HorrorUITheme.ApplyText(text, fontSize, color);
+            text.alignment = TextAlignmentOptions.Center;
+            text.enableWordWrapping = true;
+            text.raycastTarget = false;
+            return text;
         }
     }
 }
