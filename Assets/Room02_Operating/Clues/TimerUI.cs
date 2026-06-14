@@ -8,9 +8,9 @@ namespace EscapeRoom
     {
         [SerializeField] private Canvas timerCanvas;
         [SerializeField] private TextMeshProUGUI timerText;
-        [SerializeField] private Color deductionColor = Color.white;
-        [SerializeField] private Color chaseColor = Color.red;
-        [SerializeField] private Color urgentColor = Color.red;
+        [SerializeField] private Color deductionColor = HorrorUITheme.TextMain;
+        [SerializeField] private Color chaseColor = HorrorUITheme.BloodRed;
+        [SerializeField] private Color urgentColor = HorrorUITheme.SickYellow;
         [SerializeField] private float urgentThresholdSeconds = 180f;
 
         private void Awake()
@@ -73,11 +73,10 @@ namespace EscapeRoom
                 timerText = textObject.AddComponent<TextMeshProUGUI>();
             }
 
-            timerText.text = FormatTime(0f);
-            timerText.fontSize = 32f;
+            timerText.text = "20:00";
+            HorrorUITheme.ApplyText(timerText, 34f, deductionColor);
             timerText.alignment = TextAlignmentOptions.TopRight;
             timerText.color = deductionColor;
-            FontHelper.Apply(timerText);
 
             RectTransform rect = timerText.rectTransform;
             rect.anchorMin = new Vector2(1f, 1f);

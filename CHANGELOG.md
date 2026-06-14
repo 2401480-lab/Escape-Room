@@ -153,6 +153,11 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 14:18:28]
+- Room02 단서 상호작용을 박스 조사 방식으로 확장하고 ClueBoxInteractable을 추가
+- Room02 단서 배치 도구가 설치된 Box_V1 프리팹 기반 단서 박스를 배치하도록 수정
+- HUD, 타이머, 설정, 단서 팝업 UI에 공포 게임 분위기의 어두운 패널과 붉은 강조 테마 적용
+
 ### [2026-06-14 03:07:33]
 - Room02 전용 기능으로 관리되도록 기존 Assets/Clues 폴더 전체를 Assets/Room02_Operating/Clues 경로로 이동하고 Unity GUID를 유지
 - 단서 생성기, 단서 배치 도구, HUD/타이머/추격/엔딩 관련 테스트 경로를 Room02 기준으로 수정

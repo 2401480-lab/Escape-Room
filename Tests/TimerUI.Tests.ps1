@@ -24,9 +24,9 @@ Assert-True ($timerUI -match 'class\s+TimerUI\s*:\s*MonoBehaviour') 'TimerUI mus
 Assert-True ($timerUI -match 'ScreenSpaceOverlay') 'TimerUI must create/use a Screen Space Overlay canvas.'
 Assert-True ($timerUI -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*1f\s*,\s*1f\s*\)' -and $timerUI -match 'anchorMax\s*=\s*new\s+Vector2\s*\(\s*1f\s*,\s*1f\s*\)') 'TimerUI must position the timer in the top-right corner.'
 Assert-True ($timerUI -match 'FormatTime\s*\(' -and $timerUI -match 'Mathf\.FloorToInt' -and $timerUI -match '"D2"') 'TimerUI must format the timer as MM:SS.'
-Assert-True ($timerUI -match 'deductionColor\s*=\s*Color\.white') 'TimerUI must display deduction timer in white.'
-Assert-True ($timerUI -match 'chaseColor\s*=\s*Color\.red') 'TimerUI must display chase timer in red.'
-Assert-True ($timerUI -match 'urgentThresholdSeconds\s*=\s*180f' -and $timerUI -match 'urgentColor\s*=\s*Color\.red') 'TimerUI must turn red when 3 minutes or less remain.'
+Assert-True ($timerUI -match 'deductionColor\s*=\s*HorrorUITheme\.TextMain') 'TimerUI must display deduction timer with the Room02 horror text color.'
+Assert-True ($timerUI -match 'chaseColor\s*=\s*HorrorUITheme\.BloodRed') 'TimerUI must display chase timer in blood red.'
+Assert-True ($timerUI -match 'urgentThresholdSeconds\s*=\s*180f' -and $timerUI -match 'urgentColor\s*=\s*HorrorUITheme\.SickYellow') 'TimerUI must turn urgent with the Room02 horror warning color when 3 minutes or less remain.'
 Assert-True ($timerUI -match 'StoryProgressManager\.Instance' -and $timerUI -match 'CurrentTimerRemaining') 'TimerUI must read timer values from StoryProgressManager.'
 Assert-True ($timerUI -match 'IsChaseTimerActive') 'TimerUI must switch color when the chase timer is active.'
 

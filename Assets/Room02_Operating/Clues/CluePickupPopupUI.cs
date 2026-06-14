@@ -53,7 +53,7 @@ namespace EscapeRoom
             }
 
             EnsureUI();
-            popupText.text = $"{clueData.clueName} 증거 수집됨";
+            popupText.text = $"{clueData.clueName}\n증거를 확보했다";
             if (fadeRoutine != null)
             {
                 StopCoroutine(fadeRoutine);
@@ -120,10 +120,8 @@ namespace EscapeRoom
             GameObject textObject = new GameObject("CluePickupPopupText");
             textObject.transform.SetParent(popupCanvas.transform, false);
             popupText = textObject.AddComponent<TextMeshProUGUI>();
-            FontHelper.Apply(popupText);
-            popupText.fontSize = 26f;
+            HorrorUITheme.ApplyText(popupText, 26f, HorrorUITheme.SickYellow);
             popupText.alignment = TextAlignmentOptions.Center;
-            popupText.color = Color.white;
 
             RectTransform rect = popupText.rectTransform;
             rect.anchorMin = new Vector2(0.5f, 0f);

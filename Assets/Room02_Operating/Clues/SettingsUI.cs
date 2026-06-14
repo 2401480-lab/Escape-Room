@@ -71,7 +71,7 @@ namespace EscapeRoom
 
         private void CreateSettingsButton(Transform parent)
         {
-            Button button = CreateButton("SettingsHudButton", parent, "설정 (ESC)", 96f, 38f);
+            Button button = CreateButton("SettingsHudButton", parent, "설정 (ESC)", 108f, 38f);
             RectTransform rect = (RectTransform)button.transform;
             rect.anchorMin = new Vector2(1f, 1f);
             rect.anchorMax = new Vector2(1f, 1f);
@@ -82,7 +82,7 @@ namespace EscapeRoom
 
         private void CreateSettingsPanel(Transform parent)
         {
-            panelRoot = CreatePanel("SettingsPanel", parent, new Color(0.05f, 0.05f, 0.06f, 0.94f)).gameObject;
+            panelRoot = CreatePanel("SettingsPanel", parent, HorrorUITheme.PanelBlack).gameObject;
             RectTransform panelRect = (RectTransform)panelRoot.transform;
             panelRect.anchorMin = new Vector2(0.5f, 0.5f);
             panelRect.anchorMax = new Vector2(0.5f, 0.5f);
@@ -91,6 +91,7 @@ namespace EscapeRoom
             panelRect.anchoredPosition = Vector2.zero;
 
             TextMeshProUGUI title = CreateText("SettingsTitle", panelRect, "설정", 32f, TextAlignmentOptions.Left);
+            title.color = HorrorUITheme.BloodRed;
             title.rectTransform.anchorMin = new Vector2(0f, 1f);
             title.rectTransform.anchorMax = new Vector2(1f, 1f);
             title.rectTransform.offsetMin = new Vector2(28f, -70f);
@@ -107,7 +108,7 @@ namespace EscapeRoom
             tabLayout.childControlHeight = true;
             tabLayout.spacing = 8f;
 
-            Button volumeTab = CreateButton("VolumeSensitivityTabButton", tabBar, "볼륨/감도", 150f, 38f);
+            Button volumeTab = CreateButton("VolumeSensitivityTabButton", tabBar, "소리 / 감도", 150f, 38f);
             volumeTab.onClick.AddListener(ShowVolumeSensitivityTab);
             Button controlsTab = CreateButton("ControlsTabButton", tabBar, "조작법", 120f, 38f);
             controlsTab.onClick.AddListener(ShowControlsTab);
@@ -144,7 +145,7 @@ namespace EscapeRoom
             rect.offsetMin = new Vector2(28f, 34f);
             rect.offsetMax = new Vector2(-28f, -140f);
 
-            string controls = "WASD 이동\nShift 달리기\n마우스 시점 이동\nE 문 열기\nF 조사하기\nJ 수집 증거\nK 용의자 수첩\nESC 설정";
+            string controls = "WASD 이동\nShift 달리기\n마우스 시점 이동\nE 문 열기\nF 조사하기 / 박스 조사하기\nJ 수집 증거\nK 용의자 수첩\nESC 설정";
             TextMeshProUGUI text = CreateText("ControlsText", rect, controls, 22f, TextAlignmentOptions.Left);
             text.rectTransform.anchorMin = Vector2.zero;
             text.rectTransform.anchorMax = Vector2.one;
@@ -154,7 +155,7 @@ namespace EscapeRoom
 
         private Slider CreateLabeledSlider(string name, Transform parent, string label, float min, float max, float value)
         {
-            RectTransform row = CreatePanel($"{name}Row", parent, new Color(0.12f, 0.12f, 0.15f, 0.95f));
+            RectTransform row = CreatePanel($"{name}Row", parent, HorrorUITheme.PanelDeep);
             LayoutElement rowElement = row.gameObject.AddComponent<LayoutElement>();
             rowElement.preferredHeight = 72f;
 
@@ -178,7 +179,7 @@ namespace EscapeRoom
             sliderRect.offsetMin = new Vector2(150f, -12f);
             sliderRect.offsetMax = new Vector2(-20f, 12f);
 
-            Image background = CreatePanel("Background", sliderRect, new Color(0.18f, 0.18f, 0.2f, 1f)).GetComponent<Image>();
+            Image background = CreatePanel("Background", sliderRect, HorrorUITheme.PanelBlack).GetComponent<Image>();
             background.rectTransform.anchorMin = new Vector2(0f, 0.35f);
             background.rectTransform.anchorMax = new Vector2(1f, 0.65f);
             background.rectTransform.offsetMin = Vector2.zero;
@@ -190,13 +191,13 @@ namespace EscapeRoom
             fillArea.offsetMin = new Vector2(8f, 0f);
             fillArea.offsetMax = new Vector2(-8f, 0f);
 
-            Image fill = CreatePanel("Fill", fillArea, new Color(0.55f, 0.08f, 0.08f, 1f)).GetComponent<Image>();
+            Image fill = CreatePanel("Fill", fillArea, HorrorUITheme.BloodRed).GetComponent<Image>();
             fill.rectTransform.anchorMin = Vector2.zero;
             fill.rectTransform.anchorMax = Vector2.one;
             fill.rectTransform.offsetMin = Vector2.zero;
             fill.rectTransform.offsetMax = Vector2.zero;
 
-            Image handle = CreatePanel("Handle", sliderRect, new Color(0.86f, 0.86f, 0.86f, 1f)).GetComponent<Image>();
+            Image handle = CreatePanel("Handle", sliderRect, HorrorUITheme.TextMain).GetComponent<Image>();
             handle.rectTransform.sizeDelta = new Vector2(18f, 28f);
 
             slider.targetGraphic = handle;
@@ -239,7 +240,7 @@ namespace EscapeRoom
             GameObject go = new GameObject(name);
             go.transform.SetParent(parent, false);
             Image image = go.AddComponent<Image>();
-            image.color = color;
+            HorrorUITheme.ApplyPanel(image, color);
             return go.GetComponent<RectTransform>();
         }
 
@@ -248,23 +249,21 @@ namespace EscapeRoom
             GameObject go = new GameObject(name);
             go.transform.SetParent(parent, false);
             TextMeshProUGUI tmp = go.AddComponent<TextMeshProUGUI>();
-            FontHelper.Apply(tmp);
             tmp.text = text;
-            tmp.fontSize = fontSize;
             tmp.alignment = alignment;
-            tmp.color = Color.white;
-            tmp.enableWordWrapping = true;
+            HorrorUITheme.ApplyText(tmp, fontSize);
             return tmp;
         }
 
         private static Button CreateButton(string name, Transform parent, string text, float width, float height)
         {
-            RectTransform rect = CreatePanel(name, parent, new Color(0.18f, 0.2f, 0.25f, 0.95f));
+            RectTransform rect = CreatePanel(name, parent, HorrorUITheme.PanelRed);
             LayoutElement element = rect.gameObject.AddComponent<LayoutElement>();
             element.preferredWidth = width;
             element.preferredHeight = height;
 
             Button button = rect.gameObject.AddComponent<Button>();
+            HorrorUITheme.ApplyButton(button, rect.GetComponent<Image>());
             TextMeshProUGUI label = CreateText("Label", rect, text, 17f, TextAlignmentOptions.Center);
             label.rectTransform.anchorMin = Vector2.zero;
             label.rectTransform.anchorMax = Vector2.one;

@@ -151,9 +151,8 @@ namespace EscapeRoom
             GameObject textObject = new GameObject("ClueInteractionPrompt");
             textObject.transform.SetParent(canvas.transform, false);
             promptText = textObject.AddComponent<TextMeshProUGUI>();
-            FontHelper.Apply(promptText);
+            HorrorUITheme.ApplyText(promptText, 28f, HorrorUITheme.TextMain);
             promptText.text = PromptMessage;
-            promptText.fontSize = 28f;
             promptText.alignment = TextAlignmentOptions.Center;
 
             RectTransform rect = promptText.rectTransform;

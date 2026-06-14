@@ -17,9 +17,10 @@ namespace EscapeRoom.Editor
             "OperatingRoom"
         };
 
-        // ─── 테스트: 단서 큐브 1개만 배치 ────────────────────────────────────
-        [MenuItem("Tools/Room02/Clues/Place Single Test Clue")]
-        public static void PlaceSingleTestClue()
+        private const string BoxPrefabPath = "Assets/Abandoned_Asylum/Prefabs/Box_V1.prefab";
+
+        [MenuItem("Tools/Room02/Clues/Place Single Test Clue Box")]
+        public static void PlaceSingleTestClueBox()
         {
             // Clues 루트 아래 기존 큐브 전부 제거
             GameObject cluesRoot = GameObject.Find("Clues");
@@ -49,28 +50,20 @@ namespace EscapeRoom.Editor
                 ? ps.transform.position + ps.transform.forward * 2f + Vector3.up * 0.15f
                 : new Vector3(0f, 0.15f, 2f);
 
-            // 큐브 생성
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.name = "TestClue_cast_notice";
-            cube.transform.SetParent(cluesRoot.transform);
-            cube.transform.position = spawnPos;
-            cube.transform.localScale = new Vector3(0.28f, 0.08f, 0.2f);
-            Undo.RegisterCreatedObjectUndo(cube, "Create TestClue");
-
-            // 노란색으로 눈에 띄게 (URP 머티리얼 복사 후 색 변경)
-            MeshRenderer mr = cube.GetComponent<MeshRenderer>();
-            if (mr != null && mr.sharedMaterial != null)
-            {
-                Material mat = new Material(mr.sharedMaterial);
-                mat.SetColor("_BaseColor", new Color(1f, 0.9f, 0.2f));
-                mr.sharedMaterial = mat;
-            }
+            GameObject box = CreateBoxObject("TestClueBox_cast_notice", cluesRoot.transform);
+            box.transform.position = spawnPos;
+            box.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            Undo.RegisterCreatedObjectUndo(box, "Create TestClueBox");
 
             // ClueInteractable + ClueData 연결 (첫 번째 에셋 자동 사용)
             ClueAssetGenerator.GenerateStoryClueAssets();
             AssetDatabase.Refresh();
 
-            ClueInteractable interactable = cube.AddComponent<ClueInteractable>();
+            ClueBoxInteractable interactable = box.GetComponent<ClueBoxInteractable>();
+            if (interactable == null)
+            {
+                interactable = box.AddComponent<ClueBoxInteractable>();
+            }
 
             // GetEntries()로 첫 번째 일반 단서 에셋 경로를 정확히 가져옴
             ClueData asset = null;
@@ -88,17 +81,23 @@ namespace EscapeRoom.Editor
                 var so = new SerializedObject(interactable);
                 so.FindProperty("clueData").objectReferenceValue = asset;
                 so.ApplyModifiedProperties();
-                Debug.Log($"[Clues] 테스트 큐브에 ClueData 연결: {asset.clueName}");
+                Debug.Log($"[Clues] 테스트 박스에 ClueData 연결: {asset.clueName}");
             }
             else
             {
-                Debug.LogError("[Clues] ClueData 에셋을 찾지 못했습니다. Tools > Clues > Generate All Clue Assets 먼저 실행하세요.");
+                Debug.LogError("[Clues] ClueData 에셋을 찾지 못했습니다. Tools > Room02 > Clues > Generate Story Clue Assets 먼저 실행하세요.");
             }
 
-            EditorUtility.SetDirty(cube);
+            EditorUtility.SetDirty(box);
 
             EditorUtility.DisplayDialog("완료",
-                $"테스트 큐브 1개 배치 완료!\n\n위치: {spawnPos}\n단서: cast_notice\n\nCtrl+S 저장 후 플레이해서\nF키 테스트!", "확인");
+                $"테스트 단서 박스 1개 배치 완료!\n\n위치: {spawnPos}\n단서: cast_notice\n\nCtrl+S 저장 후 플레이해서\nF키로 박스 조사 테스트!", "확인");
+        }
+
+        [MenuItem("Tools/Room02/Clues/Place Single Test Clue")]
+        public static void PlaceSingleTestClue()
+        {
+            PlaceSingleTestClueBox();
         }
 
         [MenuItem("Tools/Room02/Clues/Setup Current Stage Clues")]
@@ -201,9 +200,8 @@ namespace EscapeRoom.Editor
             GameObject clueObject;
             if (existing == null)
             {
-                clueObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                clueObject = CreateBoxObject(objectName, cluesRoot.transform);
                 clueObject.name = objectName;
-                clueObject.transform.SetParent(cluesRoot.transform, false);
                 Undo.RegisterCreatedObjectUndo(clueObject, $"Create {objectName}");
             }
             else
@@ -212,7 +210,7 @@ namespace EscapeRoom.Editor
             }
 
             clueObject.transform.localPosition = GetLocalPosition(entry.zone, index);
-            clueObject.transform.localScale = new Vector3(0.28f, 0.08f, 0.2f);
+            clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
             if (collider == null)
@@ -222,16 +220,21 @@ namespace EscapeRoom.Editor
 
             collider.isTrigger = false;
 
-            MeshRenderer renderer = clueObject.GetComponent<MeshRenderer>();
-            if (renderer != null)
+            foreach (Renderer renderer in clueObject.GetComponentsInChildren<Renderer>())
             {
                 renderer.enabled = true;
             }
 
-            ClueInteractable interactable = clueObject.GetComponent<ClueInteractable>();
+            ClueInteractable oldInteractable = clueObject.GetComponent<ClueInteractable>();
+            if (oldInteractable != null)
+            {
+                Undo.DestroyObjectImmediate(oldInteractable);
+            }
+
+            ClueBoxInteractable interactable = clueObject.GetComponent<ClueBoxInteractable>();
             if (interactable == null)
             {
-                interactable = clueObject.AddComponent<ClueInteractable>();
+                interactable = clueObject.AddComponent<ClueBoxInteractable>();
             }
 
             SerializedObject serializedObject = new SerializedObject(interactable);
@@ -239,6 +242,30 @@ namespace EscapeRoom.Editor
             serializedObject.ApplyModifiedProperties();
 
             EditorUtility.SetDirty(clueObject);
+        }
+
+        private static GameObject CreateBoxObject(string objectName, Transform parent)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BoxPrefabPath);
+            GameObject box;
+            if (prefab != null)
+            {
+                box = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            }
+            else
+            {
+                box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                Debug.LogWarning($"[Clues] 박스 프리팹을 찾지 못해 임시 큐브를 사용합니다: {BoxPrefabPath}");
+            }
+
+            box.name = objectName;
+            box.transform.SetParent(parent, false);
+            if (box.GetComponentInChildren<Collider>() == null)
+            {
+                box.AddComponent<BoxCollider>();
+            }
+
+            return box;
         }
 
         private static ClueData LoadClueAsset(ClueAssetGenerator.ClueEntry entry)

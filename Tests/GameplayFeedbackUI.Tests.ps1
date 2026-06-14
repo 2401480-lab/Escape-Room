@@ -27,7 +27,7 @@ $confirm = Get-Content -LiteralPath $confirmPath -Raw -Encoding UTF8
 $ending = Get-Content -LiteralPath $endingPath -Raw -Encoding UTF8
 $chase = Get-Content -LiteralPath $chasePath -Raw -Encoding UTF8
 $allFeedbackCode = "$vignette`n$popup`n$confirm`n$ending`n$chase"
-$evidenceCollected = (U 0xC99D,0xAC70) + ' ' + (U 0xC218,0xC9D1,0xB428)
+$evidenceCollected = U 0xC99D,0xAC70,0xB97C,0x0020,0xD655,0xBCF4,0xD588,0xB2E4
 $reallyText = U 0xC815,0xB9D0
 $culpritQuestion = U 0xBC94,0xC778,0xC785,0xB2C8,0xAE4C
 

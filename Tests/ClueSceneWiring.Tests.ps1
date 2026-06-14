@@ -3,7 +3,7 @@
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $assetGeneratorPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueAssetGenerator.cs'
 $sceneSetupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
-$interactablePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueInteractable.cs'
+$interactablePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueBoxInteractable.cs'
 $managerPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalManager.cs'
 $popupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/CluePickupPopupUI.cs.meta'
 $sceneSetupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs.meta'
@@ -36,12 +36,12 @@ Assert-True ($sceneSetup -notmatch 'SetupAllStageClues' -and $sceneSetup -notmat
 Assert-True ($sceneSetup -match 'GenerateStoryClueAssets\s*\(') 'Scene setup must generate missing ClueData assets before wiring scene objects.'
 Assert-True ($sceneSetup -match 'Scene_OperatingRoom') 'Scene setup must support the integrated stage scene.'
 Assert-True ($sceneSetup -notmatch 'case\s+"Scene_Corridor"' -and $sceneSetup -notmatch 'case\s+"Scene_DressingRoom"') 'Scene setup must not target deleted split scenes.'
-Assert-True ($sceneSetup -match 'AddComponent<ClueInteractable>\s*\(') 'Scene setup must place EscapeRoom.ClueInteractable components.'
+Assert-True ($sceneSetup -match 'AddComponent<ClueBoxInteractable>\s*\(') 'Scene setup must place EscapeRoom.ClueBoxInteractable components.'
 Assert-True ($sceneSetup -match 'AddComponent<BoxCollider>\s*\(' -or $sceneSetup -match 'CreatePrimitive') 'Scene setup must give clues a collider so range checks have visible objects.'
 Assert-True ($sceneSetup -match 'AddComponent<MeshRenderer>\s*\(' -or $sceneSetup -match 'CreatePrimitive') 'Scene setup must create visible clue markers.'
-Assert-True ($sceneSetup -match 'SerializedObject' -and $sceneSetup -match '"clueData"') 'Scene setup must assign ClueData asset references to ClueInteractable.'
+Assert-True ($sceneSetup -match 'SerializedObject' -and $sceneSetup -match '"clueData"') 'Scene setup must assign ClueData asset references to ClueBoxInteractable.'
 Assert-True ($sceneSetup -match 'ClueJournalManager' -and $sceneSetup -match 'ClueJournalUI' -and $sceneSetup -match 'CluePickupPopupUI') 'Scene setup must ensure clue manager, journal UI, and pickup popup exist.'
-Assert-True ($interactable -match 'RegisterClueDefinition') 'ClueInteractable must register its ClueData so the journal can show available clues.'
+Assert-True ($interactable -match 'RegisterClueDefinition') 'ClueBoxInteractable must register its ClueData so the journal can show available clues.'
 Assert-True ($manager -notmatch 'DontDestroyOnLoad') 'ClueJournalManager must not use DontDestroyOnLoad in the single-scene flow.'
 
 $normalAssets = Get-ChildItem -LiteralPath $normalCluePath -Filter '*.asset' -File
