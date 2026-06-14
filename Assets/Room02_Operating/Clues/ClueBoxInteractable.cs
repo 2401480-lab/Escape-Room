@@ -7,7 +7,8 @@ namespace EscapeRoom
     public class ClueBoxInteractable : MonoBehaviour
     {
         [SerializeField] public ClueData clueData;
-        [SerializeField] private float interactDistance = 5f;
+        [SerializeField] private float interactDistance = 2.2f;
+        [SerializeField] private float promptDistance = 2.2f;
         [SerializeField] private float inputBufferSeconds = 0.2f;
         [SerializeField] private TextMeshProUGUI promptText;
         [SerializeField] private Renderer[] highlightRenderers;
@@ -136,13 +137,13 @@ namespace EscapeRoom
 
                 Vector3 toCandidate = candidate.transform.position - cam.transform.position;
                 float distance = toCandidate.magnitude;
-                if (distance > interactDistance)
+                if (distance > promptDistance)
                 {
                     continue;
                 }
 
                 float directionScore = Vector3.Dot(cam.transform.forward, toCandidate.normalized);
-                float distanceScore = 1f - Mathf.Clamp01(distance / interactDistance);
+                float distanceScore = 1f - Mathf.Clamp01(distance / promptDistance);
                 float score = distanceScore * 1.4f + Mathf.Max(0f, directionScore);
                 if (score > bestScore)
                 {
