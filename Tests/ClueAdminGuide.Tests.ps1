@@ -1,0 +1,32 @@
+$ErrorActionPreference = 'Stop'
+
+$root = Resolve-Path (Join-Path $PSScriptRoot '..')
+$guidePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueAdminGuideOverlay.cs'
+$guideMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueAdminGuideOverlay.cs.meta'
+$scenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
+
+function Assert-True {
+    param([bool] $Condition, [string] $Message)
+    if (-not $Condition) { throw $Message }
+}
+
+Assert-True (Test-Path -LiteralPath $guidePath) 'Missing Room02 admin clue guide overlay script.'
+Assert-True (Test-Path -LiteralPath $guideMetaPath) 'Missing Room02 admin clue guide overlay meta file.'
+Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Scene_OperatingRoom scene.'
+
+$guide = Get-Content -LiteralPath $guidePath -Raw -Encoding UTF8
+$scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
+$guideGuid = ((Select-String -LiteralPath $guideMetaPath -Pattern '^guid:').Line -replace '^guid:\s*', '').Trim()
+
+Assert-True ($guide -match 'class\s+ClueAdminGuideOverlay\s*:\s*MonoBehaviour') 'ClueAdminGuideOverlay must be a MonoBehaviour.'
+Assert-True ($guide -match 'FindObjectsOfType<ClueBoxInteractable>\s*\(') 'Admin guide overlay must discover Room02 clue boxes automatically.'
+Assert-True ($guide -match 'WorldToScreenPoint') 'Admin guide overlay must place arrows over clues in screen space.'
+Assert-True ($guide -match 'AdminGuideArrow_' -and $guide -match 'TextMeshProUGUI') 'Admin guide overlay must create visible arrow labels for each clue.'
+Assert-True ($guide -match 'Application\.isEditor' -and $guide -match 'EditorOnly') 'Admin guide overlay must be editor/admin-only, not player-facing.'
+Assert-True ($guide -notmatch 'Time\.timeScale' -and $guide -notmatch 'CursorController') 'Admin guide overlay must not alter gameplay time or cursor behavior.'
+
+Assert-True ($scene -match 'm_Name:\s+Admin_ClueGuideOverlay') 'Scene_OperatingRoom must contain the admin clue guide overlay object.'
+Assert-True ($scene -match [regex]::Escape("guid: $guideGuid")) 'Scene_OperatingRoom must reference ClueAdminGuideOverlay.'
+Assert-True ($scene -match 'm_TagString:\s+EditorOnly') 'Admin clue guide overlay scene object must use the EditorOnly tag.'
+
+Write-Host 'Clue admin guide checks passed.'

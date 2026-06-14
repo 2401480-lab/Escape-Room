@@ -212,3 +212,8 @@
 - Room02 통합 씬 Scene_OperatingRoom에 일반 단서 28개와 열쇠 단서 3개를 모두 ClueBoxInteractable 박스로 배치
 - 빈 clueData가 남아 있던 기존 단서 오브젝트를 제거하고 단서 배치 도구가 낡은 단서 오브젝트를 정리하도록 개선
 - 단서 획득 시 하단 텍스트 대신 중앙 화면창 형태의 팝업 패널로 단서명, 설명, 의미가 표시되도록 CluePickupPopupUI 개선
+
+### [2026-06-14 16:07:57]
+- Room02 통합 씬에 관리자용 Admin_ClueGuideOverlay를 추가하여 단서 위치 위에 화면 화살표와 단서명이 표시되도록 구현
+- ClueAdminGuideOverlay가 Scene_OperatingRoom의 ClueBoxInteractable 단서를 자동 탐색하고 EditorOnly 태그로 관리자 확인용 오버레이를 생성하도록 추가
+- 관리자용 단서 가이드 검증 테스트를 추가하여 오버레이 스크립트, 씬 연결, EditorOnly 설정을 확인
