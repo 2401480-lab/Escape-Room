@@ -7,6 +7,8 @@ $journalPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueJournalUI.cs'
 $settingsPath = Join-Path $root 'Assets/Room02_Operating/Clues/SettingsUI.cs'
 $timerPath = Join-Path $root 'Assets/Room02_Operating/Clues/TimerUI.cs'
 $setupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
+$adapterPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueBoxRuntimeAdapter.cs'
+$runtimeBoxPath = Join-Path $root 'Assets/Room02_Operating/Resources/Room02_ClueBox.prefab'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -20,6 +22,8 @@ function U {
 
 Assert-True (Test-Path -LiteralPath $boxPath) 'Missing Room02 ClueBoxInteractable.cs'
 Assert-True (Test-Path -LiteralPath $themePath) 'Missing Room02 HorrorUITheme.cs'
+Assert-True (Test-Path -LiteralPath $adapterPath) 'Missing Room02 ClueBoxRuntimeAdapter.cs'
+Assert-True (Test-Path -LiteralPath $runtimeBoxPath) 'Missing Room02 runtime clue box prefab.'
 
 $box = Get-Content -LiteralPath $boxPath -Raw -Encoding UTF8
 $theme = Get-Content -LiteralPath $themePath -Raw -Encoding UTF8
@@ -27,6 +31,7 @@ $journal = Get-Content -LiteralPath $journalPath -Raw -Encoding UTF8
 $settings = Get-Content -LiteralPath $settingsPath -Raw -Encoding UTF8
 $timer = Get-Content -LiteralPath $timerPath -Raw -Encoding UTF8
 $setup = Get-Content -LiteralPath $setupPath -Raw -Encoding UTF8
+$adapter = Get-Content -LiteralPath $adapterPath -Raw -Encoding UTF8
 $allCode = "$box`n$theme`n$journal`n$settings`n$timer"
 
 $boxPrompt = '[F] ' + (U 0xBC15,0xC2A4,0x0020,0xC870,0xC0AC,0xD558,0xAE30)
@@ -46,6 +51,12 @@ Assert-True ($box -match 'isSearched\s*=\s*true') 'ClueBoxInteractable must keep
 Assert-True ($box -notmatch 'gameObject\.SetActive\s*\(\s*false\s*\)') 'ClueBoxInteractable must leave the box in the scene after searching.'
 Assert-True ($setup -match 'ClueBoxInteractable') 'Room02 clue setup must place box clue interactables.'
 Assert-True ($setup -match 'Box_V1\.prefab|Box_V2\.prefab|SmallMetalicCase\.prefab|CaseMetallic\.prefab') 'Room02 clue setup must use installed box/case assets.'
+Assert-True ($setup -match 'SetupOperatingRoomSceneForBatch' -and $setup -match 'EditorSceneManager\.OpenScene' -and $setup -match 'EditorSceneManager\.SaveScene') 'Room02 clue setup must provide a batch scene apply method that opens and saves Scene_OperatingRoom.'
+Assert-True ($setup -match 'DestroyObjectImmediate\s*\(\s*existing\.gameObject\s*\)' -or $setup -match 'DestroyImmediate\s*\(\s*existing\.gameObject\s*\)') 'Room02 clue setup must replace old cube clue objects with box objects.'
+Assert-True ($adapter -match 'class\s+ClueBoxRuntimeAdapter\s*:\s*MonoBehaviour') 'ClueBoxRuntimeAdapter must be a runtime MonoBehaviour.'
+Assert-True ($adapter -match 'Resources\.Load<GameObject>\s*\(\s*"Room02_ClueBox"\s*\)') 'ClueBoxRuntimeAdapter must load the Room02 runtime box prefab.'
+Assert-True ($adapter -match 'ClueBoxInteractable' -and $adapter -match 'clueData') 'ClueBoxRuntimeAdapter must add ClueBoxInteractable and copy clue data.'
+Assert-True ($adapter -match 'SetActive\s*\(\s*false\s*\)') 'ClueBoxRuntimeAdapter must hide old clue marker objects after creating boxes.'
 
 Assert-True ($theme -match 'class\s+HorrorUITheme') 'HorrorUITheme must centralize Room02 horror UI styling.'
 Assert-True ($theme -match 'BloodRed' -and $theme -match 'PanelBlack' -and $theme -match 'TextDim') 'HorrorUITheme must define horror colors.'

@@ -153,6 +153,11 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 14:37:33]
+- Scene_OperatingRoom에 기존 큐브 단서가 남아 있어 박스가 보이지 않던 문제 원인 확인
+- Play 시작 시 기존 단서 마커를 Room02 전용 박스 프리팹으로 자동 변환하는 ClueBoxRuntimeAdapter 추가
+- Unity 배치 적용용 Scene_OperatingRoom 저장 메서드와 관련 검증 테스트 보강
+
 ### [2026-06-14 14:18:28]
 - Room02 단서 상호작용을 박스 조사 방식으로 확장하고 ClueBoxInteractable을 추가
 - Room02 단서 배치 도구가 설치된 Box_V1 프리팹 기반 단서 박스를 배치하도록 수정

@@ -18,6 +18,7 @@ namespace EscapeRoom
             EnsureRuntimeObject<TimerUI>("TimerUI");
             EnsureRuntimeObject<SettingsUI>("SettingsUI");
             EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
+            EnsureRuntimeObject<ClueBoxRuntimeAdapter>("ClueBoxRuntimeAdapter");
         }
 
         private static void EnsureHudCanvas()

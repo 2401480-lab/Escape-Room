@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,6 +19,7 @@ namespace EscapeRoom.Editor
         };
 
         private const string BoxPrefabPath = "Assets/Abandoned_Asylum/Prefabs/Box_V1.prefab";
+        private const string OperatingRoomScenePath = "Assets/Scenes/Scene_OperatingRoom.unity";
 
         [MenuItem("Tools/Room02/Clues/Place Single Test Clue Box")]
         public static void PlaceSingleTestClueBox()
@@ -89,6 +91,7 @@ namespace EscapeRoom.Editor
             }
 
             EditorUtility.SetDirty(box);
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
 
             EditorUtility.DisplayDialog("완료",
                 $"테스트 단서 박스 1개 배치 완료!\n\n위치: {spawnPos}\n단서: cast_notice\n\nCtrl+S 저장 후 플레이해서\nF키로 박스 조사 테스트!", "확인");
@@ -118,10 +121,21 @@ namespace EscapeRoom.Editor
             }
 
             Debug.Log($"[Clues] {scene.name} clue scene wiring complete. Placed/updated: {placed}");
+            EditorSceneManager.MarkSceneDirty(scene);
             if (!Application.isBatchMode)
             {
                 EditorUtility.DisplayDialog("단서 씬 세팅 완료", $"{scene.name} 단서 {placed}개 세팅 완료", "확인");
             }
+        }
+
+        public static void SetupOperatingRoomSceneForBatch()
+        {
+            Scene scene = EditorSceneManager.OpenScene(OperatingRoomScenePath, OpenSceneMode.Single);
+            ClueAssetGenerator.GenerateStoryClueAssets();
+            int placed = SetupScene(scene.name);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log($"[Clues] Batch scene apply complete. Scene: {scene.path}, Placed/updated: {placed}");
         }
 
         private static int SetupScene(string sceneName)
@@ -197,6 +211,12 @@ namespace EscapeRoom.Editor
         {
             string objectName = $"Clue_{entry.fileName}";
             Transform existing = cluesRoot.transform.Find(objectName);
+            if (existing != null && existing.GetComponent<ClueBoxInteractable>() == null)
+            {
+                Undo.DestroyObjectImmediate(existing.gameObject);
+                existing = null;
+            }
+
             GameObject clueObject;
             if (existing == null)
             {
