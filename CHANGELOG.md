@@ -258,3 +258,7 @@
 - Room02 배경음 dk-theroom.aif와 음악 폴더 메타를 Assets/Room02_Operating/Audio/music 아래로 이동하여 사용 에셋이 Room02 범위 안에 있도록 정리
 - Room02 씬에 Show/Abandoned Asylum 맵 프리팹을 병합하여 실제 병원 맵, 단서 31개, 관리자 화살표, BGM이 같은 Room02 씬 안에 존재하도록 수정
 - Room02 범위와 Show 맵 포함 여부를 검증하는 테스트를 추가하고 기존 씬 경로 참조 테스트를 Room02 기준으로 갱신
+
+### [2026-06-14 19:24:04]
+- Assets/Abandoned_Asylum 아래에 남아 있던 Show.unity, Show 라이트맵/반사 프로브 데이터, Show_Assets 관련 파일을 Assets/Room02_Operating/Scenes 아래로 이동
+- Room02 범위 검증 테스트에 Show 관련 씬과 조명 데이터가 Abandoned_Asylum에 남지 않는지 확인하는 항목을 추가
