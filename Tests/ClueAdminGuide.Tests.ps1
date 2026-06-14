@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $guidePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueAdminGuideOverlay.cs'
 $guideMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueAdminGuideOverlay.cs.meta'
-$scenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
+$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)

@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$scenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
+$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
 $legacyPackagePath = Join-Path $root 'Assets/3rdPerson+Fly'
 $legacyPackageMetaPath = Join-Path $root 'Assets/3rdPerson+Fly.meta'
 

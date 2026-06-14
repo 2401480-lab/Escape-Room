@@ -9,7 +9,7 @@ $popupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/CluePickupPopupU
 $sceneSetupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs.meta'
 $normalCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/Normal'
 $keyCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/KeyClue'
-$operatingScenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
+$operatingScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)

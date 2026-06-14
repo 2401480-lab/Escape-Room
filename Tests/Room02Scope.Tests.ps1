@@ -1,0 +1,29 @@
+$ErrorActionPreference = 'Stop'
+
+$root = Resolve-Path (Join-Path $PSScriptRoot '..')
+$room02ScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$oldScenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
+$room02BgmPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-theroom.aif'
+$oldBgmPath = Join-Path $root 'Assets/music/darkness/dk-theroom.aif'
+$buildSettingsPath = Join-Path $root 'ProjectSettings/EditorBuildSettings.asset'
+$setupToolPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
+
+function Assert-True {
+    param([bool] $Condition, [string] $Message)
+    if (-not $Condition) { throw $Message }
+}
+
+Assert-True (Test-Path -LiteralPath $room02ScenePath) 'Room02 gameplay scene must live under Assets/Room02_Operating/Scenes.'
+Assert-True (-not (Test-Path -LiteralPath $oldScenePath)) 'Room02 gameplay scene must not remain in Assets/Scenes.'
+Assert-True (Test-Path -LiteralPath $room02BgmPath) 'Room02 selected BGM must live under Assets/Room02_Operating/Audio.'
+Assert-True (-not (Test-Path -LiteralPath $oldBgmPath)) 'Room02 selected BGM must not remain under Assets/music.'
+
+$buildSettings = Get-Content -LiteralPath $buildSettingsPath -Raw -Encoding UTF8
+$setupTool = Get-Content -LiteralPath $setupToolPath -Raw -Encoding UTF8
+
+Assert-True ($buildSettings -match 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom\.unity') 'Build Settings must point to the Room02-owned scene path.'
+Assert-True ($buildSettings -notmatch 'Assets/Scenes/Scene_OperatingRoom\.unity') 'Build Settings must not point to the old shared scene path.'
+Assert-True ($setupTool -match 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom\.unity') 'Room02 clue setup tool must target the Room02-owned scene path.'
+Assert-True ($setupTool -notmatch 'Assets/Scenes/Scene_OperatingRoom\.unity') 'Room02 clue setup tool must not target the old shared scene path.'
+
+Write-Host 'Room02 scope checks passed.'

@@ -252,3 +252,9 @@
 - Unity 6 Scene 뷰에서 관리자용 단서 라벨 표시가 Handles.Label assertion을 발생시키던 문제를 수정
 - Scene 뷰 단서 가이드를 에디터 안전한 Gizmo 선, 화살촉 점, 단서 위치 원 표시 방식으로 변경
 - Scene_OperatingRoom에 관리자용 Scene 가이드 옵션을 명시 저장하고 재발 방지 검증 테스트를 보강
+
+### [2026-06-14 19:14:34]
+- Room02 실제 플레이 씬을 Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity로 이동하고 Build Settings와 단서 배치 도구 경로를 Room02 기준으로 수정
+- Room02 배경음 dk-theroom.aif와 음악 폴더 메타를 Assets/Room02_Operating/Audio/music 아래로 이동하여 사용 에셋이 Room02 범위 안에 있도록 정리
+- Room02 씬에 Show/Abandoned Asylum 맵 프리팹을 병합하여 실제 병원 맵, 단서 31개, 관리자 화살표, BGM이 같은 Room02 씬 안에 존재하도록 수정
+- Room02 범위와 Show 맵 포함 여부를 검증하는 테스트를 추가하고 기존 씬 경로 참조 테스트를 Room02 기준으로 갱신

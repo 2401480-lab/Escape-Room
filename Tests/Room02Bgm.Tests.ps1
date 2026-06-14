@@ -1,11 +1,11 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$scenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
+$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
 $bgmScriptPath = Join-Path $root 'Assets/Room02_Operating/Audio/Room02BgmPlayer.cs'
 $bgmScriptMetaPath = Join-Path $root 'Assets/Room02_Operating/Audio/Room02BgmPlayer.cs.meta'
-$clipPath = Join-Path $root 'Assets/music/darkness/dk-theroom.aif'
-$clipMetaPath = Join-Path $root 'Assets/music/darkness/dk-theroom.aif.meta'
+$clipPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-theroom.aif'
+$clipMetaPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-theroom.aif.meta'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)

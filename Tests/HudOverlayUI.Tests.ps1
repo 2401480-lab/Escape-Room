@@ -7,7 +7,7 @@ $timerPath = Join-Path $root 'Assets/Room02_Operating/Clues/TimerUI.cs'
 $interactablePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueInteractable.cs'
 $bootstrapperPath = Join-Path $root 'Assets/Room02_Operating/Clues/HudRuntimeBootstrapper.cs'
 $setupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
-$scenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
+$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)

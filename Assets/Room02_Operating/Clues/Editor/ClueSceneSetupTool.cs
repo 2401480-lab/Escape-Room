@@ -19,7 +19,7 @@ namespace EscapeRoom.Editor
         };
 
         private const string BoxPrefabPath = "Assets/Abandoned_Asylum/Prefabs/Box_V1.prefab";
-        private const string OperatingRoomScenePath = "Assets/Scenes/Scene_OperatingRoom.unity";
+        private const string OperatingRoomScenePath = "Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity";
 
         [MenuItem("Tools/Room02/Clues/Place Single Test Clue Box")]
         public static void PlaceSingleTestClueBox()
