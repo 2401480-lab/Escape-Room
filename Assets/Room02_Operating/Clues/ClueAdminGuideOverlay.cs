@@ -3,21 +3,32 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace EscapeRoom
 {
     public class ClueAdminGuideOverlay : MonoBehaviour
     {
         [SerializeField] private bool adminGuideEnabled = true;
+        [SerializeField] private bool drawEditorSceneGuides = true;
         [SerializeField] private Vector3 clueWorldOffset = new Vector3(0f, 1.65f, 0f);
         [SerializeField] private Color arrowColor = new Color(1f, 0.82f, 0.18f, 1f);
         [SerializeField] private Color labelColor = new Color(1f, 0.95f, 0.72f, 1f);
         [SerializeField] private float edgeViewportPadding = 0.08f;
         [SerializeField] private float refreshInterval = 1f;
+        [SerializeField] private float sceneGuideHeight = 2.35f;
+        [SerializeField] private float sceneArrowHeadSize = 0.24f;
 
         private readonly Dictionary<ClueBoxInteractable, TextMeshProUGUI> arrowLabels = new Dictionary<ClueBoxInteractable, TextMeshProUGUI>();
         private Canvas guideCanvas;
         private RectTransform canvasRect;
         private float nextRefreshTime;
+
+#if UNITY_EDITOR
+        private GUIStyle sceneGuideLabelStyle;
+#endif
 
         private void Awake()
         {
@@ -52,6 +63,66 @@ namespace EscapeRoom
 
             UpdateGuidePositions();
         }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (!adminGuideEnabled || !drawEditorSceneGuides)
+            {
+                return;
+            }
+
+            ClueBoxInteractable[] clueBoxes = FindObjectsOfType<ClueBoxInteractable>(true);
+            foreach (ClueBoxInteractable clueBox in clueBoxes)
+            {
+                if (clueBox == null)
+                {
+                    continue;
+                }
+
+                DrawSceneGuide(clueBox);
+            }
+        }
+
+        private void DrawSceneGuide(ClueBoxInteractable clueBox)
+        {
+            Vector3 cluePosition = clueBox.transform.position;
+            Vector3 arrowTip = cluePosition + Vector3.up * 0.35f;
+            Vector3 arrowStart = cluePosition + Vector3.up * sceneGuideHeight;
+            Vector3 labelPosition = arrowStart + Vector3.up * 0.18f;
+            Vector3 cameraRight = GetSceneCameraRight();
+
+            Gizmos.color = arrowColor;
+            Gizmos.DrawLine(arrowStart, arrowTip);
+            Gizmos.DrawLine(arrowTip, arrowTip + Vector3.up * sceneArrowHeadSize - cameraRight * sceneArrowHeadSize);
+            Gizmos.DrawLine(arrowTip, arrowTip + Vector3.up * sceneArrowHeadSize + cameraRight * sceneArrowHeadSize);
+
+            Handles.Label(labelPosition, "\u25BC " + GetClueName(clueBox), GetSceneGuideLabelStyle());
+        }
+
+        private static Vector3 GetSceneCameraRight()
+        {
+            SceneView sceneView = SceneView.currentDrawingSceneView;
+            return sceneView != null && sceneView.camera != null
+                ? sceneView.camera.transform.right
+                : Vector3.right;
+        }
+
+        private GUIStyle GetSceneGuideLabelStyle()
+        {
+            if (sceneGuideLabelStyle == null)
+            {
+                sceneGuideLabelStyle = new GUIStyle(EditorStyles.boldLabel)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = 12
+                };
+            }
+
+            sceneGuideLabelStyle.normal.textColor = labelColor;
+            return sceneGuideLabelStyle;
+        }
+#endif
 
         private void RefreshGuideTargets()
         {

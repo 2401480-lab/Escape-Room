@@ -23,6 +23,8 @@ Assert-True ($guide -match 'FindObjectsOfType<ClueBoxInteractable>\s*\(') 'Admin
 Assert-True ($guide -match 'WorldToViewportPoint' -and $guide -match 'Mathf\.Clamp') 'Admin guide overlay must clamp arrows to the visible screen edge for off-screen clues.'
 Assert-True ($guide -match 'Screen\.width' -and $guide -match 'Screen\.height') 'Admin guide overlay must use screen bounds so guide arrows remain visible.'
 Assert-True ($guide -match 'AdminGuideArrow_' -and $guide -match 'TextMeshProUGUI') 'Admin guide overlay must create visible arrow labels for each clue.'
+Assert-True ($guide -match '#if\s+UNITY_EDITOR' -and $guide -match 'OnDrawGizmos') 'Admin guide overlay must also draw editor-only Scene view guides.'
+Assert-True ($guide -match 'Handles\.Label' -and $guide -match 'Gizmos\.DrawLine') 'Scene view guide must draw clue labels and arrows for admin placement checks.'
 Assert-True ($guide -notmatch 'Application\.isEditor') 'Admin guide overlay must not disappear outside the Unity editor when used for admin playtesting.'
 Assert-True ($guide -notmatch 'Time\.timeScale' -and $guide -notmatch 'CursorController') 'Admin guide overlay must not alter gameplay time or cursor behavior.'
 
