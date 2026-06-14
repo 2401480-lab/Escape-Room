@@ -7,7 +7,8 @@ namespace EscapeRoom
     public class ClueBoxInteractable : MonoBehaviour
     {
         [SerializeField] public ClueData clueData;
-        [SerializeField] private float interactDistance = 4f;
+        [SerializeField] private float interactDistance = 5f;
+        [SerializeField] private float inputBufferSeconds = 0.2f;
         [SerializeField] private TextMeshProUGUI promptText;
         [SerializeField] private Renderer[] highlightRenderers;
         [SerializeField] private Color searchedTint = new Color(0.25f, 0.22f, 0.2f, 1f);
@@ -16,6 +17,9 @@ namespace EscapeRoom
         private const string SearchedPrompt = "이미 조사한 박스";
 
         private static ClueBoxInteractable currentTarget;
+        private static readonly Collider[] nearbyColliders = new Collider[64];
+        private static float lastInteractPressedAt = -999f;
+
         private bool isSearched;
 
         private void Awake()
@@ -45,6 +49,11 @@ namespace EscapeRoom
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                lastInteractPressedAt = Time.unscaledTime;
+            }
+
             if (clueData == null)
             {
                 if (Input.GetKeyDown(KeyCode.F))
@@ -56,23 +65,23 @@ namespace EscapeRoom
             }
 
             EnsureManager();
-            bool aimed = IsAimedAt();
-            if (!aimed)
+            ClueBoxInteractable bestTarget = FindBestTarget();
+            if (bestTarget != null)
             {
-                if (currentTarget == this)
-                {
-                    currentTarget = null;
-                    HidePrompt();
-                }
+                currentTarget = bestTarget;
+            }
 
+            if (currentTarget != this)
+            {
+                HidePrompt();
                 return;
             }
 
-            currentTarget = this;
             SetPrompt(isSearched ? SearchedPrompt : SearchPrompt, true);
 
-            if (!isSearched && Input.GetKeyDown(KeyCode.F))
+            if (!isSearched && HasBufferedInteractInput())
             {
+                lastInteractPressedAt = -999f;
                 SearchBox();
             }
         }
@@ -93,21 +102,56 @@ namespace EscapeRoom
             }
         }
 
-        private bool IsAimedAt()
+        private bool HasBufferedInteractInput()
+        {
+            return Time.unscaledTime - lastInteractPressedAt <= inputBufferSeconds;
+        }
+
+        private ClueBoxInteractable FindBestTarget()
         {
             Camera cam = Camera.main;
             if (cam == null)
             {
-                return false;
+                return null;
             }
 
-            Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-            if (!Physics.Raycast(ray, out RaycastHit hit, interactDistance))
+            int hitCount = Physics.OverlapSphereNonAlloc(cam.transform.position, interactDistance, nearbyColliders);
+            ClueBoxInteractable best = null;
+            float bestScore = float.MinValue;
+
+            for (int i = 0; i < hitCount; i++)
             {
-                return false;
+                Collider hit = nearbyColliders[i];
+                nearbyColliders[i] = null;
+                if (hit == null)
+                {
+                    continue;
+                }
+
+                ClueBoxInteractable candidate = hit.GetComponentInParent<ClueBoxInteractable>();
+                if (candidate == null || candidate.clueData == null)
+                {
+                    continue;
+                }
+
+                Vector3 toCandidate = candidate.transform.position - cam.transform.position;
+                float distance = toCandidate.magnitude;
+                if (distance > interactDistance)
+                {
+                    continue;
+                }
+
+                float directionScore = Vector3.Dot(cam.transform.forward, toCandidate.normalized);
+                float distanceScore = 1f - Mathf.Clamp01(distance / interactDistance);
+                float score = distanceScore * 1.4f + Mathf.Max(0f, directionScore);
+                if (score > bestScore)
+                {
+                    best = candidate;
+                    bestScore = score;
+                }
             }
 
-            return hit.collider != null && hit.collider.GetComponentInParent<ClueBoxInteractable>() == this;
+            return best;
         }
 
         private void EnsureManager()

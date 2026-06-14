@@ -153,6 +153,11 @@
 ### [2026-06-13 20:50:42]
 - ClueSceneSetupTool에 남아 있던 EditorSceneManager.MarkSceneDirty 호출을 제거해 Unity 컴파일 오류를 수정
 - ClueSceneWiring 테스트가 EditorSceneManager 참조 전체를 금지하도록 강화해 같은 컴파일 오류가 재발하지 않도록 보강
+### [2026-06-14 14:50:09]
+- Room02 단서 박스 인식을 정중앙 Raycast 방식에서 360도 근접 감지 방식으로 개선
+- 박스 상호작용 거리를 5m로 늘리고 거리와 시야 방향을 함께 반영해 가장 적절한 박스를 자동 선택
+- F키 입력 버퍼를 추가해 박스 조사 입력이 씹히는 현상을 완화
+
 ### [2026-06-14 14:37:33]
 - Scene_OperatingRoom에 기존 큐브 단서가 남아 있어 박스가 보이지 않던 문제 원인 확인
 - Play 시작 시 기존 단서 마커를 Room02 전용 박스 프리팹으로 자동 변환하는 ClueBoxRuntimeAdapter 추가
