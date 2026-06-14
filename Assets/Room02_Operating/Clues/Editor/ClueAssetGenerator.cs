@@ -50,6 +50,28 @@ namespace EscapeRoom.Editor
             }
         }
 
+        [MenuItem("Tools/Room02/Generate Clues Part3")]
+        public static void GenerateCluesPart3()
+        {
+            EnsureFolders();
+            int created = 0;
+            int updated = 0;
+
+            foreach (ClueEntry entry in GetPart3Entries())
+            {
+                string folder = entry.category == ClueCategory.KeyClue ? KeyCluePath : NormalPath;
+                CreateOrUpdateAsset(entry, folder, $"{entry.clueID}.asset", ref created, ref updated);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[Clues] Part3 ClueData assets generated. Created: {created}, Updated: {updated}");
+            if (!Application.isBatchMode)
+            {
+                EditorUtility.DisplayDialog("Part3 단서 생성 완료", $"Part3 단서 에셋 생성 {created}개, 갱신 {updated}개 완료", "확인");
+            }
+        }
+
         [MenuItem("Tools/Room02/Clues/Generate Story Clue Assets")]
         public static void GenerateStoryClueAssets()
         {
@@ -349,6 +371,53 @@ namespace EscapeRoom.Editor
                     "코드 입력 해제 후 획득. 진세웅의 리허설 스케줄표.",
                     "수술실에서 수차례 리허설했다는 증거.",
                     "Storage", ClueCategory.General, isRequired: false),
+            };
+        }
+
+        internal static ClueEntry[] GetPart3Entries()
+        {
+            return new[]
+            {
+                new ClueEntry("paint_footprints", "paint_footprints", "바닥 페인트 자국",
+                    "분장실 바닥 흰 페인트 발자국. 수술대 방향으로 이어진다.",
+                    "핵심 물증 B. 운동화 페인트와 방향 일치. 이동 동선 물리적 증명.",
+                    "DressingRoom", ClueCategory.General, isRequired: true),
+                new ClueEntry("makeup_diary", "makeup_diary", "진세웅 일기장",
+                    "진세웅 필체. 유안나가 모든 걸 망쳐놨어. 하시호 형은 그 때문에 죽은 거야.",
+                    "미스디렉션 완전 붕괴. 진세웅의 동기와 범행 의지 확정.",
+                    "DressingRoom", ClueCategory.General, isRequired: true),
+                new ClueEntry("mirror_message", "mirror_message", "거울 메모",
+                    "거울에 립스틱으로 쓰인 글씨. 봐, 결국 네 차례야 — 세웅.",
+                    "유안나를 특정 타겟으로 삼았음 확정.",
+                    "DressingRoom", ClueCategory.General, isRequired: false),
+                new ClueEntry("paint_toolbox", "paint_toolbox", "분장 도구함",
+                    "분장 도구 사이 흰 페인트 튜브. 뚜껑 열림, 사용 흔적 있음.",
+                    "운동화 페인트, 바닥 발자국의 출처 확정. 물증 체인 완성.",
+                    "DressingRoom", ClueCategory.General, isRequired: false),
+                new ClueEntry("under_table_space", "under_table_space", "수술대 하부 공간",
+                    "수술대 아래 성인 한 명이 숨을 수 있는 공간. 페인트 자국 방향과 일치하는 흔적.",
+                    "핵심 물증 C. 수술대 아래 숨어 발버둥 연기를 했다는 것이 공간적으로 증명된다.",
+                    "OperatingRoom", ClueCategory.General, isRequired: true),
+                new ClueEntry("yoanna_relic", "yoanna_relic", "유안나의 유품",
+                    "수술대 옆 빈 약병. 독약 앰플과 동일 성분 흔적.",
+                    "독약이 유안나에게 실제 사용됐음 확인. 앰플부터 사용까지 전 경로 완성.",
+                    "OperatingRoom", ClueCategory.General, isRequired: false),
+                new ClueEntry("nurse_log", "nurse_log", "간호사실 재고 일지",
+                    "당일 마취약 1병 원인 불명 부족.",
+                    "독약 앰플 출처를 공식 기록으로 뒷받침.",
+                    "OperatingRoom", ClueCategory.General, isRequired: false),
+                new ClueEntry("key_hint_note", "key_hint_note", "진세웅의 쪽지",
+                    "병실 침대 밑 쪽지. 아무도 찾지 못할 곳에 뒀다. 제일 차가운 곳.",
+                    "탈출 열쇠가 차가운 장소에 있다는 첫 번째 힌트.",
+                    "Ward", ClueCategory.KeyClue, isRequired: true),
+                new ClueEntry("key_hint_sticker", "key_hint_sticker", "온도 경고 스티커",
+                    "냉장 약품함 문 스티커. 내용물 주의 — 4도 이하 보관.",
+                    "제일 차가운 곳이 냉장 약품함임을 가리키는 두 번째 힌트.",
+                    "Storage", ClueCategory.KeyClue, isRequired: true),
+                new ClueEntry("key_hint_scratch", "key_hint_scratch", "긁힌 자국",
+                    "냉장 약품함 문 표면 긁힌 흔적. 자물쇠 없음.",
+                    "세 단서를 모두 모으면 냉장 약품함에서 탈출 열쇠 획득 가능.",
+                    "Storage", ClueCategory.KeyClue, isRequired: true),
             };
         }
 
