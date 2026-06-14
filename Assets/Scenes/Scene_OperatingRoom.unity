@@ -7233,11 +7233,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   adminGuideEnabled: 1
+  drawEditorSceneGuides: 1
   clueWorldOffset: {x: 0, y: 1.65, z: 0}
   arrowColor: {r: 1, g: 0.82, b: 0.18, a: 1}
   labelColor: {r: 1, g: 0.95, b: 0.72, a: 1}
   edgeViewportPadding: 0.08
   refreshInterval: 1
+  sceneGuideHeight: 2.35
+  sceneArrowHeadSize: 0.24
+  sceneClueMarkerRadius: 0.45
 --- !u!1 &2003000000
 GameObject:
   m_ObjectHideFlags: 0

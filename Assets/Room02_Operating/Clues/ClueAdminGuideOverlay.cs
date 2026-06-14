@@ -20,15 +20,12 @@ namespace EscapeRoom
         [SerializeField] private float refreshInterval = 1f;
         [SerializeField] private float sceneGuideHeight = 2.35f;
         [SerializeField] private float sceneArrowHeadSize = 0.24f;
+        [SerializeField] private float sceneClueMarkerRadius = 0.45f;
 
         private readonly Dictionary<ClueBoxInteractable, TextMeshProUGUI> arrowLabels = new Dictionary<ClueBoxInteractable, TextMeshProUGUI>();
         private Canvas guideCanvas;
         private RectTransform canvasRect;
         private float nextRefreshTime;
-
-#if UNITY_EDITOR
-        private GUIStyle sceneGuideLabelStyle;
-#endif
 
         private void Awake()
         {
@@ -89,15 +86,14 @@ namespace EscapeRoom
             Vector3 cluePosition = clueBox.transform.position;
             Vector3 arrowTip = cluePosition + Vector3.up * 0.35f;
             Vector3 arrowStart = cluePosition + Vector3.up * sceneGuideHeight;
-            Vector3 labelPosition = arrowStart + Vector3.up * 0.18f;
             Vector3 cameraRight = GetSceneCameraRight();
 
             Gizmos.color = arrowColor;
             Gizmos.DrawLine(arrowStart, arrowTip);
             Gizmos.DrawLine(arrowTip, arrowTip + Vector3.up * sceneArrowHeadSize - cameraRight * sceneArrowHeadSize);
             Gizmos.DrawLine(arrowTip, arrowTip + Vector3.up * sceneArrowHeadSize + cameraRight * sceneArrowHeadSize);
-
-            Handles.Label(labelPosition, "\u25BC " + GetClueName(clueBox), GetSceneGuideLabelStyle());
+            Gizmos.DrawSphere(arrowTip, sceneArrowHeadSize * 0.35f);
+            Gizmos.DrawWireSphere(cluePosition, sceneClueMarkerRadius);
         }
 
         private static Vector3 GetSceneCameraRight()
@@ -106,21 +102,6 @@ namespace EscapeRoom
             return sceneView != null && sceneView.camera != null
                 ? sceneView.camera.transform.right
                 : Vector3.right;
-        }
-
-        private GUIStyle GetSceneGuideLabelStyle()
-        {
-            if (sceneGuideLabelStyle == null)
-            {
-                sceneGuideLabelStyle = new GUIStyle(EditorStyles.boldLabel)
-                {
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 12
-                };
-            }
-
-            sceneGuideLabelStyle.normal.textColor = labelColor;
-            return sceneGuideLabelStyle;
         }
 #endif
 

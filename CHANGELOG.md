@@ -247,3 +247,8 @@
 - Scene_OperatingRoom에 Room02_BGM 오브젝트를 추가하고 Free Horror Ambience의 dk-theroom.aif를 배경음으로 연결
 - Room02BgmPlayer를 추가하여 시작 시 AudioSource를 구성하고 2D 루프 배경음이 낮은 볼륨으로 재생되도록 처리
 - Room02 배경음 오브젝트, 선택한 오디오 클립 참조, 루프 및 볼륨 설정을 검증하는 테스트 추가
+
+### [2026-06-14 18:53:15]
+- Unity 6 Scene 뷰에서 관리자용 단서 라벨 표시가 Handles.Label assertion을 발생시키던 문제를 수정
+- Scene 뷰 단서 가이드를 에디터 안전한 Gizmo 선, 화살촉 점, 단서 위치 원 표시 방식으로 변경
+- Scene_OperatingRoom에 관리자용 Scene 가이드 옵션을 명시 저장하고 재발 방지 검증 테스트를 보강

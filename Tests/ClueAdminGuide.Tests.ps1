@@ -24,12 +24,15 @@ Assert-True ($guide -match 'WorldToViewportPoint' -and $guide -match 'Mathf\.Cla
 Assert-True ($guide -match 'Screen\.width' -and $guide -match 'Screen\.height') 'Admin guide overlay must use screen bounds so guide arrows remain visible.'
 Assert-True ($guide -match 'AdminGuideArrow_' -and $guide -match 'TextMeshProUGUI') 'Admin guide overlay must create visible arrow labels for each clue.'
 Assert-True ($guide -match '#if\s+UNITY_EDITOR' -and $guide -match 'OnDrawGizmos') 'Admin guide overlay must also draw editor-only Scene view guides.'
-Assert-True ($guide -match 'Handles\.Label' -and $guide -match 'Gizmos\.DrawLine') 'Scene view guide must draw clue labels and arrows for admin placement checks.'
+Assert-True ($guide -notmatch 'Handles\.Label') 'Scene view guide must not use Handles.Label because it can trigger Unity 6 editor assertions.'
+Assert-True ($guide -match 'Gizmos\.DrawLine' -and $guide -match 'Gizmos\.DrawSphere') 'Scene view guide must draw obvious clue arrows with editor-safe Gizmos.'
+Assert-True ($guide -match 'Gizmos\.DrawWireSphere') 'Scene view guide must circle each clue location so admins can find clue boxes easily.'
 Assert-True ($guide -notmatch 'Application\.isEditor') 'Admin guide overlay must not disappear outside the Unity editor when used for admin playtesting.'
 Assert-True ($guide -notmatch 'Time\.timeScale' -and $guide -notmatch 'CursorController') 'Admin guide overlay must not alter gameplay time or cursor behavior.'
 
 Assert-True ($scene -match 'm_Name:\s+Admin_ClueGuideOverlay') 'Scene_OperatingRoom must contain the admin clue guide overlay object.'
 Assert-True ($scene -match [regex]::Escape("guid: $guideGuid")) 'Scene_OperatingRoom must reference ClueAdminGuideOverlay.'
 Assert-True ($scene -match 'm_TagString:\s+Untagged') 'Admin clue guide overlay scene object must remain loadable during admin playtesting.'
+Assert-True ($scene -match 'drawEditorSceneGuides:\s+1') 'Admin scene guide must be explicitly enabled in Scene_OperatingRoom.'
 
 Write-Host 'Clue admin guide checks passed.'
