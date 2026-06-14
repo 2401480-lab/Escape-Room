@@ -215,5 +215,10 @@
 
 ### [2026-06-14 16:07:57]
 - Room02 통합 씬에 관리자용 Admin_ClueGuideOverlay를 추가하여 단서 위치 위에 화면 화살표와 단서명이 표시되도록 구현
-- ClueAdminGuideOverlay가 Scene_OperatingRoom의 ClueBoxInteractable 단서를 자동 탐색하고 EditorOnly 태그로 관리자 확인용 오버레이를 생성하도록 추가
-- 관리자용 단서 가이드 검증 테스트를 추가하여 오버레이 스크립트, 씬 연결, EditorOnly 설정을 확인
+- ClueAdminGuideOverlay가 Scene_OperatingRoom의 ClueBoxInteractable 단서를 자동 탐색하고 관리자 확인용 오버레이를 생성하도록 추가
+- 관리자용 단서 가이드 검증 테스트를 추가하여 오버레이 스크립트와 씬 연결을 확인
+
+### [2026-06-14 16:15:35]
+- 관리자용 단서 화살표가 화면 밖으로 밀려 보이지 않던 문제를 수정하고 화면 가장자리 안쪽에 고정 표시되도록 개선
+- 관리자 실행 중에도 단서 가이드가 보이도록 Application.isEditor 조건과 EditorOnly 태그 의존을 제거
+- 단서가 시야 밖에 있을 때도 화면 경계 안에서 화살표와 단서명이 계속 표시되도록 검증 테스트 보강

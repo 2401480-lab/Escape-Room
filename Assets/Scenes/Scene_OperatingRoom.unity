@@ -7200,7 +7200,7 @@ GameObject:
   - component: {fileID: 2002000002}
   m_Layer: 0
   m_Name: Admin_ClueGuideOverlay
-  m_TagString: EditorOnly
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7233,10 +7233,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   adminGuideEnabled: 1
-  editorOnly: 1
   clueWorldOffset: {x: 0, y: 1.65, z: 0}
   arrowColor: {r: 1, g: 0.82, b: 0.18, a: 1}
   labelColor: {r: 1, g: 0.95, b: 0.72, a: 1}
+  edgeViewportPadding: 0.08
   refreshInterval: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

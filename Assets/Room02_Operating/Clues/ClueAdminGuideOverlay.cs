@@ -8,10 +8,10 @@ namespace EscapeRoom
     public class ClueAdminGuideOverlay : MonoBehaviour
     {
         [SerializeField] private bool adminGuideEnabled = true;
-        [SerializeField] private bool editorOnly = true;
         [SerializeField] private Vector3 clueWorldOffset = new Vector3(0f, 1.65f, 0f);
         [SerializeField] private Color arrowColor = new Color(1f, 0.82f, 0.18f, 1f);
         [SerializeField] private Color labelColor = new Color(1f, 0.95f, 0.72f, 1f);
+        [SerializeField] private float edgeViewportPadding = 0.08f;
         [SerializeField] private float refreshInterval = 1f;
 
         private readonly Dictionary<ClueBoxInteractable, TextMeshProUGUI> arrowLabels = new Dictionary<ClueBoxInteractable, TextMeshProUGUI>();
@@ -21,7 +21,6 @@ namespace EscapeRoom
 
         private void Awake()
         {
-            TrySetEditorOnlyTag(gameObject);
             EnsureCanvas();
             RefreshGuideTargets();
         }
@@ -34,7 +33,7 @@ namespace EscapeRoom
 
         private void LateUpdate()
         {
-            bool visible = adminGuideEnabled && (!editorOnly || Application.isEditor);
+            bool visible = adminGuideEnabled;
             if (guideCanvas != null && guideCanvas.gameObject.activeSelf != visible)
             {
                 guideCanvas.gameObject.SetActive(visible);
@@ -94,7 +93,6 @@ namespace EscapeRoom
         private TextMeshProUGUI CreateArrowLabel(ClueBoxInteractable clueBox)
         {
             GameObject labelObject = new GameObject($"AdminGuideArrow_{GetClueId(clueBox)}");
-            TrySetEditorOnlyTag(labelObject);
             labelObject.transform.SetParent(guideCanvas.transform, false);
 
             TextMeshProUGUI label = labelObject.AddComponent<TextMeshProUGUI>();
@@ -104,7 +102,7 @@ namespace EscapeRoom
             label.alignment = TextAlignmentOptions.Center;
             label.enableWordWrapping = false;
             label.raycastTarget = false;
-            label.text = $"▼\n{GetClueName(clueBox)}";
+            label.text = "\u25BC\n" + GetClueName(clueBox);
 
             RectTransform rect = label.rectTransform;
             rect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -131,13 +129,16 @@ namespace EscapeRoom
                     continue;
                 }
 
-                Vector3 screenPosition = mainCamera.WorldToScreenPoint(clueBox.transform.position + clueWorldOffset);
-                bool isVisible = screenPosition.z > 0f;
-                label.gameObject.SetActive(isVisible);
-                if (!isVisible)
+                Vector3 viewportPosition = mainCamera.WorldToViewportPoint(clueBox.transform.position + clueWorldOffset);
+                if (viewportPosition.z < 0f)
                 {
-                    continue;
+                    viewportPosition.x = 1f - viewportPosition.x;
+                    viewportPosition.y = 1f - viewportPosition.y;
                 }
+
+                float clampedX = Mathf.Clamp(viewportPosition.x, edgeViewportPadding, 1f - edgeViewportPadding);
+                float clampedY = Mathf.Clamp(viewportPosition.y, edgeViewportPadding, 1f - edgeViewportPadding);
+                Vector2 screenPosition = new Vector2(clampedX * Screen.width, clampedY * Screen.height);
 
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     canvasRect,
@@ -145,8 +146,15 @@ namespace EscapeRoom
                     null,
                     out Vector2 localPoint);
 
+                bool onScreen = viewportPosition.z > 0f
+                    && viewportPosition.x >= 0f
+                    && viewportPosition.x <= 1f
+                    && viewportPosition.y >= 0f
+                    && viewportPosition.y <= 1f;
+
                 label.rectTransform.anchoredPosition = localPoint;
-                label.color = arrowColor;
+                label.color = onScreen ? labelColor : arrowColor;
+                label.gameObject.SetActive(true);
             }
         }
 
@@ -163,7 +171,6 @@ namespace EscapeRoom
                 canvasObject = new GameObject("Admin_ClueGuideCanvas");
             }
 
-            TrySetEditorOnlyTag(canvasObject);
             guideCanvas = canvasObject.GetComponent<Canvas>();
             if (guideCanvas == null)
             {
@@ -203,23 +210,6 @@ namespace EscapeRoom
             return clueBox != null && clueBox.clueData != null && !string.IsNullOrWhiteSpace(clueBox.clueData.clueName)
                 ? clueBox.clueData.clueName
                 : GetClueId(clueBox);
-        }
-
-        private static void TrySetEditorOnlyTag(GameObject target)
-        {
-            if (target == null)
-            {
-                return;
-            }
-
-            try
-            {
-                target.tag = "EditorOnly";
-            }
-            catch (UnityException)
-            {
-                // EditorOnly is a built-in tag in normal Unity projects; ignore custom test contexts.
-            }
         }
     }
 }

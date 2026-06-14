@@ -20,13 +20,14 @@ $guideGuid = ((Select-String -LiteralPath $guideMetaPath -Pattern '^guid:').Line
 
 Assert-True ($guide -match 'class\s+ClueAdminGuideOverlay\s*:\s*MonoBehaviour') 'ClueAdminGuideOverlay must be a MonoBehaviour.'
 Assert-True ($guide -match 'FindObjectsOfType<ClueBoxInteractable>\s*\(') 'Admin guide overlay must discover Room02 clue boxes automatically.'
-Assert-True ($guide -match 'WorldToScreenPoint') 'Admin guide overlay must place arrows over clues in screen space.'
+Assert-True ($guide -match 'WorldToViewportPoint' -and $guide -match 'Mathf\.Clamp') 'Admin guide overlay must clamp arrows to the visible screen edge for off-screen clues.'
+Assert-True ($guide -match 'Screen\.width' -and $guide -match 'Screen\.height') 'Admin guide overlay must use screen bounds so guide arrows remain visible.'
 Assert-True ($guide -match 'AdminGuideArrow_' -and $guide -match 'TextMeshProUGUI') 'Admin guide overlay must create visible arrow labels for each clue.'
-Assert-True ($guide -match 'Application\.isEditor' -and $guide -match 'EditorOnly') 'Admin guide overlay must be editor/admin-only, not player-facing.'
+Assert-True ($guide -notmatch 'Application\.isEditor') 'Admin guide overlay must not disappear outside the Unity editor when used for admin playtesting.'
 Assert-True ($guide -notmatch 'Time\.timeScale' -and $guide -notmatch 'CursorController') 'Admin guide overlay must not alter gameplay time or cursor behavior.'
 
 Assert-True ($scene -match 'm_Name:\s+Admin_ClueGuideOverlay') 'Scene_OperatingRoom must contain the admin clue guide overlay object.'
 Assert-True ($scene -match [regex]::Escape("guid: $guideGuid")) 'Scene_OperatingRoom must reference ClueAdminGuideOverlay.'
-Assert-True ($scene -match 'm_TagString:\s+EditorOnly') 'Admin clue guide overlay scene object must use the EditorOnly tag.'
+Assert-True ($scene -match 'm_TagString:\s+Untagged') 'Admin clue guide overlay scene object must remain loadable during admin playtesting.'
 
 Write-Host 'Clue admin guide checks passed.'
