@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "Clue_\uC9C4\uC138\uC6C5\uC77C\uAE30\uC7A5"
   m_EditorClassIdentifier: 
   clueID: clue_makeup_diary
-  clueName: "\uC9C4\uC138\uC6C5 \uC77C\uAE30\uC7A5"
-  description: "\uC77C\uAE30\uC7A5 \uC548\uCABD\uC5D0 \uB20C\uB9B0 \uAE00\uC528\uAC00 \uB0A0\uCE74\uB86D\uB2E4. \u201C\uC720\uC548\uB098\uAC00 \uBAA8\uB4E0 \uAC78 \uB9DD\uCCD0\uB1A8\uC5B4.\u201D"
-  meaning: "\uBCF5\uC218\uC758 \uBAA9\uC18C\uB9AC\uAC00 \uB354 \uC774\uC0C1 \uC18D\uC0AD\uC784\uC73C\uB85C \uC228\uC9C0 \uC54A\uB294\uB2E4."
+  clueName: "진세웅 일기장"
+  description: "2년을 기다렸다. 오늘이 마지막이다."
+  meaning: "수첩: 진세웅 — 계획적 범행 가능성. 사전 준비했다"
   areaName: DressingRoom
   category: 0
   isRequired: 1

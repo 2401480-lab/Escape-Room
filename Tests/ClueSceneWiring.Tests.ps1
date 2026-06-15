@@ -38,7 +38,7 @@ Assert-True ($sceneSetup -match 'MenuItem\("Tools/Room02/Clues/Setup Current Sta
 Assert-True ($sceneSetup -match 'MenuItem\("Tools/Room02/Clues/Restore All Clue Boxes"\)') 'Scene setup tool must expose an explicit restore-all-clues menu.'
 Assert-True ($sceneSetup -notmatch 'Place Single Test Clue' -and $sceneSetup -notmatch 'TestClueBox') 'Scene setup tool must not expose the old destructive single test clue menu.'
 Assert-True ($sceneSetup -match 'EditorApplication\.delayCall' -and $sceneSetup -match 'RepairOpenShowCluesIfNeeded') 'Scene setup tool must auto-repair an open Show scene that only has stale test clues.'
-Assert-True ($sceneSetup -match 'testClueCount\s*>\s*0' -and $sceneSetup -match 'realClueCount\s*<\s*31') 'Scene auto-repair must only run when stale test clues are present and real clues are missing.'
+Assert-True ($sceneSetup -match 'ExpectedStoryClueCount\s*=\s*15' -and $sceneSetup -match 'realClueCount\s*<\s*ExpectedStoryClueCount') 'Scene auto-repair must use the 15-clue story count.'
 Assert-True ($sceneSetup -notmatch 'SetupAllStageClues') 'Scene setup must not target removed split-scene setup flows.'
 Assert-True ($sceneSetup -match 'SetupShowSceneForBatch' -and $sceneSetup -match 'EditorSceneManager\.OpenScene' -and $sceneSetup -match 'EditorSceneManager\.SaveScene') 'Scene setup must expose an explicit batch method for applying and saving Show.'
 Assert-True ($sceneSetup -match 'GenerateStoryClueAssets\s*\(') 'Scene setup must generate missing ClueData assets before wiring scene objects.'
@@ -52,16 +52,17 @@ Assert-True ($sceneSetup -match 'ClueJournalManager' -and $sceneSetup -match 'Cl
 Assert-True ($interactable -match 'RegisterClueDefinition') 'ClueBoxInteractable must register its ClueData so the journal can show available clues.'
 Assert-True ($manager -notmatch 'DontDestroyOnLoad') 'ClueJournalManager must not use DontDestroyOnLoad in the single-scene flow.'
 
-$normalAssets = Get-ChildItem -LiteralPath $normalCluePath -Filter '*.asset' -File
-$keyAssets = Get-ChildItem -LiteralPath $keyCluePath -Filter '*.asset' -File
-Assert-True ($normalAssets.Count -eq 28) "Expected 28 generated normal clue assets, found $($normalAssets.Count)."
-Assert-True ($keyAssets.Count -eq 3) "Expected 3 generated key clue assets, found $($keyAssets.Count)."
+$storyEntriesMatch = [regex]::Match($assetGenerator, 'CurrentStoryEntries\s*=\s*new\[\]\s*\{(?<body>[\s\S]*?)\};', 'Singleline')
+Assert-True ($storyEntriesMatch.Success) 'Generator must expose CurrentStoryEntries.'
+$storyEntries = $storyEntriesMatch.Groups['body'].Value
+$storyEntryCount = ([regex]::Matches($storyEntries, 'new\s+ClueEntry\s*\(')).Count
+Assert-True ($storyEntryCount -eq 15) "Expected 15 generated story clue entries, found $storyEntryCount."
 
 $scene = Get-Content -LiteralPath $showScenePath -Raw -Encoding UTF8
 $wiredClueCount = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*11400000')).Count
 $emptyClueRefs = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*0\}')).Count
 $testClueCount = ([regex]::Matches($scene, 'm_Name:\s+TestClue')).Count
-Assert-True ($wiredClueCount -eq 31) "Show must contain all 31 wired clue boxes, found $wiredClueCount."
+Assert-True ($wiredClueCount -eq 15) "Show must contain all 15 wired clue boxes, found $wiredClueCount."
 Assert-True ($emptyClueRefs -eq 0) "Show must not contain clue objects with empty clueData references, found $emptyClueRefs."
 Assert-True ($testClueCount -eq 0) "Show must not contain temporary TestClue objects, found $testClueCount."
 

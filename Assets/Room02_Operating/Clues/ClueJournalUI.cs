@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -18,14 +19,19 @@ namespace EscapeRoom
         [SerializeField] private GameObject suspectTabRoot;
         [SerializeField] private RectTransform suspectContent;
 
+        private const string NotebookPrefix = "수첩:";
+        private const string CommonTarget = "공통";
+        private const string CommonNotebookName = "사건 공통";
+
         private readonly Dictionary<ClueData, RectTransform> clueCards = new Dictionary<ClueData, RectTransform>();
         private readonly List<PersonInfo> people = new List<PersonInfo>
         {
-            new PersonInfo("유안나", "피해자", "이번 사건의 피해자. 하시호의 죽음에 대해 무언가를 알고 있었다."),
-            new PersonInfo("진세웅", "용의자", "하시호의 절친한 친구. 당일 혼자 1시간 일찍 도착했다."),
-            new PersonInfo("봉태현", "용의자", "하시호 수술 당시 담당의. 의료 과실 의혹을 받고 있다."),
-            new PersonInfo("문수미", "용의자", "진세웅과 가까운 사이. 그의 계획을 눈치챘으나 말리지 못했다."),
-            new PersonInfo("하시호", "고인", "2년 전 이 병원 수술실에서 사망. 유서에 \"살해당한 것\"이라 적혀 있었다.")
+            new PersonInfo("유안나", "피해자", "수술실에서 독살된 동아리 부원. 하시호의 죽음과 연결되어 있다."),
+            new PersonInfo("진세웅", "용의자", "하시호의 복수를 위해 행사를 설계한 인물. 진범."),
+            new PersonInfo("봉태현", "용의자", "하시호 담당의였던 인물. 초반 의심을 받지만 수술실 입장을 양보했다."),
+            new PersonInfo("문수미", "용의자", "진세웅의 이상한 낌새를 눈치챈 인물."),
+            new PersonInfo("하시호", "고인", "한 달 전 사망한 동아리 부원. 사건의 발단."),
+            new PersonInfo(CommonNotebookName, CommonTarget, "인물 하나로 묶이지 않는 사건의 공통 단서.")
         };
 
         private void Awake()
@@ -186,7 +192,7 @@ namespace EscapeRoom
             buttonBar.anchorMax = new Vector2(0f, 1f);
             buttonBar.pivot = new Vector2(0f, 1f);
             buttonBar.anchoredPosition = new Vector2(24f, -24f);
-            buttonBar.sizeDelta = new Vector2(280f, 44f);
+            buttonBar.sizeDelta = new Vector2(300f, 44f);
 
             HorizontalLayoutGroup layout = buttonBar.gameObject.AddComponent<HorizontalLayoutGroup>();
             layout.childControlWidth = false;
@@ -212,7 +218,7 @@ namespace EscapeRoom
             titleRect.offsetMin = new Vector2(32f, -74f);
             titleRect.offsetMax = new Vector2(-32f, -24f);
 
-            progressText = CreateText("ProgressText", parent, "남은 흔적 0 / 0", 20f, TextAlignmentOptions.Right);
+            progressText = CreateText("ProgressText", parent, "수집 단서 0 / 0", 20f, TextAlignmentOptions.Right);
             progressText.color = HorrorUITheme.TextDim;
             RectTransform progressRect = progressText.rectTransform;
             progressRect.anchorMin = new Vector2(0f, 1f);
@@ -335,6 +341,7 @@ namespace EscapeRoom
 
             BuildEvidenceChips();
             BuildEvidenceCards();
+            BuildSuspectCards();
         }
 
         private void BuildEvidenceChips()
@@ -357,7 +364,7 @@ namespace EscapeRoom
             IReadOnlyList<ClueData> allClues = journalManager.AllClues;
             int totalCount = allClues.Count;
             int collectedCount = journalManager.CollectedClues.Count;
-            progressText.text = $"남은 흔적 {collectedCount} / {totalCount}";
+            progressText.text = $"수집 단서 {collectedCount} / {totalCount}";
 
             Dictionary<string, List<ClueData>> grouped = new Dictionary<string, List<ClueData>>();
             List<ClueData> keyClueSection = new List<ClueData>();
@@ -369,7 +376,7 @@ namespace EscapeRoom
                     continue;
                 }
 
-                string area = string.IsNullOrWhiteSpace(clueData.areaName) ? "미지의 구역" : clueData.areaName;
+                string area = GetAreaDisplayName(clueData.areaName);
                 if (!grouped.ContainsKey(area))
                 {
                     grouped.Add(area, new List<ClueData>());
@@ -431,19 +438,23 @@ namespace EscapeRoom
             TextMeshProUGUI nameText = CreateText("ClueName", card, clueData.clueName, 22f, TextAlignmentOptions.Left);
             nameText.color = HorrorUITheme.BloodRed;
             CreateText("ClueDescription", card, clueData.description, 18f, TextAlignmentOptions.Left);
-            TextMeshProUGUI meaningText = CreateText("ClueMeaning", card, $"의미: {clueData.meaning}", 18f, TextAlignmentOptions.Left);
+            TextMeshProUGUI meaningText = CreateText("ClueMeaning", card, $"힌트: {GetNotebookHintText(clueData)}", 18f, TextAlignmentOptions.Left);
             meaningText.color = HorrorUITheme.SickYellow;
         }
 
         private void BuildSuspectCards()
         {
             ClearChildren(suspectContent);
+            if (suspectContent == null || journalManager == null)
+            {
+                return;
+            }
 
             foreach (PersonInfo person in people)
             {
                 RectTransform card = CreatePanel($"Person_{person.name}", suspectContent, GetRoleColor(person.role));
                 LayoutElement element = card.gameObject.AddComponent<LayoutElement>();
-                element.preferredHeight = 110f;
+                element.preferredHeight = 150f;
 
                 VerticalLayoutGroup layout = card.gameObject.AddComponent<VerticalLayoutGroup>();
                 layout.padding = new RectOffset(16, 16, 12, 12);
@@ -454,7 +465,106 @@ namespace EscapeRoom
 
                 CreateText("PersonName", card, $"{person.name} / {person.role}", 22f, TextAlignmentOptions.Left);
                 CreateText("PersonDescription", card, person.description, 18f, TextAlignmentOptions.Left);
+
+                TextMeshProUGUI hintHeader = CreateText("SuspectHintHeader", card, "수집된 단서 힌트", 18f, TextAlignmentOptions.Left);
+                hintHeader.color = HorrorUITheme.SickYellow;
+
+                List<string> hints = GetCollectedHintsForPerson(person);
+                if (hints.Count == 0)
+                {
+                    TextMeshProUGUI empty = CreateText("SuspectHintEmpty", card, "아직 확인된 힌트 없음", 17f, TextAlignmentOptions.Left);
+                    empty.color = HorrorUITheme.TextDim;
+                    continue;
+                }
+
+                foreach (string hint in hints)
+                {
+                    CreateText("SuspectHint", card, $"- {hint}", 17f, TextAlignmentOptions.Left);
+                }
             }
+        }
+
+        private List<string> GetCollectedHintsForPerson(PersonInfo person)
+        {
+            List<string> hints = new List<string>();
+            foreach (ClueData clueData in journalManager.CollectedClues)
+            {
+                if (!TryParseNotebookHint(clueData, out List<string> targets, out string hint))
+                {
+                    continue;
+                }
+
+                if (TargetsPerson(targets, person))
+                {
+                    hints.Add($"{clueData.clueName}: {hint}");
+                }
+            }
+
+            return hints;
+        }
+
+        private static bool TryParseNotebookHint(ClueData clueData, out List<string> targets, out string hint)
+        {
+            targets = new List<string>();
+            hint = string.Empty;
+            if (clueData == null || string.IsNullOrWhiteSpace(clueData.meaning))
+            {
+                return false;
+            }
+
+            string meaning = clueData.meaning.Trim();
+            if (!meaning.StartsWith(NotebookPrefix, StringComparison.Ordinal))
+            {
+                hint = meaning;
+                targets.Add(CommonTarget);
+                return true;
+            }
+
+            string body = meaning.Substring(NotebookPrefix.Length).Trim();
+            int separator = body.IndexOf('—');
+            if (separator < 0)
+            {
+                targets.Add(CommonTarget);
+                hint = body;
+                return !string.IsNullOrWhiteSpace(hint);
+            }
+
+            string targetText = body.Substring(0, separator).Trim();
+            hint = body.Substring(separator + 1).Trim();
+            foreach (string target in targetText.Split(new[] { '/', ',', '·' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                targets.Add(target.Trim());
+            }
+
+            if (targets.Count == 0)
+            {
+                targets.Add(CommonTarget);
+            }
+
+            return !string.IsNullOrWhiteSpace(hint);
+        }
+
+        private static bool TargetsPerson(List<string> targets, PersonInfo person)
+        {
+            foreach (string target in targets)
+            {
+                if (target == CommonTarget && person.name == CommonNotebookName)
+                {
+                    return true;
+                }
+
+                if (target == person.name)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static string GetNotebookHintText(ClueData clueData)
+        {
+            return TryParseNotebookHint(clueData, out _, out string hint) ? hint : clueData.meaning;
         }
 
         private void ShowEvidenceTab()
@@ -549,6 +659,25 @@ namespace EscapeRoom
             return button;
         }
 
+        private static string GetAreaDisplayName(string areaName)
+        {
+            switch (areaName)
+            {
+                case "Hallway":
+                    return "복도";
+                case "Ward":
+                    return "병실";
+                case "Storage":
+                    return "보관실";
+                case "DressingRoom":
+                    return "분장실";
+                case "OperatingRoom":
+                    return "수술실";
+                default:
+                    return string.IsNullOrWhiteSpace(areaName) ? "미확인 구역" : areaName;
+            }
+        }
+
         private static Color GetRoleColor(string role)
         {
             switch (role)
@@ -559,6 +688,8 @@ namespace EscapeRoom
                     return new Color(0.25f, 0.2f, 0.08f, 0.95f);
                 case "고인":
                     return new Color(0.13f, 0.13f, 0.18f, 0.95f);
+                case CommonTarget:
+                    return new Color(0.12f, 0.16f, 0.16f, 0.95f);
                 default:
                     return new Color(0.15f, 0.15f, 0.16f, 0.95f);
             }

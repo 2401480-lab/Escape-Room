@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "KeyClue_\uC628\uB3C4\uACBD\uACE0\uC2A4\uD2F0\uCEE4"
   m_EditorClassIdentifier: 
   clueID: key_clue_temperature_warning
-  clueName: "\uC628\uB3C4 \uACBD\uACE0 \uC2A4\uD2F0\uCEE4"
-  description: "4\uB3C4 \uC774\uD558 \uBCF4\uAD00 \uACBD\uACE0\uBB38\uC774 \uC11C\uB298\uD558\uAC8C \uBD99\uC5B4 \uC788\uB2E4. \uAC00\uC7A5\uC790\uB9AC\uC5D0\uB294 \uC131\uC5D0 \uAC19\uC740 \uC5BC\uB8E9\uC774 \uB9D0\uB77C \uC788\uB2E4."
-  meaning: "\uCC28\uAC00\uC6B4 \uC57D\uD488\uD568\uC774 \uB2E4\uC74C \uC228\uC740 \uC7A5\uC18C\uB2E4."
+  clueName: "냉장 약품함"
+  description: "온도 경고 스티커. 문 모서리에 긁힌 자국이 있다."
+  meaning: "수첩: 공통 — 열쇠 힌트 2. 누군가 최근에 열었다"
   areaName: Storage
   category: 1
   isRequired: 1

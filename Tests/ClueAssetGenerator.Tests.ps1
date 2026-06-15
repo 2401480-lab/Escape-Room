@@ -28,8 +28,8 @@ Assert-True ($generator -notmatch $legacyPathText -and $generator -notmatch 'Cre
 Assert-True ($generator -match 'MenuItem\("Tools/Room02/Clues/Generate Story Clue Assets"\)') 'Generator must expose the requested editor menu.'
 Assert-True ($generator -notmatch 'new\s+GameObject') 'Generator must not create scene objects.'
 
-$mainEntriesMatch = [regex]::Match($generator, 'internal\s+static\s+ClueEntry\[\]\s+GetEntries\s*\(\s*\).*?internal\s+static\s+ClueEntry\[\]\s+GetPart1Entries', 'Singleline')
-Assert-True ($mainEntriesMatch.Success) 'Generator must keep the main story entries separate from Part1 entries.'
+$mainEntriesMatch = [regex]::Match($generator, 'CurrentStoryEntries\s*=\s*new\[\]\s*\{(?<body>[\s\S]*?)\};', 'Singleline')
+Assert-True ($mainEntriesMatch.Success) 'Generator must keep the 15-clue story entries separate from legacy part entries.'
 $mainEntriesSource = $mainEntriesMatch.Value
 
 $entries = [regex]::Matches($mainEntriesSource, 'new\s+ClueEntry\s*\(')
@@ -39,27 +39,30 @@ $requiredTrue = [regex]::Matches($mainEntriesSource, 'isRequired:\s*true')
 $normalFileNames = [regex]::Matches($mainEntriesSource, '"Clue_[^"]+"')
 $keyFileNames = [regex]::Matches($mainEntriesSource, '"KeyClue_[^"]+"')
 
-Assert-True ($entries.Count -eq 31) "Generator must define 31 clue entries, found $($entries.Count)."
-Assert-True ($normalEntries.Count -eq 28) "Generator must define 28 normal clues, found $($normalEntries.Count)."
+Assert-True ($entries.Count -eq 15) "Generator must define 15 clue entries, found $($entries.Count)."
+Assert-True ($normalEntries.Count -eq 12) "Generator must define 12 normal clues, found $($normalEntries.Count)."
 Assert-True ($keyEntries.Count -eq 3) "Generator must define 3 key clues, found $($keyEntries.Count)."
-Assert-True ($requiredTrue.Count -eq 8) "Generator must mark 8 required clues, found $($requiredTrue.Count)."
-Assert-True ($normalFileNames.Count -ge 28) 'Generator must include Clue_ filenames for normal clues.'
+Assert-True ($requiredTrue.Count -eq 15) "Generator must mark all 15 story clues required, found $($requiredTrue.Count)."
+Assert-True ($normalFileNames.Count -ge 12) 'Generator must include Clue_ filenames for normal clues.'
 Assert-True ($keyFileNames.Count -ge 3) 'Generator must include KeyClue_ filenames for key clues.'
 
-foreach ($zone in @('Lobby', 'Hallway', 'Ward', 'Storage', 'DressingRoom', 'OperatingRoom')) {
+foreach ($zone in @('Hallway', 'Ward', 'Storage', 'DressingRoom', 'OperatingRoom')) {
     Assert-True ($generator.Contains($zone)) "Generator missing zone: $zone"
 }
 
 foreach ($id in @(
     'normal_cast_notice',
     'normal_memorial_frame',
-    'normal_security_log',
-    'normal_production_plan',
+    'normal_conversation_memo',
+    'normal_medical_certificate',
+    'normal_ward_calendar',
     'clue_hasho_will',
-    'normal_jin_sneakers',
-    'normal_paint_footprints',
+    'normal_bong_rebuttal',
+    'normal_makeup_toolbox',
+    'normal_sumi_memo',
     'clue_makeup_diary',
     'normal_under_table_space',
+    'normal_mirror_message',
     'key_clue_coldest_place',
     'key_clue_temperature_warning',
     'key_clue_fridge_scratches'

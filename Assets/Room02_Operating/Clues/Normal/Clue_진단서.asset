@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "Clue_\uC9C4\uB2E8\uC11C"
   m_EditorClassIdentifier: 
   clueID: normal_medical_certificate
-  clueName: "\uC9C4\uB2E8\uC11C"
-  description: "\uB2F4\uB2F9\uC758 \uBD09\uD0DC\uD604\uC758 \uC774\uB984 \uC704\uB85C \uC789\uD06C\uAC00 \uCC3D\uBC31\uD558\uAC8C \uBC88\uC838 \uC788\uB2E4. \uC0AC\uC778\uC740 \uC218\uC220 \uC911 \uC2EC\uC815\uC9C0."
-  meaning: "\uBD09\uD0DC\uD604 \uCABD\uC73C\uB85C \uD53C \uBB3B\uC740 \uC190\uAC00\uB77D\uC774 \uD5A5\uD558\uC9C0\uB9CC, \uB108\uBB34 \uAE54\uB054\uD574\uC11C \uB354 \uC218\uC0C1\uD558\uB2E4."
+  clueName: "하시호 진단서"
+  description: "말기 진단. 담당의: 봉태현."
+  meaning: "수첩: 봉태현 — 하시호 담당의였다. 의료 과실 가능성?"
   areaName: Ward
   category: 0
-  isRequired: 0
+  isRequired: 1

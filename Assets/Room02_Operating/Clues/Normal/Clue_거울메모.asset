@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "Clue_\uAC70\uC6B8\uBA54\uBAA8"
   m_EditorClassIdentifier: 
   clueID: normal_mirror_message
-  clueName: "\uAC70\uC6B8 \uBA54\uBAA8"
-  description: "\uB9BD\uC2A4\uD2F1 \uAE00\uC790\uAC00 \uD53C\uCC98\uB7FC \uBC88\uC838 \uC788\uB2E4. \u201C\uBD10, \uACB0\uAD6D \uB124 \uCC28\uB840\uC57C \u2014 \uC138\uC6C5.\u201D"
-  meaning: "\uC720\uC548\uB098\uC758 \uC774\uB984 \uB4A4\uB85C \uC138\uC6C5\uC758 \uC228\uC18C\uB9AC\uAC00 \uBD99\uC5B4 \uC788\uB2E4."
-  areaName: DressingRoom
+  clueName: "벽 메모"
+  description: "하시호를 위해서. 미안해, 안나. 쓰레기통 메모와 같은 필체다."
+  meaning: "수첩: 진세웅 — 쓰레기통 메모 필체와 일치. 범인은 진세웅"
+  areaName: OperatingRoom
   category: 0
-  isRequired: 0
+  isRequired: 1

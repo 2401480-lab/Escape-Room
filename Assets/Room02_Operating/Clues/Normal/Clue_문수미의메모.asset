@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "Clue_\uBB38\uC218\uBBF8\uC758\uBA54\uBAA8"
   m_EditorClassIdentifier: 
   clueID: normal_sumi_memo
-  clueName: "\uBB38\uC218\uBBF8\uC758 \uBA54\uBAA8"
-  description: "\uAE00\uC528 \uB05D\uC774 \uB5A8\uB9B0\uB2E4. \u201C\uC138\uC6C5\uC774\uAC00 \uC774\uC0C1\uD574. \uBB54\uAC00 \uACC4\uD68D\uD558\uACE0 \uC788\uB294 \uAC83 \uAC19\uC544.\u201D"
-  meaning: "\uAC00\uAE4C\uC6B4 \uC0AC\uB78C\uB3C4 \uADF8\uC758 \uC18D\uC0AD\uC784\uC744 \uB4E4\uC740 \uAC83\uCC98\uB7FC \uBD88\uC548\uC744 \uB0A8\uACBC\uB2E4."
-  areaName: Hallway
+  clueName: "문수미 일기장"
+  description: "안나가 하시호한테 그런 짓을 했다면, 진세웅 오빠가 절대 가만있지 않을 것 같다."
+  meaning: "수첩: 진세웅 — 유안나에 대한 원한의 주체로 지목됨"
+  areaName: DressingRoom
   category: 0
-  isRequired: 0
+  isRequired: 1

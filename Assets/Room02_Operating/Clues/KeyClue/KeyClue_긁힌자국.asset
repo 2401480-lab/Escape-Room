@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "KeyClue_\uAE01\uD78C\uC790\uAD6D"
   m_EditorClassIdentifier: 
   clueID: key_clue_fridge_scratches
-  clueName: "\uAE01\uD78C \uC790\uAD6D"
-  description: "\uB0C9\uC7A5 \uC57D\uD488\uD568 \uBB38 \uD45C\uBA74\uC5D0 \uAE01\uD78C \uC120\uC774 \uBE7D\uBE7D\uD558\uB2E4. \uC548\uCABD\uC5D0\uC11C \uB204\uAC00 \uB098\uAC00\uB824 \uD55C \uAC83\uCC98\uB7FC \uBCF4\uC778\uB2E4."
-  meaning: "\uC5F4\uC1E0\uAC00 \uC548\uCABD\uC5D0\uC11C \uCC28\uAC11\uAC8C \uC7A0\uB4E4\uC5B4 \uC788\uB2E4."
+  clueName: "냉장 약품함 내부"
+  description: "열쇠가 들어있다. 차갑다."
+  meaning: "수첩: 공통 — 탈출 열쇠 획득"
   areaName: Storage
   category: 1
   isRequired: 1

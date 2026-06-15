@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "Clue_\uD558\uC2DC\uD638\uC720\uC11C"
   m_EditorClassIdentifier: 
   clueID: clue_hasho_will
-  clueName: "\uD558\uC2DC\uD638 \uC720\uC11C"
-  description: "\uBB38\uC7A5 \uC0AC\uC774\uB9C8\uB2E4 \uC228\uC774 \uB04A\uAE34 \uB4EF\uD558\uB2E4. \u201C\uB0B4 \uC8FD\uC74C\uC740 \uC758\uB8CC \uACFC\uC2E4\uC774 \uC544\uB2C8\uC57C. \uB098\uB294 \uC0B4\uD574\uB2F9\uD55C \uAC70\uC57C.\u201D"
-  meaning: "\uC774 \uBC29\uC740 \uC0AC\uACE0\uAC00 \uC544\uB2C8\uB77C \uC0B4\uC778\uC758 \uB0C4\uC0C8\uB97C \uB0B8\uB2E4."
+  clueName: "하시호 유서 사본"
+  description: "살 이유를 잃었다. 안나가 그걸 빼앗아 갔다."
+  meaning: "수첩: 공통 — 유안나가 하시호의 죽음과 연관되어 있다"
   areaName: Ward
   category: 0
   isRequired: 1

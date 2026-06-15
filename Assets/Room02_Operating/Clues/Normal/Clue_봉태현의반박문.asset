@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "Clue_\uBD09\uD0DC\uD604\uC758\uBC18\uBC15\uBB38"
   m_EditorClassIdentifier: 
   clueID: normal_bong_rebuttal
-  clueName: "\uBD09\uD0DC\uD604\uC758 \uBC18\uBC15\uBB38"
-  description: "\uC885\uC774 \uBAA8\uC11C\uB9AC\uAC00 \uB5A8\uB9AC\uACE0 \uAD6C\uACA8\uC838 \uC788\uB2E4. \u201C\uB098\uB294 \uCD5C\uC120\uC744 \uB2E4\uD588\uB2E4. \uC8FD\uC74C\uC740 \uBD88\uAC00\uD56D\uB825\uC774\uC5C8\uB2E4.\u201D"
-  meaning: "\uADF8\uC758 \uBCC0\uBA85 \uC0AC\uC774\uB85C \uB2E4\uB978 \uBC1C\uC18C\uB9AC\uAC00 \uC11C\uB298\uD558\uAC8C \uC2A4\uCE5C\uB2E4."
-  areaName: Ward
+  clueName: "봉태현 메모"
+  description: "세웅아 내가 먼저 수술실 들어갈게. / 답: 괜찮아, 내가 할게."
+  meaning: "수첩: 봉태현 — 수술실 입장을 진세웅에게 양보했다. 봉태현은 안에 없었다?"
+  areaName: Storage
   category: 0
-  isRequired: 0
+  isRequired: 1

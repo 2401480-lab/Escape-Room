@@ -21,6 +21,9 @@ namespace EscapeRoom
         [SerializeField] private string keyClueBID = "key_clue_temperature_warning";
         [SerializeField] private string keyClueCID = "key_clue_fridge_scratches";
 
+        [Header("범인 선택 조건")]
+        [SerializeField] private int requiredClueCount = 15;
+
         [Header("타이머")]
         [SerializeField] private bool useDeductionTimer = true;
         [SerializeField] private float deductionTimer = 1200f;
@@ -39,6 +42,7 @@ namespace EscapeRoom
 
         public StoryPhase CurrentPhase => currentPhase;
         public bool HasEscapeKey => hasEscapeKey;
+        public bool HasAllStoryClues => collectedClueIDs.Count >= requiredClueCount;
         public float DeductionTimeRemaining => deductionTimeRemaining;
         public bool IsChaseTimerActive => currentPhase == StoryPhase.ChaseEscape;
         public float CurrentTimerRemaining => IsChaseTimerActive && chaseController != null
@@ -120,13 +124,17 @@ namespace EscapeRoom
             }
 
             hasEscapeKey = true;
-            SetPhase(StoryPhase.SuspectSelection);
+            if (HasAllStoryClues)
+            {
+                SetPhase(StoryPhase.SuspectSelection);
+            }
+
             OnEscapeKeyCollected?.Invoke();
         }
 
         public void BeginSuspectSelection()
         {
-            if (hasEscapeKey)
+            if (hasEscapeKey && HasAllStoryClues)
             {
                 SetPhase(StoryPhase.SuspectSelection);
             }
@@ -179,6 +187,11 @@ namespace EscapeRoom
             if (HasAllKeyClues())
             {
                 OnEscapeKeyReady?.Invoke();
+            }
+
+            if (hasEscapeKey && HasAllStoryClues)
+            {
+                SetPhase(StoryPhase.SuspectSelection);
             }
         }
 

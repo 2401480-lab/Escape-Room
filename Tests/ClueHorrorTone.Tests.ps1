@@ -55,21 +55,40 @@ foreach ($word in $horrorWords) {
 
 Assert-True ($generatorHits -ge 25) "Clue generator should carry a stronger horror tone; found only $generatorHits horror-word hits."
 
+$activeClueIDs = @(
+    'normal_cast_notice',
+    'normal_memorial_frame',
+    'normal_conversation_memo',
+    'normal_medical_certificate',
+    'normal_ward_calendar',
+    'clue_hasho_will',
+    'key_clue_coldest_place',
+    'key_clue_temperature_warning',
+    'normal_bong_rebuttal',
+    'key_clue_fridge_scratches',
+    'normal_makeup_toolbox',
+    'normal_sumi_memo',
+    'clue_makeup_diary',
+    'normal_under_table_space',
+    'normal_mirror_message'
+)
 $assetFiles = @(Get-ChildItem -LiteralPath $normalCluePath -Filter '*.asset' -File) + @(Get-ChildItem -LiteralPath $keyCluePath -Filter '*.asset' -File)
-Assert-True ($assetFiles.Count -eq 31) "Expected 31 clue assets, found $($assetFiles.Count)."
+$activeAssets = @()
+foreach ($id in $activeClueIDs) {
+    $assetFile = $assetFiles | Where-Object {
+        (Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8) -match "clueID:\s+$id(\r?\n|$)"
+    } | Select-Object -First 1
+    Assert-True ($null -ne $assetFile) "Missing active clue asset for clueID: $id"
+    $activeAssets += $assetFile
+}
 
-foreach ($assetFile in $assetFiles) {
+$notebookPrefix = U 0xC218,0xCCA9,0x003A
+Assert-True ($activeAssets.Count -eq 15) "Expected 15 active clue assets, found $($activeAssets.Count)."
+
+foreach ($assetFile in $activeAssets) {
     $assetText = Get-Content -LiteralPath $assetFile.FullName -Raw -Encoding UTF8
     $assetDecoded = [regex]::Unescape($assetText)
-    $hasAtmosphere = $false
-    foreach ($word in $horrorWords) {
-        if ($assetDecoded.Contains($word)) {
-            $hasAtmosphere = $true
-            break
-        }
-    }
-
-    Assert-True $hasAtmosphere "Clue asset needs a more horror-like hint: $($assetFile.Name)"
+    Assert-True ($assetDecoded.Contains($notebookPrefix)) "Active clue asset must include a notebook hint: $($assetFile.Name)"
 }
 
 Write-Host 'Clue horror tone checks passed.'

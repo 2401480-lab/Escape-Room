@@ -56,7 +56,7 @@ $cluesRoot = Get-NamedPosition $scene 'Clues'
 Assert-True ([math]::Abs($cluesRoot.X) -lt 0.001 -and [math]::Abs($cluesRoot.Y) -lt 0.001 -and [math]::Abs($cluesRoot.Z) -lt 0.001) 'Clues root must stay at world origin so clue local positions match room coordinates.'
 
 $clueMatches = [regex]::Matches($scene, 'm_Name:\s+(Clue_[^\r\n]+).*?--- !u!4 &\d+\s*\r?\nTransform:.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}', 'Singleline')
-Assert-True ($clueMatches.Count -eq 31) "Expected 31 clue transforms, found $($clueMatches.Count)."
+Assert-True ($clueMatches.Count -eq 15) "Expected 15 clue transforms, found $($clueMatches.Count)."
 
 $camera = Get-NamedPosition $scene 'Main Camera'
 $uniquePositions = @{}
@@ -79,29 +79,25 @@ foreach ($match in $clueMatches) {
     Assert-True ($y -ge 0.3 -and $y -le 1.1) "$name must sit near floor height; found y=$y."
 }
 
-Assert-True ($uniquePositions.Count -eq 31) "All 31 clues must be individually visible, not stacked; found only $($uniquePositions.Count) unique positions."
+Assert-True ($uniquePositions.Count -eq 15) "All 15 clues must be individually visible, not stacked; found only $($uniquePositions.Count) unique positions."
 
-foreach ($name in @('Clue_normal_cast_notice', 'Clue_normal_production_plan', 'Clue_normal_memorial_frame', 'Clue_normal_conversation_memo', 'Clue_clue_hasho_will')) {
-    Assert-InRoom $positions[$name] 'Lobby/notice room' -2.5 3.5 -5.5 -1.0
+foreach ($name in @('Clue_normal_cast_notice', 'Clue_normal_memorial_frame', 'Clue_normal_conversation_memo')) {
+    Assert-InRoom $positions[$name] 'Corridor room' -16.0 -6.0 -25.0 -18.0
 }
 
-foreach ($name in @('Clue_normal_security_log', 'Clue_normal_cctv_notice', 'Clue_normal_deleted_entry_trace', 'Clue_normal_hidden_camera', 'Clue_normal_torn_letter_a', 'Clue_normal_torn_letter_b')) {
-    Assert-InRoom $positions[$name] 'Corridor/security room' -16.0 -6.0 -25.0 -18.0
-}
-
-foreach ($name in @('Clue_normal_ward_calendar', 'Clue_normal_medical_certificate', 'Clue_normal_poison_ampoule', 'Clue_normal_nurse_inventory_log', 'Clue_normal_under_table_space', 'Clue_normal_yoanna_relic')) {
+foreach ($name in @('Clue_normal_ward_calendar', 'Clue_normal_medical_certificate', 'Clue_clue_hasho_will', 'Clue_key_clue_coldest_place')) {
     Assert-InRoom $positions[$name] 'Ward room' -39.0 -28.0 -29.0 -20.0
 }
 
-foreach ($name in @('Clue_key_clue_coldest_place', 'Clue_normal_gloves', 'Clue_key_clue_fridge_scratches', 'Clue_key_clue_temperature_warning', 'Clue_normal_locker_document')) {
+foreach ($name in @('Clue_key_clue_temperature_warning', 'Clue_normal_bong_rebuttal', 'Clue_key_clue_fridge_scratches')) {
     Assert-InRoom $positions[$name] 'Storage/cold room' 9.0 17.5 -18.5 -10.0
 }
 
-foreach ($name in @('Clue_normal_mirror_message', 'Clue_normal_paint_footprints', 'Clue_normal_makeup_toolbox', 'Clue_clue_makeup_diary', 'Clue_normal_jin_sneakers')) {
+foreach ($name in @('Clue_normal_makeup_toolbox', 'Clue_normal_sumi_memo', 'Clue_clue_makeup_diary')) {
     Assert-InRoom $positions[$name] 'Dressing room' -16.0 -6.0 -14.0 -6.0
 }
 
-foreach ($name in @('Clue_normal_yoanna_memo', 'Clue_normal_sumi_memo', 'Clue_normal_bong_rebuttal', 'Clue_normal_oh_threat_memo')) {
+foreach ($name in @('Clue_normal_under_table_space', 'Clue_normal_mirror_message')) {
     Assert-InRoom $positions[$name] 'Operating room' 5.0 15.5 -28.5 -20.0
 }
 
