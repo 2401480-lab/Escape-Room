@@ -381,3 +381,8 @@
 - feature/room1의 온보딩 화면에서 Show 씬으로 이동하는 연결 변경만 plus_young 브랜치에 반영
 - Assets/Onboarding.unity와 Assets/_Shared/Scripts/OnboardingUI.cs의 roomSceneName 값을 Show 기준으로 유지
 - Room02_Operating, 방 씬, 단서 및 용의자 수첩 관련 변경은 병합 대상에서 제외
+
+### [2026-06-15 22:03:34]
+- 빌드 시작 씬 목록에서 Assets/Onboarding.unity를 첫 번째로 배치해 게임 시작 페이지가 먼저 열리도록 수정
+- Unity 에디터 Play 버튼도 온보딩 씬에서 시작하도록 OnboardingPlayModeStartScene 에디터 헬퍼 추가
+- 온보딩 시작 씬 설정과 Show 연결을 검증하는 테스트 추가
