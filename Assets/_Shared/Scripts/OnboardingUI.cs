@@ -8,7 +8,7 @@ namespace EscapeGame
     public class OnboardingUI : MonoBehaviour
     {
         [Header("Scene")]
-        [SerializeField] private string roomSceneName = "Scene_OperatingRoom";
+        [SerializeField] private string roomSceneName = "Show";
 
         [Header("Main Menu")]
         [SerializeField] private TextMeshProUGUI titleText;

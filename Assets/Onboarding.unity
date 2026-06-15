@@ -2097,7 +2097,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d10c6540abc16d64fa1bc84d678a69e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomSceneName: Scene_OperatingRoom
+  roomSceneName: Show
   titleText: {fileID: 1382737533}
   directStartButton: {fileID: 497016444}
   descriptionButton: {fileID: 296320655}
