@@ -370,6 +370,7 @@ namespace EscapeRoom
             tmp.fontSize = fontSize;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = Color.white;
+            FontHelper.Apply(tmp);
             return tmp;
         }
     }

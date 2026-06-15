@@ -137,6 +137,7 @@ namespace EscapeRoom
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.color = Color.white;
             tmp.enableWordWrapping = true;
+            FontHelper.Apply(tmp);
             return tmp;
         }
     }
