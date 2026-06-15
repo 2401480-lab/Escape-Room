@@ -22,6 +22,11 @@ namespace EscapeRoom.Editor
         private const string CulpritPrefabPath = "Assets/Room02_Operating/Models/char_shadow.fbx";
         private const string CulpritObjectName = "Culprit_StartPosition";
         private const string OperatingRoomScenePath = "Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity";
+        private const int VisibleClueColumns = 8;
+        private const float VisibleClueDistanceFromCamera = 5.0f;
+        private const float VisibleClueSpacingX = 0.7f;
+        private const float VisibleClueSpacingY = 0.55f;
+        private const float VisibleClueFirstRowYOffset = -0.45f;
 
         [MenuItem("Tools/Room02/Clues/Place Single Test Clue Box")]
         public static void PlaceSingleTestClueBox()
@@ -267,7 +272,7 @@ namespace EscapeRoom.Editor
                 clueObject = existing.gameObject;
             }
 
-            clueObject.transform.position = GetVisibleClueStackWorldPosition();
+            clueObject.transform.position = GetCameraVisibleClueWorldPosition(index);
             clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
@@ -345,22 +350,71 @@ namespace EscapeRoom.Editor
                 Undo.RegisterCreatedObjectUndo(culprit, $"Create {CulpritObjectName}");
             }
 
-            Vector3 stackPosition = GetVisibleClueStackWorldPosition();
-            culprit.transform.position = new Vector3(stackPosition.x, 0f, stackPosition.z);
-            culprit.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            culprit.transform.position = GetCameraVisibleCulpritWorldPosition();
+            Vector3 lookDirection = GetPlacementCameraPosition() - culprit.transform.position;
+            lookDirection.y = 0f;
+            culprit.transform.rotation = lookDirection.sqrMagnitude > 0.001f
+                ? Quaternion.LookRotation(lookDirection)
+                : Quaternion.Euler(0f, 180f, 0f);
             culprit.transform.localScale = Vector3.one;
             EditorUtility.SetDirty(culprit);
         }
 
-        private static Vector3 GetVisibleClueStackWorldPosition()
+        private static Vector3 GetCameraVisibleClueWorldPosition(int index)
         {
-            return GetStartWorldPosition() + new Vector3(-1.5f, 1.1f, -1.5f);
+            int column = index % VisibleClueColumns;
+            int row = index / VisibleClueColumns;
+            float xOffset = (column - ((VisibleClueColumns - 1) * 0.5f)) * VisibleClueSpacingX;
+            float yOffset = VisibleClueFirstRowYOffset + (row * VisibleClueSpacingY);
+            return GetPlacementCameraPosition()
+                + (GetPlacementCameraForward() * VisibleClueDistanceFromCamera)
+                + (GetPlacementCameraRight() * xOffset)
+                + (GetPlacementCameraUp() * yOffset);
         }
 
-        private static Vector3 GetStartWorldPosition()
+        private static Vector3 GetCameraVisibleCulpritWorldPosition()
         {
-            GameObject playerStart = GameObject.Find("PlayerStart");
-            return playerStart != null ? playerStart.transform.position : new Vector3(0f, 0f, -4f);
+            float xOffset = (((VisibleClueColumns - 1) * 0.5f) + 0.75f) * VisibleClueSpacingX;
+            return GetPlacementCameraPosition()
+                + (GetPlacementCameraForward() * (VisibleClueDistanceFromCamera + 0.4f))
+                + (GetPlacementCameraRight() * xOffset)
+                - (GetPlacementCameraUp() * GetPlacementCameraPosition().y);
+        }
+
+        private static Transform GetPlacementCameraTransform()
+        {
+            Camera mainCamera = Camera.main;
+            if (mainCamera != null)
+            {
+                return mainCamera.transform;
+            }
+
+            GameObject cameraObject = GameObject.Find("Main Camera");
+            return cameraObject != null ? cameraObject.transform : null;
+        }
+
+        private static Vector3 GetPlacementCameraPosition()
+        {
+            Transform cameraTransform = GetPlacementCameraTransform();
+            return cameraTransform != null ? cameraTransform.position : new Vector3(0f, 1f, -10f);
+        }
+
+        private static Vector3 GetPlacementCameraForward()
+        {
+            Transform cameraTransform = GetPlacementCameraTransform();
+            return cameraTransform != null ? cameraTransform.forward : Vector3.forward;
+        }
+
+        private static Vector3 GetPlacementCameraRight()
+        {
+            Transform cameraTransform = GetPlacementCameraTransform();
+            return cameraTransform != null ? cameraTransform.right : Vector3.right;
+        }
+
+        private static Vector3 GetPlacementCameraUp()
+        {
+            Transform cameraTransform = GetPlacementCameraTransform();
+            return cameraTransform != null ? cameraTransform.up : Vector3.up;
         }
     }
 }

@@ -2,6 +2,7 @@ $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$setupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -21,29 +22,65 @@ function Read-Vector3 {
 }
 
 Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Room02 operating scene.'
+Assert-True (Test-Path -LiteralPath $setupPath) 'Missing Room02 clue setup tool.'
 
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
+$setup = Get-Content -LiteralPath $setupPath -Raw -Encoding UTF8
+
+function Get-NamedPosition {
+    param([string] $SceneText, [string] $ObjectName)
+
+    $block = [regex]::Match($SceneText, "m_Name:\s+$([regex]::Escape($ObjectName)).*?--- !u!4 &\d+\s*\r?\nTransform:.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}", 'Singleline')
+    Assert-True $block.Success "Missing transform position for $ObjectName."
+    return [pscustomobject]@{
+        X = [double]$block.Groups[1].Value
+        Y = [double]$block.Groups[2].Value
+        Z = [double]$block.Groups[3].Value
+    }
+}
 
 $clueMatches = [regex]::Matches($scene, 'm_Name:\s+Clue_[^\r\n]+.*?--- !u!4 &\d+\s*\r?\nTransform:.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}', 'Singleline')
 Assert-True ($clueMatches.Count -eq 31) "Expected 31 clue transforms, found $($clueMatches.Count)."
 
-$anchorX = [double]$clueMatches[0].Groups[1].Value
-$anchorY = [double]$clueMatches[0].Groups[2].Value
-$anchorZ = [double]$clueMatches[0].Groups[3].Value
+$camera = Get-NamedPosition $scene 'Main Camera'
+$uniquePositions = @{}
+$uniqueX = @{}
+$uniqueY = @{}
+$minX = [double]::PositiveInfinity
+$maxX = [double]::NegativeInfinity
 
 foreach ($match in $clueMatches) {
     $x = [double]$match.Groups[1].Value
     $y = [double]$match.Groups[2].Value
     $z = [double]$match.Groups[3].Value
-    Assert-True ([math]::Abs($x - $anchorX) -lt 0.001 -and [math]::Abs($y - $anchorY) -lt 0.001 -and [math]::Abs($z - $anchorZ) -lt 0.001) "Every clue must be stacked at the same visible box position; found x=$x y=$y z=$z, expected x=$anchorX y=$anchorY z=$anchorZ."
+
+    $uniquePositions["$x,$y,$z"] = $true
+    $uniqueX["$x"] = $true
+    $uniqueY["$y"] = $true
+    $minX = [math]::Min($minX, $x)
+    $maxX = [math]::Max($maxX, $x)
+
+    Assert-True ($z -gt $camera.Z) "Every clue must be in front of Main Camera; found z=$z, camera z=$($camera.Z)."
+    Assert-True ([math]::Abs($z - ($camera.Z + 5.0)) -lt 0.001) "Every clue must sit in the camera-visible clue row; found z=$z, expected $($camera.Z + 5.0)."
+    Assert-True ($x -ge -2.6 -and $x -le 2.6) "Every clue must stay inside the visible camera width; found x=$x."
+    Assert-True ($y -ge 0.5 -and $y -le 2.3) "Every clue must stay inside the visible camera height; found y=$y."
 }
+
+Assert-True ($uniquePositions.Count -eq 31) "All 31 clues must be individually visible, not stacked; found only $($uniquePositions.Count) unique positions."
+Assert-True ($uniqueX.Count -ge 8 -and $uniqueY.Count -ge 4) "Clues must be spread into a visible grid, found $($uniqueX.Count) columns and $($uniqueY.Count) rows."
 
 Assert-True ($scene -match 'Culprit_StartPosition') 'Scene must contain the culprit start-position object.'
 $culpritPositionMatch = [regex]::Match($scene, 'Culprit_StartPosition.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}', 'Singleline')
 if ($culpritPositionMatch.Success) {
     $culpritX = [double]$culpritPositionMatch.Groups[1].Value
+    $culpritY = [double]$culpritPositionMatch.Groups[2].Value
     $culpritZ = [double]$culpritPositionMatch.Groups[3].Value
-    Assert-True ([math]::Abs($culpritX - $anchorX) -lt 0.001 -and [math]::Abs($culpritZ - $anchorZ) -lt 0.001) "Culprit must share the visible box x/z position; found x=$culpritX z=$culpritZ, expected x=$anchorX z=$anchorZ."
+    Assert-True ($culpritZ -gt $camera.Z) "Culprit must be in front of Main Camera; found z=$culpritZ, camera z=$($camera.Z)."
+    Assert-True ($culpritX -gt $maxX) "Culprit must stand beside the clue grid, not inside or behind it; found x=$culpritX, clue max x=$maxX."
+    Assert-True ([math]::Abs($culpritY) -lt 0.001) "Culprit must stand on the floor; found y=$culpritY."
 }
+
+Assert-True ($setup -match 'GetCameraVisibleClueWorldPosition' -and $setup -match 'Main Camera') 'Clue setup must place clues from the Main Camera visible area.'
+Assert-True ($setup -notmatch 'GetVisibleClueStackWorldPosition') 'Clue setup must not stack every clue at one visible box position.'
 
 Write-Host 'Room02 start placement checks passed.'
