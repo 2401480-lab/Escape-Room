@@ -21,6 +21,12 @@ namespace EscapeRoom
         [SerializeField] private ScrollRect suspectScrollRect;
         [SerializeField] private RectTransform suspectContent;
 
+        private enum JournalTab
+        {
+            Evidence,
+            Suspect
+        }
+
         private const string NotebookPrefix = "수첩:";
         private const string CommonTarget = "공통";
         private const string CommonNotebookName = "사건 공통";
@@ -44,6 +50,7 @@ namespace EscapeRoom
         private CursorLockMode previousCursorLockMode;
         private bool previousCursorVisible;
         private bool journalOwnsCursor;
+        private JournalTab activeTab = JournalTab.Evidence;
         public static int LastJournalCloseFrame { get; private set; } = -1;
 
         private void Awake()
@@ -141,6 +148,11 @@ namespace EscapeRoom
 
         public void SetOpen(bool isOpen)
         {
+            if (isOpen)
+            {
+                RefreshUI();
+            }
+
             if (panelRoot != null)
             {
                 panelRoot.SetActive(isOpen);
@@ -148,6 +160,7 @@ namespace EscapeRoom
 
             if (isOpen)
             {
+                ApplyActiveTab();
                 ReleaseCursorForJournal();
             }
             else
@@ -302,8 +315,7 @@ namespace EscapeRoom
             viewport.anchorMax = Vector2.one;
             viewport.offsetMin = Vector2.zero;
             viewport.offsetMax = Vector2.zero;
-            Mask mask = viewport.gameObject.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
+            viewport.gameObject.AddComponent<RectMask2D>();
 
             chipContainer = CreatePanel("EvidenceChipContent", viewport, new Color(0f, 0f, 0f, 0f));
             chipContainer.anchorMin = new Vector2(0f, 0f);
@@ -361,8 +373,7 @@ namespace EscapeRoom
             viewport.anchorMax = Vector2.one;
             viewport.offsetMin = Vector2.zero;
             viewport.offsetMax = Vector2.zero;
-            Mask mask = viewport.gameObject.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
+            viewport.gameObject.AddComponent<RectMask2D>();
 
             evidenceContent = CreatePanel("EvidenceContent", viewport, new Color(0f, 0f, 0f, 0f));
             evidenceContent.anchorMin = new Vector2(0f, 1f);
@@ -399,8 +410,7 @@ namespace EscapeRoom
             viewport.anchorMax = Vector2.one;
             viewport.offsetMin = Vector2.zero;
             viewport.offsetMax = Vector2.zero;
-            Mask mask = viewport.gameObject.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
+            viewport.gameObject.AddComponent<RectMask2D>();
 
             suspectContent = CreatePanel("SuspectContent", viewport, new Color(0f, 0f, 0f, 0f));
             suspectContent.anchorMin = new Vector2(0f, 1f);
@@ -424,6 +434,8 @@ namespace EscapeRoom
 
         private void RefreshUI()
         {
+            EnsureManager();
+            EnsureUI();
             if (journalManager == null)
             {
                 return;
@@ -432,6 +444,7 @@ namespace EscapeRoom
             BuildEvidenceChips();
             BuildEvidenceCards();
             BuildSuspectCards();
+            ApplyActiveTab();
         }
 
         private void BuildEvidenceChips()
@@ -579,12 +592,12 @@ namespace EscapeRoom
 
         private void BuildSuspectCards()
         {
-            ClearChildren(suspectContent);
             if (suspectContent == null || journalManager == null)
             {
                 return;
             }
 
+            ClearChildren(suspectContent);
             float contentHeight = 0f;
             int contentItems = 0;
             foreach (PersonInfo person in people)
@@ -846,27 +859,27 @@ namespace EscapeRoom
 
         private void ShowEvidenceTab()
         {
-            if (evidenceTabRoot != null)
-            {
-                evidenceTabRoot.SetActive(true);
-            }
-
-            if (suspectTabRoot != null)
-            {
-                suspectTabRoot.SetActive(false);
-            }
+            activeTab = JournalTab.Evidence;
+            ApplyActiveTab();
         }
 
         private void ShowSuspectTab()
         {
+            activeTab = JournalTab.Suspect;
+            ApplyActiveTab();
+        }
+
+        private void ApplyActiveTab()
+        {
+            bool showEvidence = activeTab == JournalTab.Evidence;
             if (evidenceTabRoot != null)
             {
-                evidenceTabRoot.SetActive(false);
+                evidenceTabRoot.SetActive(showEvidence);
             }
 
             if (suspectTabRoot != null)
             {
-                suspectTabRoot.SetActive(true);
+                suspectTabRoot.SetActive(!showEvidence);
             }
         }
 

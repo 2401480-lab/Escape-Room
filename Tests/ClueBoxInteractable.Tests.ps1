@@ -99,6 +99,9 @@ Assert-True ($intro -match 'ScreenSpaceOverlay' -and $intro -match 'HUD_Canvas')
 foreach ($line in $introRequiredLines) {
     Assert-True ($intro.Contains($line)) "IntroScenarioUI must show requested opening narration line: $line"
 }
+Assert-True ($intro -match 'IntroPages\s*=' -and $intro -match 'currentPageIndex' -and $intro -match 'UpdateIntroPage\s*\(') 'IntroScenarioUI must split the intro into multiple pages instead of one long body.'
+Assert-True ($intro -match 'PreviousIntroPageButton' -and $intro -match 'NextIntroPageButton' -and $intro -match 'PreviousIntroPage\s*\(' -and $intro -match 'NextIntroPage\s*\(') 'IntroScenarioUI must provide side navigation buttons for intro pages.'
+Assert-True ($intro -match 'currentPageIndex\s*>=\s*IntroPages\.Length\s*-\s*1' -and $intro -match 'SetOpen\s*\(\s*false\s*\)') 'IntroScenarioUI must close only after advancing from the last intro page.'
 Assert-True ($intro -match 'IntroSoundResourcePath' -and $intro -match 'Audio/SFX/Deadly Kombat Free version/guts_and_gore_19') 'IntroScenarioUI must load intro-only SFX from Room02 Resources.'
 Assert-True ($intro -match 'AudioSource\s+introAudioSource' -and $intro -match 'Resources\.Load<AudioClip>' -and $intro -match 'PlayIntroSound\s*\(' -and $intro -match 'PlayOneShot') 'IntroScenarioUI must play a one-shot intro SFX when the text opens.'
 Assert-True ($intro -match 'StopIntroSound\s*\(' -and $intro -match 'introAudioSource\.Stop\s*\(' -and $intro -match 'SetOpen\s*\(\s*false\s*\)') 'IntroScenarioUI must stop the intro SFX when the intro text closes.'
