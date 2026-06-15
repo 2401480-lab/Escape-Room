@@ -14,7 +14,7 @@ namespace EscapeGame
         private const string ONBOARDING_SCENE  = "Onboarding";     // 게임 온보딩 화면
         private const string ROOM_SELECT_SCENE = "RoomSelect";     // 테마(방) 선택 화면
         private const string ROOM01_SCENE      = "Room01_Conan";   // 코난 외교관 사건
-        private const string ROOM02_SCENE      = "Scene_OperatingRoom"; // 절규의 수술실
+        private const string ROOM02_SCENE      = "Show"; // 절규의 수술실, Room02 후레쉬/HUD가 붙은 플레이 씬
         private const string ROOM03_SCENE      = "Room03";         // 팀원3 확정 후 수정
 
         void Awake()

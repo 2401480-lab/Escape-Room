@@ -4,6 +4,7 @@ $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $buildSettingsPath = Join-Path $root 'ProjectSettings/EditorBuildSettings.asset'
 $onboardingScenePath = Join-Path $root 'Assets/Onboarding.unity'
 $onboardingScriptPath = Join-Path $root 'Assets/_Shared/Scripts/OnboardingUI.cs'
+$roomLoaderPath = Join-Path $root 'Assets/_Shared/Scripts/RoomLoader.cs'
 $playModeStartPath = Join-Path $root 'Assets/_Shared/Scripts/Editor/OnboardingPlayModeStartScene.cs'
 $backgroundPath = Join-Path $root 'Assets/_Shared/Resources/Onboarding/HospitalHorrorBackground.png'
 $backgroundMetaPath = Join-Path $root 'Assets/_Shared/Resources/Onboarding/HospitalHorrorBackground.png.meta'
@@ -22,6 +23,7 @@ function U {
 
 Assert-True (Test-Path -LiteralPath $onboardingScenePath) 'Onboarding scene must exist.'
 Assert-True (Test-Path -LiteralPath $onboardingScriptPath) 'OnboardingUI script must exist.'
+Assert-True (Test-Path -LiteralPath $roomLoaderPath) 'RoomLoader script must exist.'
 Assert-True (Test-Path -LiteralPath $playModeStartPath) 'Editor play mode start scene helper must exist.'
 Assert-True (Test-Path -LiteralPath $backgroundPath) 'Onboarding hospital horror background image must exist under _Shared Resources.'
 Assert-True (Test-Path -LiteralPath $backgroundMetaPath) 'Onboarding hospital horror background image meta must exist.'
@@ -31,6 +33,7 @@ Assert-True (Test-Path -LiteralPath $onboardingBgmMetaPath) 'Onboarding looping 
 $buildSettings = Get-Content -LiteralPath $buildSettingsPath -Raw -Encoding UTF8
 $onboardingScene = Get-Content -LiteralPath $onboardingScenePath -Raw -Encoding UTF8
 $onboardingScript = Get-Content -LiteralPath $onboardingScriptPath -Raw -Encoding UTF8
+$roomLoader = Get-Content -LiteralPath $roomLoaderPath -Raw -Encoding UTF8
 $playModeStart = Get-Content -LiteralPath $playModeStartPath -Raw -Encoding UTF8
 $backgroundMeta = Get-Content -LiteralPath $backgroundMetaPath -Raw -Encoding UTF8
 $onboardingBgmMeta = Get-Content -LiteralPath $onboardingBgmMetaPath -Raw -Encoding UTF8
@@ -53,6 +56,8 @@ Assert-True ($onboardingScript -notmatch 'Scene_OperatingRoom') 'OnboardingUI mu
 Assert-True ($onboardingScript -match 'OnStartButtonClicked\s*\(\s*\)[\s\S]*?LoadRoom\s*\(\s*\)') 'Onboarding start button must load Show directly so Room02 owns the intro.'
 Assert-True ($onboardingScript -notmatch 'GeneratedIntroPanel' -and $onboardingScript -notmatch 'ShowGeneratedIntro' -and $onboardingScript -notmatch 'BuildGeneratedIntroPanel') 'OnboardingUI must not create its own intro panel; Room02 IntroScenarioUI owns the story intro.'
 Assert-True ($onboardingScript -notmatch 'IntroScenarioUI' -and $onboardingScript -notmatch 'IntroScenarioPanel') 'OnboardingUI must not hide or manage Room02 intro UI objects.'
+Assert-True ($roomLoader -match 'ROOM02_SCENE\s*=\s*"Show"') 'Shared RoomLoader room 2 route must also load Show, the Room02 scene with flashlight.'
+Assert-True ($roomLoader -notmatch 'ROOM02_SCENE\s*=\s*"Scene_OperatingRoom"') 'Shared RoomLoader must not send room 2 to Scene_OperatingRoom.'
 Assert-True ($onboardingScript -match 'BackgroundResourcePath\s*=\s*"Onboarding/HospitalHorrorBackground"') 'OnboardingUI must load the hospital horror background from Resources.'
 Assert-True ($onboardingScript -match 'Resources\.Load<Sprite>\s*\(\s*BackgroundResourcePath\s*\)') 'OnboardingUI must load the onboarding background sprite.'
 Assert-True ($onboardingScript -match 'OnboardingHospitalHorrorBackground') 'OnboardingUI must create a named hospital horror background object.'
