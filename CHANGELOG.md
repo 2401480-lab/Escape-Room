@@ -435,3 +435,8 @@
 - Room02 전체 브금을 최근 추가한 Into Insanity Vol. 2의 "grimyth - You shouldn't have come here" 트랙으로 변경
 - 새 브금 파일을 Room02 전용 Resources 오디오 경로에 복사하고 런타임 fallback 경로를 갱신
 - 기존 씬에 오래된 오디오 클립 참조가 남아 있어도 Room02BgmPlayer가 새 설정 트랙을 우선 재생하도록 보강
+
+### [2026-06-16 01:51:44]
+- Room02 Show 씬의 단서 15개를 시작 위치에 몰리지 않도록 맵 여러 지점으로 분산 배치
+- 시작 화면 근처에는 단서 2개만 남기고, 나머지는 Room02 내부 좌표로 이동
+- CluePlacementLayout 배치표와 Show 씬 좌표를 일치시켜 Play 모드에서 단서가 다시 밀리지 않도록 검증 추가

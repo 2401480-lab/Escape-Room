@@ -11,18 +11,18 @@ namespace EscapeRoom
         {
             switch (clueID)
             {
-                // 복도
+                // Start area: keep only two clues visible near the opening camera.
                 case "normal_cast_notice":
-                    position = new Vector3(0.4f, 0.45f, -2.2f);
+                    position = new Vector3(-2.2f, 0.45f, 2.4f);
                     return true;
                 case "normal_memorial_frame":
-                    position = new Vector3(1.9f, 0.55f, -3.6f);
+                    position = new Vector3(2.2f, 0.55f, 2.4f);
                     return true;
                 case "normal_conversation_memo":
-                    position = new Vector3(-0.4f, 0.45f, -4.8f);
+                    position = new Vector3(-5.4f, 0.45f, -8.6f);
                     return true;
 
-                // 병실
+                // Back-left room spread.
                 case "normal_medical_certificate":
                     position = new Vector3(-33.2f, 0.45f, -23.5f);
                     return true;
@@ -36,7 +36,7 @@ namespace EscapeRoom
                     position = new Vector3(-31.6f, 0.45f, -27.0f);
                     return true;
 
-                // 보관실
+                // Right-side room spread.
                 case "key_clue_temperature_warning":
                     position = new Vector3(10.2f, 0.7f, -16.9f);
                     return true;
@@ -47,7 +47,7 @@ namespace EscapeRoom
                     position = new Vector3(15.8f, 0.55f, -14.8f);
                     return true;
 
-                // 분장실
+                // Mid-left room spread.
                 case "normal_makeup_toolbox":
                     position = new Vector3(-12.0f, 0.45f, -9.6f);
                     return true;
@@ -58,7 +58,7 @@ namespace EscapeRoom
                     position = new Vector3(-14.5f, 0.45f, -11.2f);
                     return true;
 
-                // 수술실
+                // Far surgical room spread.
                 case "normal_under_table_space":
                     position = new Vector3(6.4f, 0.45f, -21.6f);
                     return true;
