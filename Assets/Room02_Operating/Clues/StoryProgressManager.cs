@@ -154,6 +154,23 @@ namespace EscapeRoom
             OnEscapeKeyReady?.Invoke();
         }
 
+        public void GrantEscapeKeyFromAdminSkip()
+        {
+            if (hasEscapeKey)
+            {
+                return;
+            }
+
+            hasEscapeKey = true;
+            if (CanSelectSuspect)
+            {
+                SetPhase(StoryPhase.SuspectSelection);
+            }
+
+            OnEscapeKeyCollected?.Invoke();
+            OnEscapeKeyReady?.Invoke();
+        }
+
         public void BeginSuspectSelection()
         {
             if (CanSelectSuspect)

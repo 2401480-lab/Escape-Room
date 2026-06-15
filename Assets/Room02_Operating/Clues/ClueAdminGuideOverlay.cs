@@ -48,6 +48,14 @@ namespace EscapeRoom
             }
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                CollectAllCluesAndGrantKey();
+            }
+        }
+
         private void LateUpdate()
         {
             bool visible = IsGuideVisible;
@@ -68,6 +76,20 @@ namespace EscapeRoom
             }
 
             UpdateGuidePositions();
+        }
+
+        private void CollectAllCluesAndGrantKey()
+        {
+            ClueBoxInteractable[] clueBoxes = FindObjectsOfType<ClueBoxInteractable>(true);
+            foreach (ClueBoxInteractable clueBox in clueBoxes)
+            {
+                if (clueBox != null)
+                {
+                    clueBox.AdminCollectClue();
+                }
+            }
+
+            StoryProgressManager.Instance?.GrantEscapeKeyFromAdminSkip();
         }
 
 #if UNITY_EDITOR

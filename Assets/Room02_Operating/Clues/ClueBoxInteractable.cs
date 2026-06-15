@@ -111,6 +111,29 @@ namespace EscapeRoom
             }
         }
 
+        public bool AdminCollectClue()
+        {
+            if (clueData == null)
+            {
+                return false;
+            }
+
+            EnsureManager();
+            if (ClueJournalManager.Instance == null)
+            {
+                return false;
+            }
+
+            bool added = ClueJournalManager.Instance.AddClue(clueData);
+            if (added || ClueJournalManager.Instance.HasClue(clueData))
+            {
+                MarkSearchedVisual();
+                HidePrompt();
+            }
+
+            return added;
+        }
+
         private bool HasBufferedInteractInput()
         {
             return Time.unscaledTime - lastInteractPressedAt <= inputBufferSeconds;
