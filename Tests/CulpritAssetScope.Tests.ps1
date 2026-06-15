@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $legacyPackagePath = Join-Path $root 'Assets/3rdPerson+Fly'
 $legacyPackageMetaPath = Join-Path $root 'Assets/3rdPerson+Fly.meta'
 
@@ -38,7 +38,7 @@ foreach ($metaFile in $culpritMetaFiles) {
 }
 
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
-Assert-True ($scene -match 'm_Name:\s*Culprit_StartPosition' -or $scene -match 'value:\s*Culprit_StartPosition') 'Culprit visual asset must be placed in Scene_OperatingRoom near the player start.'
-Assert-True ($scene -match 'guid:\s+fa0856ce0c0b3fb42af36e6c53346129') 'Scene_OperatingRoom must reference the Room02 char_shadow model asset.'
+Assert-True ($scene -match 'm_Name:\s*Culprit_StartPosition' -or $scene -match 'value:\s*Culprit_StartPosition') 'Culprit visual asset must be placed in Show near the player start.'
+Assert-True ($scene -match 'guid:\s+fa0856ce0c0b3fb42af36e6c53346129') 'Show must reference the Room02 char_shadow model asset.'
 
 Write-Host 'Culprit asset scope checks passed.'

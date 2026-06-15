@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $bgmScriptPath = Join-Path $root 'Assets/Room02_Operating/Audio/Room02BgmPlayer.cs'
 $bgmScriptMetaPath = Join-Path $root 'Assets/Room02_Operating/Audio/Room02BgmPlayer.cs.meta'
 $clipPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-theroom.aif'
@@ -12,7 +12,7 @@ function Assert-True {
     if (-not $Condition) { throw $Message }
 }
 
-Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Scene_OperatingRoom scene.'
+Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Show gameplay scene.'
 Assert-True (Test-Path -LiteralPath $bgmScriptPath) 'Missing Room02 BGM player script.'
 Assert-True (Test-Path -LiteralPath $bgmScriptMetaPath) 'Missing Room02 BGM player script meta file.'
 Assert-True (Test-Path -LiteralPath $clipPath) 'Missing selected Room02 BGM audio clip.'
@@ -32,9 +32,9 @@ Assert-True ($script -match '\.Play\s*\(') 'Room02 BGM player must start playbac
 Assert-True ($script -match 'OnEnable\s*\(' -and $script -match 'TryPlay\s*\(') 'Room02 BGM player must retry playback when enabled.'
 Assert-True ($script -match 'Update\s*\(' -and $script -match '!audioSource\.isPlaying') 'Room02 BGM player must recover if playback stops during play.'
 
-Assert-True ($scene -match 'm_Name:\s+Room02_BGM') 'Scene_OperatingRoom must contain the Room02_BGM object.'
-Assert-True ($scene -match [regex]::Escape("guid: $scriptGuid")) 'Scene_OperatingRoom must reference Room02BgmPlayer.'
-Assert-True ($scene -match [regex]::Escape("guid: $clipGuid")) 'Scene_OperatingRoom must reference the selected BGM clip.'
+Assert-True ($scene -match 'm_Name:\s+Room02_BGM') 'Show gameplay scene must contain the Room02_BGM object.'
+Assert-True ($scene -match [regex]::Escape("guid: $scriptGuid")) 'Show gameplay scene must reference Room02BgmPlayer.'
+Assert-True ($scene -match [regex]::Escape("guid: $clipGuid")) 'Show gameplay scene must reference the selected BGM clip.'
 Assert-True ($scene -match 'volume:\s+0\.35') 'Room02 BGM volume must be set to a restrained default.'
 Assert-True ($scene -match 'loop:\s+1') 'Room02 BGM must loop.'
 Assert-True ($scene -match 'AudioSource:[\s\S]*?m_GameObject:\s*\{fileID:\s*2003000000\}[\s\S]*?m_audioClip:\s*\{fileID:\s*8300000,\s*guid:\s*' + [regex]::Escape($clipGuid)) 'Room02_BGM must have an AudioSource with the selected clip in the scene.'

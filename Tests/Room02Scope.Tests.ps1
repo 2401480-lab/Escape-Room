@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$room02ScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$room02ScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $oldScenePath = Join-Path $root 'Assets/Scenes/Scene_OperatingRoom.unity'
 $room02ShowScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $oldShowScenePath = Join-Path $root 'Assets/Abandoned_Asylum/Show.unity'
@@ -31,9 +31,9 @@ Assert-True (-not (Test-Path -LiteralPath $oldBgmPath)) 'Room02 selected BGM mus
 $buildSettings = Get-Content -LiteralPath $buildSettingsPath -Raw -Encoding UTF8
 $setupTool = Get-Content -LiteralPath $setupToolPath -Raw -Encoding UTF8
 
-Assert-True ($buildSettings -match 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom\.unity') 'Build Settings must point to the Room02-owned scene path.'
+Assert-True ($buildSettings -match 'Assets/Room02_Operating/Scenes/Show\.unity') 'Build Settings must point to the Room02-owned Show scene path.'
 Assert-True ($buildSettings -notmatch 'Assets/Scenes/Scene_OperatingRoom\.unity') 'Build Settings must not point to the old shared scene path.'
-Assert-True ($setupTool -match 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom\.unity') 'Room02 clue setup tool must target the Room02-owned scene path.'
+Assert-True ($setupTool -match 'Assets/Room02_Operating/Scenes/Show\.unity') 'Room02 clue setup tool must target the Room02-owned Show scene path.'
 Assert-True ($setupTool -notmatch 'Assets/Scenes/Scene_OperatingRoom\.unity') 'Room02 clue setup tool must not target the old shared scene path.'
 
 Write-Host 'Room02 scope checks passed.'

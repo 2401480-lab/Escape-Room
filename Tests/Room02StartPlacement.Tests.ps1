@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $setupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
 
 function Assert-True {
@@ -21,7 +21,7 @@ function Read-Vector3 {
     }
 }
 
-Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Room02 operating scene.'
+Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Room02 Show gameplay scene.'
 Assert-True (Test-Path -LiteralPath $setupPath) 'Missing Room02 clue setup tool.'
 
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8

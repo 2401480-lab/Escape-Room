@@ -1,14 +1,14 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$room02ScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$room02ScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
     if (-not $Condition) { throw $Message }
 }
 
-Assert-True (Test-Path -LiteralPath $room02ScenePath) 'Missing Room02-owned gameplay scene.'
+Assert-True (Test-Path -LiteralPath $room02ScenePath) 'Missing Room02-owned Show gameplay scene.'
 
 $scene = Get-Content -LiteralPath $room02ScenePath -Raw -Encoding UTF8
 $clueCount = ([regex]::Matches($scene, 'm_Name:\s+Clue_')).Count
@@ -20,4 +20,4 @@ Assert-True ($scene -match 'm_Name:\s+Room02_BGM') 'Room02 gameplay scene must c
 Assert-True ($scene -notmatch 'm_Name:\s+TestClue_cast_notice') 'Room02 gameplay scene must not keep the old Show test clue.'
 Assert-True ($scene -notmatch 'm_Name:\s+TestClueBox') 'Room02 gameplay scene must not keep temporary test clue boxes.'
 
-Write-Host 'Room02 Show map checks passed.'
+Write-Host 'Room02 Show gameplay map checks passed.'

@@ -22,7 +22,7 @@ namespace EscapeRoom.Editor
         private const string BoxPrefabPath = "Assets/Room02_Operating/Resources/Room02_ClueBox.prefab";
         private const string CulpritPrefabPath = "Assets/Room02_Operating/Models/char_shadow.fbx";
         private const string CulpritObjectName = "Culprit_StartPosition";
-        private const string OperatingRoomScenePath = "Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity";
+        private const string ShowScenePath = "Assets/Room02_Operating/Scenes/Show.unity";
         private const int VisibleClueColumns = 8;
         private const float VisibleClueDistanceFromCamera = 5.0f;
         private const float VisibleClueSpacingX = 0.7f;
@@ -31,7 +31,7 @@ namespace EscapeRoom.Editor
 
         static ClueSceneSetupTool()
         {
-            EditorApplication.delayCall += RepairOpenOperatingRoomCluesIfNeeded;
+            EditorApplication.delayCall += RepairOpenShowCluesIfNeeded;
         }
 
         [MenuItem("Tools/Room02/Clues/Setup Current Stage Clues")]
@@ -65,7 +65,7 @@ namespace EscapeRoom.Editor
             SetupCurrentStageClues();
         }
 
-        private static void RepairOpenOperatingRoomCluesIfNeeded()
+        private static void RepairOpenShowCluesIfNeeded()
         {
             if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode)
             {
@@ -73,7 +73,7 @@ namespace EscapeRoom.Editor
             }
 
             Scene scene = SceneManager.GetActiveScene();
-            if (scene.name != "Scene_OperatingRoom")
+            if (scene.name != "Show")
             {
                 return;
             }
@@ -107,14 +107,19 @@ namespace EscapeRoom.Editor
             }
         }
 
-        public static void SetupOperatingRoomSceneForBatch()
+        public static void SetupShowSceneForBatch()
         {
-            Scene scene = EditorSceneManager.OpenScene(OperatingRoomScenePath, OpenSceneMode.Single);
+            Scene scene = EditorSceneManager.OpenScene(ShowScenePath, OpenSceneMode.Single);
             ClueAssetGenerator.GenerateStoryClueAssets();
             int placed = SetupScene(scene.name);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             Debug.Log($"[Clues] Batch scene apply complete. Scene: {scene.path}, Placed/updated: {placed}");
+        }
+
+        public static void SetupOperatingRoomSceneForBatch()
+        {
+            SetupShowSceneForBatch();
         }
 
         private static int SetupScene(string sceneName)
@@ -187,7 +192,7 @@ namespace EscapeRoom.Editor
         {
             switch (sceneName)
             {
-                case "Scene_OperatingRoom":
+                case "Show":
                     return IntegratedZones;
                 default:
                     return null;

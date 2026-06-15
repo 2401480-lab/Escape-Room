@@ -1,7 +1,7 @@
 ﻿$ErrorActionPreference = 'Stop'
 
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$operatingScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$showScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $corridorScenePath = Join-Path $root 'Assets/Scenes/Scene_Corridor.unity'
 $dressingScenePath = Join-Path $root 'Assets/Scenes/Scene_DressingRoom.unity'
 $sceneLoaderPath = Join-Path $root 'Assets/_Shared/Scripts/SceneLoader.cs'
@@ -15,7 +15,7 @@ function Assert-True {
     if (-not $Condition) { throw $Message }
 }
 
-Assert-True (Test-Path -LiteralPath $operatingScenePath) 'Scene_OperatingRoom must remain as the integrated scene.'
+Assert-True (Test-Path -LiteralPath $showScenePath) 'Show must be the integrated Room02 gameplay scene.'
 Assert-True (-not (Test-Path -LiteralPath $corridorScenePath)) 'Scene_Corridor.unity must be removed.'
 Assert-True (-not (Test-Path -LiteralPath $dressingScenePath)) 'Scene_DressingRoom.unity must be removed.'
 Assert-True (-not (Test-Path -LiteralPath $sceneLoaderPath)) 'SceneLoader.cs must be removed.'
@@ -23,7 +23,7 @@ Assert-True (-not (Test-Path -LiteralPath $sceneLoaderMetaPath)) 'SceneLoader.cs
 Assert-True (Test-Path -LiteralPath $zoneManagerPath) 'ZoneManager.cs must be added.'
 Assert-True (Test-Path -LiteralPath $zoneDoorPath) 'ZoneDoorActivator.cs must be added for door-driven zone activation.'
 
-$scene = Get-Content -LiteralPath $operatingScenePath -Raw -Encoding UTF8
+$scene = Get-Content -LiteralPath $showScenePath -Raw -Encoding UTF8
 $zoneManager = Get-Content -LiteralPath $zoneManagerPath -Raw -Encoding UTF8
 $zoneDoor = Get-Content -LiteralPath $zoneDoorPath -Raw -Encoding UTF8
 $buildSettings = Get-Content -LiteralPath $buildSettingsPath -Raw -Encoding UTF8
@@ -58,7 +58,7 @@ Assert-True ($zoneManager -match 'Zone_Lobby' -and $zoneManager -match 'SetActiv
 Assert-True ($zoneManager -match 'Start\s*\(\s*\)' -and $zoneManager -match 'ActivateZone\s*\(\s*ZoneType\.Lobby\s*\)') 'ZoneManager must start with only Lobby active.'
 Assert-True ($zoneDoor -match 'ActivateNextZone' -and $zoneDoor -match 'ZoneManager\.Instance\.ActivateZone') 'ZoneDoorActivator must activate the next zone for door hooks.'
 
-Assert-True ($buildSettings -match 'Scene_OperatingRoom\.unity') 'Build Settings must include Scene_OperatingRoom.'
+Assert-True ($buildSettings -match 'Show\.unity') 'Build Settings must include Show.'
 Assert-True ($buildSettings -notmatch 'Scene_Corridor\.unity') 'Build Settings must not include Scene_Corridor.'
 Assert-True ($buildSettings -notmatch 'Scene_DressingRoom\.unity') 'Build Settings must not include Scene_DressingRoom.'
 

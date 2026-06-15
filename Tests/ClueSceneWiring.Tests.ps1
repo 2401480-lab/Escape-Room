@@ -9,7 +9,7 @@ $popupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/CluePickupPopupU
 $sceneSetupMetaPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs.meta'
 $normalCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/Normal'
 $keyCluePath = Join-Path $root 'Assets/Room02_Operating/Clues/KeyClue'
-$operatingScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity'
+$showScenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -24,7 +24,7 @@ Assert-True (Test-Path -LiteralPath $popupMetaPath) 'Missing UI script meta file
 Assert-True (Test-Path -LiteralPath $sceneSetupMetaPath) 'Missing ClueSceneSetupTool.cs.meta; Unity editor scripts need committed .meta GUIDs.'
 Assert-True (Test-Path -LiteralPath $normalCluePath) 'Missing generated normal clue asset folder.'
 Assert-True (Test-Path -LiteralPath $keyCluePath) 'Missing generated key clue asset folder.'
-Assert-True (Test-Path -LiteralPath $operatingScenePath) 'Missing integrated Room02 operating scene.'
+Assert-True (Test-Path -LiteralPath $showScenePath) 'Missing integrated Room02 Show gameplay scene.'
 
 $assetGenerator = Get-Content -LiteralPath $assetGeneratorPath -Raw -Encoding UTF8
 $sceneSetup = Get-Content -LiteralPath $sceneSetupPath -Raw -Encoding UTF8
@@ -37,12 +37,12 @@ Assert-True ($sceneSetup -match '\[InitializeOnLoad\]') 'Scene setup tool must i
 Assert-True ($sceneSetup -match 'MenuItem\("Tools/Room02/Clues/Setup Current Stage Clues"\)') 'Scene setup tool must expose a current-scene clue setup menu.'
 Assert-True ($sceneSetup -match 'MenuItem\("Tools/Room02/Clues/Restore All Clue Boxes"\)') 'Scene setup tool must expose an explicit restore-all-clues menu.'
 Assert-True ($sceneSetup -notmatch 'Place Single Test Clue' -and $sceneSetup -notmatch 'TestClueBox') 'Scene setup tool must not expose the old destructive single test clue menu.'
-Assert-True ($sceneSetup -match 'EditorApplication\.delayCall' -and $sceneSetup -match 'RepairOpenOperatingRoomCluesIfNeeded') 'Scene setup tool must auto-repair an open Room02 scene that only has stale test clues.'
+Assert-True ($sceneSetup -match 'EditorApplication\.delayCall' -and $sceneSetup -match 'RepairOpenShowCluesIfNeeded') 'Scene setup tool must auto-repair an open Show scene that only has stale test clues.'
 Assert-True ($sceneSetup -match 'testClueCount\s*>\s*0' -and $sceneSetup -match 'realClueCount\s*<\s*31') 'Scene auto-repair must only run when stale test clues are present and real clues are missing.'
 Assert-True ($sceneSetup -notmatch 'SetupAllStageClues') 'Scene setup must not target removed split-scene setup flows.'
-Assert-True ($sceneSetup -match 'SetupOperatingRoomSceneForBatch' -and $sceneSetup -match 'EditorSceneManager\.OpenScene' -and $sceneSetup -match 'EditorSceneManager\.SaveScene') 'Scene setup must expose an explicit batch method for applying and saving Scene_OperatingRoom.'
+Assert-True ($sceneSetup -match 'SetupShowSceneForBatch' -and $sceneSetup -match 'EditorSceneManager\.OpenScene' -and $sceneSetup -match 'EditorSceneManager\.SaveScene') 'Scene setup must expose an explicit batch method for applying and saving Show.'
 Assert-True ($sceneSetup -match 'GenerateStoryClueAssets\s*\(') 'Scene setup must generate missing ClueData assets before wiring scene objects.'
-Assert-True ($sceneSetup -match 'Scene_OperatingRoom') 'Scene setup must support the integrated stage scene.'
+Assert-True ($sceneSetup -match 'Show') 'Scene setup must support the integrated Show stage scene.'
 Assert-True ($sceneSetup -notmatch 'case\s+"Scene_Corridor"' -and $sceneSetup -notmatch 'case\s+"Scene_DressingRoom"') 'Scene setup must not target deleted split scenes.'
 Assert-True ($sceneSetup -match 'AddComponent<ClueBoxInteractable>\s*\(') 'Scene setup must place EscapeRoom.ClueBoxInteractable components.'
 Assert-True ($sceneSetup -match 'AddComponent<BoxCollider>\s*\(' -or $sceneSetup -match 'CreatePrimitive') 'Scene setup must give clues a collider so range checks have visible objects.'
@@ -57,12 +57,12 @@ $keyAssets = Get-ChildItem -LiteralPath $keyCluePath -Filter '*.asset' -File
 Assert-True ($normalAssets.Count -eq 28) "Expected 28 generated normal clue assets, found $($normalAssets.Count)."
 Assert-True ($keyAssets.Count -eq 3) "Expected 3 generated key clue assets, found $($keyAssets.Count)."
 
-$scene = Get-Content -LiteralPath $operatingScenePath -Raw -Encoding UTF8
+$scene = Get-Content -LiteralPath $showScenePath -Raw -Encoding UTF8
 $wiredClueCount = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*11400000')).Count
 $emptyClueRefs = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*0\}')).Count
 $testClueCount = ([regex]::Matches($scene, 'm_Name:\s+TestClue')).Count
-Assert-True ($wiredClueCount -eq 31) "Scene_OperatingRoom must contain all 31 wired clue boxes, found $wiredClueCount."
-Assert-True ($emptyClueRefs -eq 0) "Scene_OperatingRoom must not contain clue objects with empty clueData references, found $emptyClueRefs."
-Assert-True ($testClueCount -eq 0) "Scene_OperatingRoom must not contain temporary TestClue objects, found $testClueCount."
+Assert-True ($wiredClueCount -eq 31) "Show must contain all 31 wired clue boxes, found $wiredClueCount."
+Assert-True ($emptyClueRefs -eq 0) "Show must not contain clue objects with empty clueData references, found $emptyClueRefs."
+Assert-True ($testClueCount -eq 0) "Show must not contain temporary TestClue objects, found $testClueCount."
 
 Write-Host 'Clue scene wiring checks passed.'
