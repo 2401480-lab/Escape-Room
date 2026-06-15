@@ -207,7 +207,7 @@ namespace EscapeRoom.Editor
                 "수첩: 진세웅 — 범행 당시 수술대 아래 누군가 숨어있었다.",
                 "OperatingRoom", ClueCategory.General, isRequired: true),
             new ClueEntry("normal_mirror_message", "Clue_\uAC70\uC6B8\uBA54\uBAA8", "벽 메모",
-                "하시호를 위해서. 미안해, 안나. 쓰레기통 메모와 같은 필체다.",
+                "하시호를 위해서. 미안해, 안나. — 쓰레기통 메모와 같은 필체.",
                 "수첩: 진세웅 — 쓰레기통 메모와 같은 필체다. 두 메모를 쓴 인물이 같다.",
                 "OperatingRoom", ClueCategory.General, isRequired: true),
         };

@@ -139,7 +139,7 @@ $requiredStoryChecks = @(
     @($sumiDiary, (From-B64 '66y47IiY66+4IOydvOq4sOyepQ=='), (From-B64 '7Jik64qYIOustOyKqCDsnbzsnbQg7IOd6ri4IOqygyDqsJnri6QuIOuCmOyBnCDsmIjqsJDsnbQg65Og64ukLg=='), (From-B64 '7Jik64qYIOyCrOqxtOydhCDrr7jrpqwg64iI7LmY7LGIIOyduOusvOydtCDsnojsl4jrjZgg6rKDIOqwmeuLpC4=')),
     @($jinDiary, (From-B64 '7KeE7IS47JuFIOydvOq4sOyepQ=='), (From-B64 '642UIOydtOyDgSDrr7jro7Ag7IiYIOyXhuuLpC4g7Jik64qY7J2064ukLg=='), (From-B64 '64iE6rWw6rCAIOyYpOuKmOydhCDsnITtlbQg7Jik656YIOq4sOuLpOugpOyZlOuLpC4=')),
     @($underTable, (From-B64 '7IiY7Iig64yAIOyVhOuemA=='), (From-B64 '7IKs656MIO2VnCDrqoXsnbQg7Iio7J2EIOyImCDsnojripQg6rO16rCELiDrsJTri6Xsl5Ag6riB7Z6MIOyekOq1reqzvCDrtonsnYAg7Y6Y7J247Yq4IOyekOq1reydtCDrgqjslYTsnojri6Qu'), (From-B64 '67KU7ZaJIOuLueyLnCDsiJjsiKDrjIAg7JWE656YIOuIhOq1sOqwgCDsiKjslrTsnojsl4jri6Qu')),
-    @($wallMemo, (From-B64 '67K9IOuplOuqqA=='), (From-B64 '7ZWY7Iuc7Zi466W8IOychO2VtOyEnC4g66+47JWI7ZW0LCDslYjrgpguIOyTsOugiOq4sO2GtSDrqZTrqqjsmYAg6rCZ7J2AIO2VhOyytOuLpC4='), (From-B64 '7JOw66CI6riw7Ya1IOuplOuqqOyZgCDqsJnsnYAg7ZWE7LK064ukLiDrkZAg66mU66qo66W8IOyTtCDsnbjrrLzsnbQg6rCZ64ukLg=='))
+    @($wallMemo, (From-B64 '67K9IOuplOuqqA=='), (From-B64 '7ZWY7Iuc7Zi466W8IOychO2VtOyEnC4g66+47JWI7ZW0LCDslYjrgpguIOKAlCDsk7DroIjquLDthrUg66mU66qo7JmAIOqwmeydgCDtlYTssrQu'), (From-B64 '7JOw66CI6riw7Ya1IOuplOuqqOyZgCDqsJnsnYAg7ZWE7LK064ukLiDrkZAg66mU66qo66W8IOyTtCDsnbjrrLzsnbQg6rCZ64ukLg=='))
 )
 
 foreach ($check in $requiredStoryChecks) {
