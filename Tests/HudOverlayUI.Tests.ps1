@@ -52,6 +52,7 @@ Assert-True ($timer -match 'HUD_Canvas' -and $timer -match 'urgentThresholdSecon
 Assert-True ($interactable.Contains($investigatePrompt) -and $interactable -match 'HUD_Canvas') 'ClueInteractable must show [F] investigate on HUD_Canvas.'
 Assert-True ($bootstrapper -match 'RuntimeInitializeOnLoadMethod' -and $bootstrapper -match 'RuntimeInitializeLoadType\.AfterSceneLoad') 'HUD bootstrapper must run after any scene loads.'
 Assert-True ($bootstrapper -match 'EnsureRuntimeObject<ClueJournalUI>' -and $bootstrapper -match 'EnsureRuntimeObject<TimerUI>' -and $bootstrapper -match 'EnsureRuntimeObject<SettingsUI>') 'HUD bootstrapper must create missing HUD runtime UI objects in any played scene.'
+Assert-True ($bootstrapper -match 'EnsureRuntimeObject<EndingUI>') 'HUD bootstrapper must create EndingUI so the culprit guess button can appear in Show.'
 Assert-True ($bootstrapper -match 'EnsureRuntimeObject<StoryProgressManager>' -and $bootstrapper -match 'EnsureRuntimeObject<ClueJournalManager>') 'HUD bootstrapper must create required managers when testing a scene directly.'
 Assert-True ($bootstrapper -match 'InputSystemUIInputModule' -and $bootstrapper -match 'EventSystem') 'HUD bootstrapper must create an EventSystem for HUD buttons.'
 

@@ -13,6 +13,7 @@ namespace EscapeRoom
         [SerializeField] private SilhouetteController silhouetteController;
         [SerializeField] private GameOverUI gameOverUI;
         [SerializeField] private SuspectConfirmUI suspectConfirmUI;
+        [SerializeField] private Button culpritGuessButton;
 
         public UnityEvent OnCorrectSuspectSelected;
         public UnityEvent OnWrongSuspectSelected;
@@ -21,6 +22,7 @@ namespace EscapeRoom
 
         private SuspectChoice pendingSuspect;
         private bool wrongAnswerUsed;
+        private StoryProgressManager observedStoryManager;
 
         private void Awake()
         {
@@ -28,9 +30,30 @@ namespace EscapeRoom
             Hide();
         }
 
+        private void OnEnable()
+        {
+            SubscribeToStoryProgress();
+        }
+
+        private void Start()
+        {
+            SubscribeToStoryProgress();
+            RefreshCulpritGuessButton();
+        }
+
+        private void OnDisable()
+        {
+            if (observedStoryManager != null)
+            {
+                observedStoryManager.OnPhaseChanged.RemoveListener(HandlePhaseChanged);
+                observedStoryManager = null;
+            }
+        }
+
         public void Show()
         {
             EnsureUI();
+            SetCulpritGuessButtonVisible(false);
             panelRoot.SetActive(true);
             StoryProgressManager.Instance?.BeginSuspectSelection();
         }
@@ -41,6 +64,8 @@ namespace EscapeRoom
             {
                 panelRoot.SetActive(false);
             }
+
+            RefreshCulpritGuessButton();
         }
 
         public void ChooseJinSewoong()
@@ -156,6 +181,8 @@ namespace EscapeRoom
                 endingCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             }
 
+            EnsureCulpritGuessButton();
+
             if (panelRoot != null)
             {
                 return;
@@ -179,6 +206,71 @@ namespace EscapeRoom
             CreateSuspectButton(panelRect, "봉태현", new Vector2(0f, 20f), ChooseBongTaehyeon);
             CreateSuspectButton(panelRect, "문수미", new Vector2(0f, -40f), ChooseMoonSumi);
             CreateSuspectButton(panelRect, "오세진", new Vector2(0f, -100f), ChooseOhSejin);
+        }
+
+        private void EnsureCulpritGuessButton()
+        {
+            if (culpritGuessButton == null)
+            {
+                RectTransform rect = CreatePanel("CulpritGuessButton", endingCanvas.transform, new Color(0.16f, 0.02f, 0.03f, 0.92f));
+                rect.anchorMin = new Vector2(1f, 0f);
+                rect.anchorMax = new Vector2(1f, 0f);
+                rect.pivot = new Vector2(1f, 0f);
+                rect.anchoredPosition = new Vector2(-24f, 28f);
+                rect.sizeDelta = new Vector2(190f, 46f);
+
+                culpritGuessButton = rect.gameObject.AddComponent<Button>();
+
+                TextMeshProUGUI text = CreateText("Label", rect, "범인 맞추기", 20f);
+                text.rectTransform.anchorMin = Vector2.zero;
+                text.rectTransform.anchorMax = Vector2.one;
+                text.rectTransform.offsetMin = Vector2.zero;
+                text.rectTransform.offsetMax = Vector2.zero;
+            }
+
+            culpritGuessButton.onClick.RemoveListener(Show);
+            culpritGuessButton.onClick.AddListener(Show);
+            culpritGuessButton.gameObject.SetActive(false);
+        }
+
+        private void SubscribeToStoryProgress()
+        {
+            StoryProgressManager manager = StoryProgressManager.Instance;
+            if (manager == null || observedStoryManager == manager)
+            {
+                return;
+            }
+
+            if (observedStoryManager != null)
+            {
+                observedStoryManager.OnPhaseChanged.RemoveListener(HandlePhaseChanged);
+            }
+
+            observedStoryManager = manager;
+            observedStoryManager.OnPhaseChanged.AddListener(HandlePhaseChanged);
+        }
+
+        private void HandlePhaseChanged(StoryPhase phase)
+        {
+            SetCulpritGuessButtonVisible(phase == StoryPhase.SuspectSelection);
+        }
+
+        private void RefreshCulpritGuessButton()
+        {
+            SubscribeToStoryProgress();
+            SetCulpritGuessButtonVisible(StoryProgressManager.Instance != null &&
+                                         StoryProgressManager.Instance.CurrentPhase == StoryPhase.SuspectSelection);
+        }
+
+        private void SetCulpritGuessButtonVisible(bool isVisible)
+        {
+            if (culpritGuessButton == null)
+            {
+                return;
+            }
+
+            bool panelIsOpen = panelRoot != null && panelRoot.activeSelf;
+            culpritGuessButton.gameObject.SetActive(isVisible && !panelIsOpen);
         }
 
         private static void CreateSuspectButton(RectTransform parent, string label, Vector2 anchoredPosition, UnityAction action)

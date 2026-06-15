@@ -105,8 +105,10 @@ Assert-True ($journalUi -match 'BuildSuspectCards\s*\(\s*\)' -and $journalUi -ma
 Assert-True ($journalUi.Contains($hintHeader) -and $journalUi.Contains($emptyHint)) 'Suspect notebook must show collected hints and empty state.'
 Assert-True ($journalUi.Contains($jin) -and $journalUi.Contains($bong) -and $journalUi.Contains($moon) -and $journalUi.Contains($caseCommon)) 'Suspect notebook must include suspects and common case notes.'
 
-Assert-True ($storyManager -match 'requiredClueCount\s*=\s*15') 'StoryProgressManager must require 15 collected clues before suspect selection.'
+Assert-True ($storyManager -match 'requiredClueCount\s*=\s*10') 'StoryProgressManager must unlock suspect selection after 10 collected clues.'
 Assert-True ($storyManager -match 'HasAllStoryClues') 'StoryProgressManager must expose all-story-clues completion.'
 Assert-True ($storyManager -match 'collectedClueIDs\.Count\s*>=\s*requiredClueCount') 'StoryProgressManager must check collected clue count for suspect selection.'
+Assert-True ($storyManager -notmatch 'hasEscapeKey\s*&&\s*HasAllStoryClues') 'Suspect selection must not require the escape key once 10 clues are collected.'
+Assert-True ($storyManager -match 'CanSelectSuspect') 'StoryProgressManager must name the 10-clue suspect selection readiness explicitly.'
 
 Write-Host 'Room02 15-clue story checks passed.'

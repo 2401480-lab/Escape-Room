@@ -14,6 +14,7 @@ namespace EscapeRoom
             EnsureEventSystem();
             EnsureRuntimeObject<ClueJournalManager>("ClueJournalManager");
             EnsureRuntimeObject<StoryProgressManager>("StoryProgressManager");
+            EnsureRuntimeObject<EndingUI>("EndingUI");
             EnsureRuntimeObject<ClueJournalUI>("ClueJournalUI");
             EnsureRuntimeObject<TimerUI>("TimerUI");
             EnsureRuntimeObject<SettingsUI>("SettingsUI");

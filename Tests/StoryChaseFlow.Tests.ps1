@@ -59,6 +59,9 @@ Assert-True ($lockSystem -match 'TryEnterCode' -and $lockSystem -match 'TryColle
 Assert-True ($lockSystem -match 'HasAllKeyClues') 'LockSystem must gate escape key by all key clues.'
 
 Assert-True ($endingUI -match 'JinSewoong' -and $endingUI -match 'BongTaehyeon' -and $endingUI -match 'MoonSumi' -and $endingUI -match 'OhSejin') 'EndingUI must include all four suspect choices.'
+Assert-True ($endingUI -match 'CulpritGuessButton' -and $endingUI -match 'culpritGuessButton') 'EndingUI must create a visible culprit guess HUD button.'
+Assert-True ($endingUI -match 'OnPhaseChanged\.AddListener' -and $endingUI -match 'StoryPhase\.SuspectSelection') 'EndingUI must show the culprit guess button when suspect selection is unlocked.'
+Assert-True ($endingUI -match 'culpritGuessButton\.onClick\.AddListener\s*\(\s*Show\s*\)') 'The culprit guess HUD button must open the suspect selection UI.'
 Assert-True ($endingUI -match 'OnCorrectSuspectSelected' -and $endingUI -match 'OnWrongSuspectSelected') 'EndingUI must expose correct/wrong selection events.'
 Assert-True ($endingUI -match 'StartChase') 'EndingUI must start chase on correct answer.'
 Assert-True ($endingUI -match 'WrongAnswer') 'EndingUI must route wrong answer to GameOver.'
