@@ -24,6 +24,12 @@ namespace EscapeRoom
         private const string NotebookPrefix = "수첩:";
         private const string CommonTarget = "공통";
         private const string CommonNotebookName = "사건 공통";
+        private const float ChipSpacing = 8f;
+        private const float ChipPaddingWidth = 16f;
+        private const float CardSpacing = 12f;
+        private const float AreaHeaderHeight = 36f;
+        private const float DiscoveredCardHeight = 196f;
+        private const float UnknownCardHeight = 112f;
 
         private readonly Dictionary<ClueData, RectTransform> clueCards = new Dictionary<ClueData, RectTransform>();
         private readonly List<PersonInfo> people = new List<PersonInfo>
@@ -35,6 +41,10 @@ namespace EscapeRoom
             new PersonInfo("하시호", "고인", "한 달 전 사망한 동아리 부원. 사건의 발단.", true),
             new PersonInfo(CommonNotebookName, CommonTarget, "인물 하나로 묶이지 않는 사건의 공통 단서.")
         };
+        private CursorLockMode previousCursorLockMode;
+        private bool previousCursorVisible;
+        private bool journalOwnsCursor;
+        public static int LastJournalCloseFrame { get; private set; } = -1;
 
         private void Awake()
         {
@@ -61,6 +71,8 @@ namespace EscapeRoom
             {
                 journalManager.OnCluesChanged -= RefreshUI;
             }
+
+            RestoreCursorAfterJournal();
         }
 
         private void Update()
@@ -73,6 +85,24 @@ namespace EscapeRoom
             if (Input.GetKeyDown(KeyCode.K))
             {
                 ToggleSuspectPanel();
+            }
+
+            if (panelRoot != null && panelRoot.activeSelf)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    ShowEvidenceTab();
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    ShowSuspectTab();
+                }
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    ClosePanel();
+                }
             }
         }
 
@@ -115,6 +145,21 @@ namespace EscapeRoom
             {
                 panelRoot.SetActive(isOpen);
             }
+
+            if (isOpen)
+            {
+                ReleaseCursorForJournal();
+            }
+            else
+            {
+                RestoreCursorAfterJournal();
+            }
+        }
+
+        public void ClosePanel()
+        {
+            LastJournalCloseFrame = Time.frameCount;
+            SetOpen(false);
         }
 
         public void ScrollToClue(ClueData clueData)
@@ -228,6 +273,15 @@ namespace EscapeRoom
             progressRect.pivot = new Vector2(0.5f, 1f);
             progressRect.offsetMin = new Vector2(32f, -74f);
             progressRect.offsetMax = new Vector2(-32f, -24f);
+
+            Button closeButton = CreateButton("CloseJournalButton", parent, "닫기 (ESC)");
+            closeButton.onClick.AddListener(ClosePanel);
+            RectTransform closeRect = (RectTransform)closeButton.transform;
+            closeRect.anchorMin = new Vector2(1f, 1f);
+            closeRect.anchorMax = new Vector2(1f, 1f);
+            closeRect.pivot = new Vector2(1f, 1f);
+            closeRect.anchoredPosition = new Vector2(-30f, -78f);
+            closeRect.sizeDelta = new Vector2(128f, 34f);
         }
 
         private void CreateChipBar(RectTransform parent)
@@ -265,9 +319,6 @@ namespace EscapeRoom
             layout.padding = new RectOffset(8, 8, 6, 6);
             layout.spacing = 8f;
 
-            ContentSizeFitter fitter = chipContainer.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-
             chipScrollRect.viewport = viewport;
             chipScrollRect.content = chipContainer;
         }
@@ -287,9 +338,9 @@ namespace EscapeRoom
             layout.childForceExpandWidth = false;
             layout.spacing = 8f;
 
-            Button evidenceButton = CreateButton("EvidenceTabButton", tabBar, "수집 증거");
+            Button evidenceButton = CreateButton("EvidenceTabButton", tabBar, "수집 증거 (1)");
             evidenceButton.onClick.AddListener(ShowEvidenceTab);
-            Button suspectButton = CreateButton("SuspectTabButton", tabBar, "용의자 수첩");
+            Button suspectButton = CreateButton("SuspectTabButton", tabBar, "용의자 수첩 (2)");
             suspectButton.onClick.AddListener(ShowSuspectTab);
         }
 
@@ -326,9 +377,6 @@ namespace EscapeRoom
             layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
             layout.spacing = 12f;
-
-            ContentSizeFitter fitter = evidenceContent.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             evidenceScrollRect.viewport = viewport;
             evidenceScrollRect.content = evidenceContent;
@@ -368,9 +416,6 @@ namespace EscapeRoom
             layout.childForceExpandHeight = false;
             layout.spacing = 12f;
 
-            ContentSizeFitter fitter = suspectContent.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
             suspectScrollRect.viewport = viewport;
             suspectScrollRect.content = suspectContent;
 
@@ -393,18 +438,25 @@ namespace EscapeRoom
         {
             ClearChildren(chipContainer);
 
+            float totalWidth = ChipPaddingWidth;
+            int chipCount = 0;
             foreach (ClueData clueData in journalManager.CollectedClues)
             {
                 ClueData captured = clueData;
                 Button chip = CreateButton($"Chip_{clueData.clueName}", chipContainer, clueData.clueName);
+                float chipWidth = Mathf.Clamp(64f + clueData.clueName.Length * 14f, 132f, 240f);
                 LayoutElement element = chip.GetComponent<LayoutElement>();
                 if (element != null)
                 {
-                    element.preferredWidth = Mathf.Clamp(64f + clueData.clueName.Length * 14f, 132f, 240f);
+                    element.preferredWidth = chipWidth;
                 }
 
                 chip.onClick.AddListener(() => ScrollToClue(captured));
+                totalWidth += chipWidth + (chipCount > 0 ? ChipSpacing : 0f);
+                chipCount++;
             }
+
+            ApplyChipContentWidth(totalWidth);
         }
 
         private void BuildEvidenceCards()
@@ -416,43 +468,73 @@ namespace EscapeRoom
             int totalCount = allClues.Count;
             int collectedCount = journalManager.CollectedClues.Count;
             progressText.text = $"수집 단서 {collectedCount} / {totalCount}";
+            float contentHeight = 0f;
+            int contentItems = 0;
 
-            Dictionary<string, List<ClueData>> grouped = new Dictionary<string, List<ClueData>>();
-            List<ClueData> keyClueSection = new List<ClueData>();
+            if (collectedCount > 0)
+            {
+                CreateAreaHeader("수집한 단서");
+                AddContentHeight(ref contentHeight, ref contentItems, AreaHeaderHeight);
+                foreach (ClueData clueData in journalManager.CollectedClues)
+                {
+                    CreateClueCard(clueData, true);
+                    AddContentHeight(ref contentHeight, ref contentItems, DiscoveredCardHeight);
+                }
+            }
+
+            Dictionary<string, List<ClueData>> undiscoveredGrouped = new Dictionary<string, List<ClueData>>();
+            List<ClueData> undiscoveredKeyClueSection = new List<ClueData>();
             foreach (ClueData clueData in allClues)
             {
+                if (journalManager.HasClue(clueData))
+                {
+                    continue;
+                }
+
                 if (clueData.category == ClueCategory.KeyClue)
                 {
-                    keyClueSection.Add(clueData);
+                    undiscoveredKeyClueSection.Add(clueData);
                     continue;
                 }
 
                 string area = GetAreaDisplayName(clueData.areaName);
-                if (!grouped.ContainsKey(area))
+                if (!undiscoveredGrouped.ContainsKey(area))
                 {
-                    grouped.Add(area, new List<ClueData>());
+                    undiscoveredGrouped.Add(area, new List<ClueData>());
                 }
 
-                grouped[area].Add(clueData);
+                undiscoveredGrouped[area].Add(clueData);
             }
 
-            if (keyClueSection.Count > 0)
+            if (undiscoveredKeyClueSection.Count > 0 || undiscoveredGrouped.Count > 0)
+            {
+                CreateAreaHeader("미수집 단서");
+                AddContentHeight(ref contentHeight, ref contentItems, AreaHeaderHeight);
+            }
+
+            if (undiscoveredKeyClueSection.Count > 0)
             {
                 CreateAreaHeader("열쇠 단서");
-                foreach (ClueData clueData in keyClueSection)
+                AddContentHeight(ref contentHeight, ref contentItems, AreaHeaderHeight);
+                foreach (ClueData clueData in undiscoveredKeyClueSection)
                 {
-                    CreateClueCard(clueData, journalManager.HasClue(clueData));
+                    CreateClueCard(clueData, false);
+                    AddContentHeight(ref contentHeight, ref contentItems, UnknownCardHeight);
                 }
             }
 
-            foreach (KeyValuePair<string, List<ClueData>> group in grouped)
+            foreach (KeyValuePair<string, List<ClueData>> group in undiscoveredGrouped)
             {
                 CreateAreaHeader(group.Key);
+                AddContentHeight(ref contentHeight, ref contentItems, AreaHeaderHeight);
                 foreach (ClueData clueData in group.Value)
                 {
-                    CreateClueCard(clueData, journalManager.HasClue(clueData));
+                    CreateClueCard(clueData, false);
+                    AddContentHeight(ref contentHeight, ref contentItems, UnknownCardHeight);
                 }
             }
+
+            ApplyScrollContentHeight(evidenceScrollRect, evidenceContent, contentHeight);
         }
 
         private void CreateAreaHeader(string areaName)
@@ -460,16 +542,16 @@ namespace EscapeRoom
             TextMeshProUGUI header = CreateText($"Area_{areaName}", evidenceContent, areaName, 24f, TextAlignmentOptions.Left);
             header.color = HorrorUITheme.SickYellow;
             LayoutElement element = header.gameObject.AddComponent<LayoutElement>();
-            element.minHeight = 36f;
-            element.preferredHeight = 36f;
+            element.minHeight = AreaHeaderHeight;
+            element.preferredHeight = AreaHeaderHeight;
         }
 
         private void CreateClueCard(ClueData clueData, bool discovered)
         {
             RectTransform card = CreatePanel($"Card_{clueData.clueName}", evidenceContent, HorrorUITheme.PanelDeep);
             LayoutElement element = card.gameObject.AddComponent<LayoutElement>();
-            element.minHeight = discovered ? 196f : 112f;
-            element.preferredHeight = discovered ? 196f : 112f;
+            element.minHeight = discovered ? DiscoveredCardHeight : UnknownCardHeight;
+            element.preferredHeight = discovered ? DiscoveredCardHeight : UnknownCardHeight;
             clueCards[clueData] = card;
 
             VerticalLayoutGroup layout = card.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -503,6 +585,8 @@ namespace EscapeRoom
                 return;
             }
 
+            float contentHeight = 0f;
+            int contentItems = 0;
             foreach (PersonInfo person in people)
             {
                 if (!ShouldShowPerson(person))
@@ -516,6 +600,7 @@ namespace EscapeRoom
                 float cardHeight = Mathf.Max(166f, 128f + Mathf.Max(1, hints.Count) * 44f);
                 element.minHeight = cardHeight;
                 element.preferredHeight = cardHeight;
+                AddContentHeight(ref contentHeight, ref contentItems, cardHeight);
 
                 VerticalLayoutGroup layout = card.gameObject.AddComponent<VerticalLayoutGroup>();
                 layout.padding = new RectOffset(18, 18, 14, 14);
@@ -542,6 +627,78 @@ namespace EscapeRoom
                     CreateTextBlock("SuspectHint", card, $"- {hint}", 16f, TextAlignmentOptions.Left, 40f);
                 }
             }
+
+            ApplyScrollContentHeight(suspectScrollRect, suspectContent, contentHeight);
+        }
+
+        private void ReleaseCursorForJournal()
+        {
+            if (journalOwnsCursor)
+            {
+                return;
+            }
+
+            previousCursorLockMode = Cursor.lockState;
+            previousCursorVisible = Cursor.visible;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            journalOwnsCursor = true;
+        }
+
+        private void RestoreCursorAfterJournal()
+        {
+            if (!journalOwnsCursor)
+            {
+                return;
+            }
+
+            Cursor.lockState = previousCursorLockMode;
+            Cursor.visible = previousCursorVisible;
+            journalOwnsCursor = false;
+        }
+
+        private static void AddContentHeight(ref float totalHeight, ref int itemCount, float itemHeight)
+        {
+            if (itemCount > 0)
+            {
+                totalHeight += CardSpacing;
+            }
+
+            totalHeight += itemHeight;
+            itemCount++;
+        }
+
+        private void ApplyChipContentWidth(float preferredWidth)
+        {
+            if (chipContainer == null)
+            {
+                return;
+            }
+
+            float viewportWidth = chipScrollRect != null && chipScrollRect.viewport != null
+                ? chipScrollRect.viewport.rect.width
+                : 760f;
+            float width = Mathf.Max(preferredWidth, viewportWidth);
+            chipContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(chipContainer);
+        }
+
+        private static void ApplyScrollContentHeight(ScrollRect scrollRect, RectTransform content, float preferredHeight)
+        {
+            if (scrollRect == null || content == null)
+            {
+                return;
+            }
+
+            Canvas.ForceUpdateCanvases();
+            float viewportHeight = scrollRect.viewport != null
+                ? scrollRect.viewport.rect.height
+                : ((RectTransform)scrollRect.transform).rect.height;
+            float height = Mathf.Max(preferredHeight, viewportHeight + 1f);
+            content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+            content.anchoredPosition = Vector2.zero;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            scrollRect.verticalNormalizedPosition = 1f;
         }
 
         private bool ShouldShowPerson(PersonInfo person)

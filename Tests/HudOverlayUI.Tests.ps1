@@ -45,6 +45,7 @@ $popupDismissText = (U 0xD31D,0xC5C5) + ' ' + (U 0xB2EB,0xAE30)
 Assert-True ($settings -match 'namespace\s+EscapeRoom' -and $settings -match 'class\s+SettingsUI\s*:\s*MonoBehaviour') 'SettingsUI must be an EscapeRoom MonoBehaviour.'
 Assert-True ($settings -match 'ScreenSpaceOverlay' -and $settings -match 'HUD_Canvas') 'SettingsUI must use HUD_Canvas as Screen Space Overlay.'
 Assert-True ($settings -match 'KeyCode\.Escape' -and $settings -match 'SettingsHudButton') 'SettingsUI must toggle from ESC and a top-right settings button.'
+Assert-True ($settings -match 'IsClueJournalHandlingEscape\s*\(' -and $settings -match 'ClueJournalPanel' -and $settings -match 'LastJournalCloseFrame') 'SettingsUI must not open settings on the same ESC used to close the clue journal.'
 Assert-True ($settings -match 'Slider\s+volumeSlider' -and $settings -match 'Slider\s+sensitivitySlider') 'SettingsUI must include volume and sensitivity sliders.'
 Assert-True ($settings.Contains($settingsText) -and $settings.Contains($volumeText) -and $settings.Contains($sensitivityText) -and $settings.Contains($controlsText)) 'SettingsUI must show Korean settings, volume, sensitivity, and controls labels.'
 Assert-True ($settings -match 'VolumeSensitivityTabRoot' -and $settings -match 'ControlsTabRoot') 'SettingsUI must split settings into volume/sensitivity and controls tabs.'

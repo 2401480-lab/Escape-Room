@@ -38,6 +38,8 @@ $evidenceTab = U 0xC218,0xC9D1,0x0020,0xC99D,0xAC70
 $suspectTab = (U 0xC6A9,0xC758,0xC790) + ' ' + (U 0xC218,0xCCA9)
 $explorePlaceholder = (U 0xC774,0x0020,0xAD6C,0xC5ED,0xC744,0x0020,0xD0D0,0xC0C9,0xD558,0xBA74,0x0020,0xC99D,0xAC70,0xB97C,0x0020,0xC218,0xC9D1,0xD560,0x0020,0xC218,0x0020,0xC788,0xC2B5,0xB2C8,0xB2E4)
 $noteTitleJoiner = ' ' + (U 0xB178,0xD2B8) + ' - '
+$collectedClueHeader = U 0xC218,0xC9D1,0xD55C,0x0020,0xB2E8,0xC11C
+$undiscoveredClueHeader = U 0xBBF8,0xC218,0xC9D1,0x0020,0xB2E8,0xC11C
 $hashiho = U 0xD558,0xC2DC,0xD638
 $deceased = U 0xACE0,0xC778
 $people = @(
@@ -84,9 +86,16 @@ Assert-True ($ui -match 'KeyCode\.J' -and $ui -match 'KeyCode\.Tab' -and $ui -ma
 Assert-True ($ui -match 'EvidenceHudButton' -and $ui -match 'SuspectHudButton') 'ClueJournalUI must create top-left HUD buttons for evidence and suspects.'
 Assert-True ($ui.Contains($evidenceTab)) 'ClueJournalUI must include the collected evidence tab.'
 Assert-True ($ui.Contains($suspectTab)) 'ClueJournalUI must include the suspect notebook tab.'
+Assert-True ($ui -match 'KeyCode\.Alpha1' -and $ui -match 'KeyCode\.Alpha2' -and $ui -match 'KeyCode\.Escape') 'ClueJournalUI must support keyboard tab switching and closing when clicks are unavailable.'
+Assert-True ($ui -match 'CloseJournalButton' -and $ui -match 'ClosePanel') 'ClueJournalUI must create an explicit close button.'
+Assert-True ($ui -match 'ReleaseCursorForJournal\s*\(' -and $ui -match 'RestoreCursorAfterJournal\s*\(' -and $ui -match 'CursorLockMode\.None' -and $ui -match 'Cursor\.visible\s*=\s*true') 'ClueJournalUI must unlock and show the cursor while the notebook is open.'
+Assert-True ($ui -match 'LastJournalCloseFrame\s*=' -and $ui -match 'Time\.frameCount') 'ClueJournalUI must record the close frame so ESC cannot also open settings.'
 Assert-True ($ui -match 'ScrollRect\s+suspectScrollRect') 'ClueJournalUI suspect notebook must scroll instead of clipping cards.'
 Assert-True ($ui -match 'CreateClueCardTitle' -and $ui.Contains($noteTitleJoiner)) 'Evidence cards must use area-note titles such as "병실 노트 - 단서명".'
+Assert-True ($ui.Contains($collectedClueHeader) -and $ui.Contains($undiscoveredClueHeader) -and $ui -match 'journalManager\.CollectedClues') 'Evidence tab must show collected clues first, then undiscovered clues.'
 Assert-True ($ui -match 'CreateTextBlock' -and $ui -match 'preferredHeight') 'Evidence and suspect cards must assign stable text heights to prevent overlap.'
+Assert-True ($ui -match 'ApplyScrollContentHeight\s*\(' -and $ui -match 'SetSizeWithCurrentAnchors\s*\(\s*RectTransform\.Axis\.Vertical' -and $ui -match 'LayoutRebuilder\.ForceRebuildLayoutImmediate') 'ClueJournalUI must explicitly size scroll content so cards cannot collapse to zero height.'
+Assert-True ($ui -match 'ApplyChipContentWidth\s*\(' -and $ui -match 'SetSizeWithCurrentAnchors\s*\(\s*RectTransform\.Axis\.Horizontal') 'ClueJournalUI must explicitly size clue chips so collected clue buttons remain visible.'
 Assert-True ($ui -match 'ShouldShowPerson\s*\(' -and $ui -match 'HasHashihoClue\s*\(') 'ClueJournalUI must hide deceased Hashiho until a Hashiho clue is collected.'
 Assert-True ($ui.Contains($hashiho) -and $ui.Contains($deceased) -and $ui -match 'normal_memorial_frame' -and $ui -match 'clue_hasho_will') 'Hashiho reveal must be tied to Hashiho-related clue IDs.'
 foreach ($person in $people) {

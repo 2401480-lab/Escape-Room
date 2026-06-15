@@ -26,8 +26,20 @@ namespace EscapeRoom
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
+                if (IsClueJournalHandlingEscape())
+                {
+                    return;
+                }
+
                 Toggle();
             }
+        }
+
+        private static bool IsClueJournalHandlingEscape()
+        {
+            GameObject journalPanel = GameObject.Find("ClueJournalPanel");
+            bool journalIsOpen = journalPanel != null && journalPanel.activeInHierarchy;
+            return journalIsOpen || ClueJournalUI.LastJournalCloseFrame == Time.frameCount;
         }
 
         public void Toggle()
