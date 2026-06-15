@@ -22,6 +22,11 @@ function U {
     return -join ($CodePoints | ForEach-Object { [char] $_ })
 }
 
+function From-B64 {
+    param([string] $Value)
+    return [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($Value))
+}
+
 Assert-True (Test-Path -LiteralPath $boxPath) 'Missing Room02 ClueBoxInteractable.cs'
 Assert-True (Test-Path -LiteralPath $themePath) 'Missing Room02 HorrorUITheme.cs'
 Assert-True (Test-Path -LiteralPath $adapterPath) 'Missing Room02 ClueBoxRuntimeAdapter.cs'
@@ -41,9 +46,23 @@ $allCode = "$box`n$theme`n$journal`n$settings`n$timer"
 
 $boxPrompt = '[F] ' + (U 0xBC15,0xC2A4,0x0020,0xC870,0xC0AC,0xD558,0xAE30)
 $searchedPrompt = U 0xC774,0xBBF8,0x0020,0xC870,0xC0AC,0xD55C,0x0020,0xBC15,0xC2A4
-$introLine1 = U 0xB208,0xC744,0x0020,0xB5A0,0xBCF4,0xB2C8,0x0020,0xCC28,0xAC00,0xC6B4,0x0020,0xBCD1,0xC6D0,0x0020,0xBCF5,0xB3C4,0xC600,0xB2E4,0x002E
-$introLine2 = U 0xBB38,0xC740,0x0020,0xC7A0,0xACA8,0x0020,0xC788,0xACE0,0x002C,0x0020,0xBD88,0xBE5B,0xC740,0x0020,0xBD88,0xC548,0xD558,0xAC8C,0x0020,0xAE5C,0xBE61,0xC778,0xB2E4,0x002E,0x0020,0xB098,0xB294,0x0020,0xAC07,0xD614,0xB2E4,0x002E
-$introLine3 = U 0xD0C8,0xCD9C,0xAD6C,0x0020,0xC5F4,0xC1E0,0xB294,0x0020,0xC774,0x0020,0xC548,0x0020,0xC5B4,0xB518,0xAC00,0xC5D0,0x0020,0xC788,0xB2E4,0x002E,0x0020,0xB2E8,0xC11C,0xB97C,0x0020,0xCC3E,0xC544,0xB77C,0x002E,0x0020,0xBC94,0xC778,0xC744,0x0020,0xBC1D,0xD600,0xB77C,0x002E,0x0020,0xADF8,0xB9AC,0xACE0,0x0020,0x2014,0x0020,0x0032,0x0030,0xBD84,0x0020,0xC548,0xC5D0,0x0020,0xC5EC,0xAE30,0xC11C,0x0020,0xB098,0xAC00,0xB77C,0x002E
+$introRequiredLines = @(
+    (From-B64 '64iI7J2EIOuWoOuztOuLiCDssKjqsIDsmrQg67OR7JuQIOuzteuPhOyYgOuLpC4='),
+    (From-B64 '66y47J2AIOyeoOqyqCDsnojqs6AsIOu2iOu5m+ydgCDrtojslYjtlZjqsowg6rmc67mh7J2464ukLg=='),
+    (From-B64 '7Jik64qYIOuwpCwg7J20IO2PkOyalOyWkSDrs5Hsm5Dsl5DshJwg7ZWcIOuqheydtCDso73sl4jri6Qu'),
+    (From-B64 '7Ius66C5IOuPmeyVhOumrCDrtoDsm5Ag7Jyg7JWI64KYLg=='),
+    (From-B64 '64+F7IK07J207JeI64ukLg=='),
+    (From-B64 '7Jqp7J2Y7J6Q64qUIOyEuCDrqoXsnbTri6Qu'),
+    (From-B64 '7KeE7IS47JuF'),
+    (From-B64 '7ZaJ7IKsIOq4sO2ajeyekC4g7IiY7Iig7IukIOq1rOyXrSDri7Tri7ku'),
+    (From-B64 '67SJ7YOc7ZiE'),
+    (From-B64 '7KeE7IS47JuF7J2YIOygiOy5nC4g7IiY7Iig7IukIOyViOuCtOybkC4='),
+    (From-B64 '66y47IiY66+4'),
+    (From-B64 '64+Z7JWE66asIDPtlZnrhYQuIOyigOu5hCDsl60g64u064u5Lg=='),
+    (From-B64 '6re466as6rOgIOq3uCDspJEg7ZWcIOuqheydgCDslYTsp4Eg7J20IOyViOyXkCDsnojri6Qu'),
+    (From-B64 '6re466as6rOgIOKAlCAyMOu2hCDslYjsl5Ag7Jes6riw7IScIOuCmOqwgOudvC4='),
+    (From-B64 'U3BhY2UgLyBGIC8g7YG066atOiDri6TsnYw=')
+)
 
 Assert-True ($box -match 'namespace\s+EscapeRoom') 'ClueBoxInteractable must use EscapeRoom namespace.'
 Assert-True ($box -match 'class\s+ClueBoxInteractable\s*:\s*MonoBehaviour') 'ClueBoxInteractable must be a MonoBehaviour.'
@@ -77,7 +96,9 @@ Assert-True ($adapter -match 'SetActive\s*\(\s*false\s*\)') 'ClueBoxRuntimeAdapt
 
 Assert-True ($intro -match 'class\s+IntroScenarioUI\s*:\s*MonoBehaviour') 'IntroScenarioUI must be a runtime MonoBehaviour.'
 Assert-True ($intro -match 'ScreenSpaceOverlay' -and $intro -match 'HUD_Canvas') 'IntroScenarioUI must attach to HUD_Canvas as Screen Space Overlay.'
-Assert-True ($intro.Contains($introLine1) -and $intro.Contains($introLine2) -and $intro.Contains($introLine3)) 'IntroScenarioUI must show the requested opening narration.'
+foreach ($line in $introRequiredLines) {
+    Assert-True ($intro.Contains($line)) "IntroScenarioUI must show requested opening narration line: $line"
+}
 Assert-True ($intro -match 'KeyCode\.Space' -and $intro -match 'KeyCode\.F' -and $intro -match 'Input\.GetMouseButtonDown') 'IntroScenarioUI must dismiss with Space, F, or click.'
 Assert-True ($intro -notmatch 'Time\.timeScale' -and $intro -notmatch 'CursorController') 'IntroScenarioUI must not touch Time.timeScale or CursorController.'
 Assert-True ($bootstrapper -match 'EnsureRuntimeObject<IntroScenarioUI>') 'HudRuntimeBootstrapper must create IntroScenarioUI at game start.'

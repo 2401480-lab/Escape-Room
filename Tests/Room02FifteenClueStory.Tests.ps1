@@ -17,6 +17,11 @@ function U {
     return -join ($CodePoints | ForEach-Object { [char] $_ })
 }
 
+function From-B64 {
+    param([string] $Value)
+    return [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($Value))
+}
+
 function Get-EntryBlock {
     param([string] $Source, [string] $ClueID)
     $match = [regex]::Match($Source, "new\s+ClueEntry\s*\(\s*""$([regex]::Escape($ClueID))""[\s\S]*?\),", 'Singleline')
@@ -34,10 +39,24 @@ $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
 $journalUi = Get-Content -LiteralPath $journalUiPath -Raw -Encoding UTF8
 $storyManager = Get-Content -LiteralPath $storyManagerPath -Raw -Encoding UTF8
 
-$introLine1 = U 0xB208,0xC744,0x0020,0xB5A0,0xBCF4,0xB2C8,0x0020,0xCC28,0xAC00,0xC6B4,0x0020,0xBCD1,0xC6D0,0x0020,0xBCF5,0xB3C4,0xC600,0xB2E4,0x002E
-$introLine2 = U 0xBB38,0xC740,0x0020,0xC7A0,0xACA8,0x0020,0xC788,0xACE0,0x002C,0x0020,0xBD88,0xBE5B,0xC740,0x0020,0xBD88,0xC548,0xD558,0xAC8C,0x0020,0xAE5C,0xBE61,0xC778,0xB2E4,0x002E,0x0020,0xB098,0xB294,0x0020,0xAC07,0xD614,0xB2E4,0x002E
-$introLine3 = U 0xD0C8,0xCD9C,0xAD6C,0x0020,0xC5F4,0xC1E0,0xB294,0x0020,0xC774,0x0020,0xC548,0x0020,0xC5B4,0xB518,0xAC00,0xC5D0,0x0020,0xC788,0xB2E4,0x002E,0x0020,0xB2E8,0xC11C,0xB97C,0x0020,0xCC3E,0xC544,0xB77C,0x002E,0x0020,0xBC94,0xC778,0xC744,0x0020,0xBC1D,0xD600,0xB77C,0x002E,0x0020,0xADF8,0xB9AC,0xACE0,0x0020,0x2014,0x0020,0x0032,0x0030,0xBD84,0x0020,0xC548,0xC5D0,0x0020,0xC5EC,0xAE30,0xC11C,0x0020,0xB098,0xAC00,0xB77C,0x002E
-foreach ($line in @($introLine1, $introLine2, $introLine3)) {
+$introRequiredLines = @(
+    (From-B64 '64iI7J2EIOuWoOuztOuLiCDssKjqsIDsmrQg67OR7JuQIOuzteuPhOyYgOuLpC4='),
+    (From-B64 '66y47J2AIOyeoOqyqCDsnojqs6AsIOu2iOu5m+ydgCDrtojslYjtlZjqsowg6rmc67mh7J2464ukLg=='),
+    (From-B64 '7Jik64qYIOuwpCwg7J20IO2PkOyalOyWkSDrs5Hsm5Dsl5DshJwg7ZWcIOuqheydtCDso73sl4jri6Qu'),
+    (From-B64 '7Ius66C5IOuPmeyVhOumrCDrtoDsm5Ag7Jyg7JWI64KYLg=='),
+    (From-B64 '64+F7IK07J207JeI64ukLg=='),
+    (From-B64 '7Jqp7J2Y7J6Q64qUIOyEuCDrqoXsnbTri6Qu'),
+    (From-B64 '7KeE7IS47JuF'),
+    (From-B64 '7ZaJ7IKsIOq4sO2ajeyekC4g7IiY7Iig7IukIOq1rOyXrSDri7Tri7ku'),
+    (From-B64 '67SJ7YOc7ZiE'),
+    (From-B64 '7KeE7IS47JuF7J2YIOygiOy5nC4g7IiY7Iig7IukIOyViOuCtOybkC4='),
+    (From-B64 '66y47IiY66+4'),
+    (From-B64 '64+Z7JWE66asIDPtlZnrhYQuIOyigOu5hCDsl60g64u064u5Lg=='),
+    (From-B64 '6re466as6rOgIOq3uCDspJEg7ZWcIOuqheydgCDslYTsp4Eg7J20IOyViOyXkCDsnojri6Qu'),
+    (From-B64 '6re466as6rOgIOKAlCAyMOu2hCDslYjsl5Ag7Jes6riw7IScIOuCmOqwgOudvC4='),
+    (From-B64 'U3BhY2UgLyBGIC8g7YG066atOiDri6TsnYw=')
+)
+foreach ($line in $introRequiredLines) {
     Assert-True ($intro.Contains($line)) "Intro narration missing: $line"
 }
 
