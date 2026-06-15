@@ -9,6 +9,7 @@ namespace EscapeGame
     {
         [Header("Scene")]
         [SerializeField] private string roomSceneName = "Show";
+        private const string BackgroundResourcePath = "Onboarding/HospitalHorrorBackground";
 
         [Header("Main Menu")]
         [SerializeField] private TextMeshProUGUI titleText;
@@ -20,6 +21,7 @@ namespace EscapeGame
         [SerializeField] private Button descriptionStartButton;
 
         private GameObject menuBackdrop;
+        private GameObject menuDarkOverlay;
         private GameObject descriptionRoot;
         private GameObject generatedDescriptionPanel;
         private GameObject generatedIntroPanel;
@@ -208,15 +210,15 @@ namespace EscapeGame
                 rect.anchorMin = new Vector2(0.5f, 0.5f);
                 rect.anchorMax = new Vector2(0.5f, 0.5f);
                 rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition = new Vector2(0f, 125f);
-                rect.sizeDelta = new Vector2(520f, 72f);
+                rect.anchoredPosition = new Vector2(-322f, 214f);
+                rect.sizeDelta = new Vector2(540f, 116f);
                 titleText.text = "\uC808\uADDC\uC758 \uC218\uC220\uC2E4";
-                titleText.fontSize = 42f;
-                titleText.alignment = TextAlignmentOptions.Center;
+                titleText.fontSize = 58f;
+                titleText.alignment = TextAlignmentOptions.Left;
             }
 
-            PositionButton(directStartButton, new Vector2(0f, 20f));
-            PositionButton(descriptionButton, new Vector2(0f, -62f));
+            PositionButton(directStartButton, new Vector2(410f, -214f));
+            PositionButton(descriptionButton, new Vector2(410f, -286f));
 
             if (descriptionPanel != null)
             {
@@ -240,12 +242,13 @@ namespace EscapeGame
             }
 
             StyleButton(directStartButton, "\uAC8C\uC784 \uC2DC\uC791");
-            StyleButton(descriptionButton, "\uAC8C\uC784 \uC124\uBA85");
+            StyleButton(descriptionButton, "\uAC8C\uC784 \uC124\uC815");
             StyleButton(descriptionStartButton, "\uAC8C\uC784 \uC2DC\uC791");
 
             if (titleText != null)
             {
                 titleText.color = Blood;
+                ApplyHorrorTitle(titleText);
             }
 
             StylePanel(descriptionPanel, new Color(0.018f, 0.016f, 0.016f, 0.96f));
@@ -405,14 +408,14 @@ namespace EscapeGame
             layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
 
-            TextMeshProUGUI title = CreateText(box.transform, "DescriptionTitle", "\uAC8C\uC784 \uC124\uBA85", 34f, Blood);
+            TextMeshProUGUI title = CreateText(box.transform, "DescriptionTitle", "\uAC8C\uC784 \uC124\uC815", 34f, Blood);
             title.fontStyle = FontStyles.Bold;
             AddPreferredHeight(title.gameObject, 48f);
 
             TextMeshProUGUI body = CreateText(
                 box.transform,
                 "DescriptionBody",
-                "\uCC28\uAC00\uC6B4 \uBA54\uC2A4\uC640 \uD53C\uBE44\uB9B0\uB0B4\uB85C \uAC00\uB4DD\uD55C \uC758\uBB38\uC758 \uC218\uC220\uC2E4.\n\uB2F9\uC2E0\uC740 \uC774 \uC5B4\uB450\uC6B4 \uBC29 \uC548\uC5D0 \uAC07\uD614\uC2B5\uB2C8\uB2E4.\n\n<color=#b00000><b>\uAC8C\uC784 \uBC29\uBC95</b></color>\n\uBC29 \uC548\uC744 \uC790\uC720\uB86D\uAC8C \uB3CC\uC544\uB2E4\uB2C8\uBA70\n\uC758\uC2EC\uC2A4\uB7EC\uC6B4 \uACF3\uC744 \uC870\uC0AC\uD558\uC138\uC694.\n\uC228\uACA8\uC9C4 \uACB0\uC815\uC801 \uB2E8\uC11C\uB4E4\uC744 \uC218\uC9D1\uD574\uC57C \uD569\uB2C8\uB2E4.\n\n<color=#b00000><b>\uACBD\uACE0</b></color>\n\uBC18\uB4DC\uC2DC \uC2E0\uC911\uD558\uAC8C \uCD94\uB9AC\uD558\uC138\uC694.\n\uD2C0\uB9B0 \uCD94\uB9AC\uB294 \uC704\uD5D8\uD55C \uACB0\uB9D0\uB85C \uC774\uC5B4\uC9C8 \uC218 \uC788\uC2B5\uB2C8\uB2E4.",
+                "<color=#b00000><b>\uC74C\uD5A5</b></color>\n\uBC30\uACBD\uC74C\uACFC \uD6A8\uACFC\uC74C\uC740 ESC \uC124\uC815\uC5D0\uC11C \uC870\uC808\uD558\uC138\uC694.\n\n<color=#b00000><b>\uD654\uBA74</b></color>\n\uC5B4\uB450\uC6B4 \uBC29\uC5D0\uC11C\uB294 \uC190\uC804\uB4F1\uC744 \uBC18\uB4DC\uC2DC \uD655\uC778\uD558\uC138\uC694.\n\n<color=#b00000><b>\uC870\uC791</b></color>\nWASD \uC774\uB3D9, \uB9C8\uC6B0\uC2A4 \uC2DC\uC57C, F \uC870\uC0AC, ESC \uC124\uC815",
                 20f,
                 TextMain);
             body.alignment = TextAlignmentOptions.Center;
@@ -439,7 +442,18 @@ namespace EscapeGame
             menuBackdrop = new GameObject("MainMenuBackdrop");
             menuBackdrop.transform.SetParent(canvas.transform, false);
             Image image = menuBackdrop.AddComponent<Image>();
-            image.color = new Color(0.01f, 0.012f, 0.014f, 0.78f);
+            Sprite backgroundSprite = Resources.Load<Sprite>(BackgroundResourcePath);
+            if (backgroundSprite != null)
+            {
+                image.sprite = backgroundSprite;
+                image.preserveAspect = false;
+                image.color = Color.white;
+            }
+            else
+            {
+                image.color = new Color(0.01f, 0.012f, 0.014f, 1f);
+            }
+
             image.raycastTarget = false;
 
             RectTransform rect = menuBackdrop.GetComponent<RectTransform>();
@@ -447,6 +461,19 @@ namespace EscapeGame
             rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
+
+            menuBackdrop.name = "OnboardingHospitalHorrorBackground";
+            menuDarkOverlay = new GameObject("OnboardingDarkVignetteOverlay");
+            menuDarkOverlay.transform.SetParent(menuBackdrop.transform, false);
+            Image overlay = menuDarkOverlay.AddComponent<Image>();
+            overlay.color = new Color(0f, 0f, 0f, 0.34f);
+            overlay.raycastTarget = false;
+
+            RectTransform overlayRect = menuDarkOverlay.GetComponent<RectTransform>();
+            overlayRect.anchorMin = Vector2.zero;
+            overlayRect.anchorMax = Vector2.one;
+            overlayRect.offsetMin = Vector2.zero;
+            overlayRect.offsetMax = Vector2.zero;
             menuBackdrop.transform.SetAsFirstSibling();
         }
 
@@ -511,7 +538,7 @@ namespace EscapeGame
             rect.anchorMax = new Vector2(0.5f, 0.5f);
             rect.pivot = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = position;
-            rect.sizeDelta = new Vector2(220f, 44f);
+            rect.sizeDelta = new Vector2(270f, 58f);
         }
 
         private static void ReplaceClick(Button button, UnityEngine.Events.UnityAction action)
@@ -614,10 +641,40 @@ namespace EscapeGame
             {
                 text.text = label;
                 text.color = TextMain;
-                text.fontSize = 24f;
+                text.fontSize = 26f;
                 text.fontStyle = FontStyles.Bold;
                 text.alignment = TextAlignmentOptions.Center;
+                text.characterSpacing = 4f;
+                EnsureOutline(text.gameObject, new Color(0f, 0f, 0f, 0.95f), new Vector2(2f, -2f));
             }
+
+            EnsureOutline(button.gameObject, new Color(0.48f, 0.015f, 0.015f, 0.96f), new Vector2(2f, -2f));
+            EnsureShadow(button.gameObject, new Color(0f, 0f, 0f, 0.8f), new Vector2(5f, -5f));
+        }
+
+        private static void ApplyHorrorTitle(TextMeshProUGUI text)
+        {
+            text.fontStyle = FontStyles.Bold;
+            text.characterSpacing = 7f;
+            text.lineSpacing = -8f;
+            EnsureOutline(text.gameObject, new Color(0f, 0f, 0f, 0.98f), new Vector2(3f, -3f));
+            EnsureShadow(text.gameObject, new Color(0.18f, 0f, 0f, 0.88f), new Vector2(7f, -7f));
+        }
+
+        private static void EnsureOutline(GameObject go, Color color, Vector2 distance)
+        {
+            Outline outline = go.GetComponent<Outline>() ?? go.AddComponent<Outline>();
+            outline.effectColor = color;
+            outline.effectDistance = distance;
+            outline.useGraphicAlpha = true;
+        }
+
+        private static void EnsureShadow(GameObject go, Color color, Vector2 distance)
+        {
+            Shadow shadow = go.GetComponent<Shadow>() ?? go.AddComponent<Shadow>();
+            shadow.effectColor = color;
+            shadow.effectDistance = distance;
+            shadow.useGraphicAlpha = true;
         }
     }
 }

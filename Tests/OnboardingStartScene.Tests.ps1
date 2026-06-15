@@ -5,20 +5,33 @@ $buildSettingsPath = Join-Path $root 'ProjectSettings/EditorBuildSettings.asset'
 $onboardingScenePath = Join-Path $root 'Assets/Onboarding.unity'
 $onboardingScriptPath = Join-Path $root 'Assets/_Shared/Scripts/OnboardingUI.cs'
 $playModeStartPath = Join-Path $root 'Assets/_Shared/Scripts/Editor/OnboardingPlayModeStartScene.cs'
+$backgroundPath = Join-Path $root 'Assets/_Shared/Resources/Onboarding/HospitalHorrorBackground.png'
+$backgroundMetaPath = Join-Path $root 'Assets/_Shared/Resources/Onboarding/HospitalHorrorBackground.png.meta'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
     if (-not $Condition) { throw $Message }
 }
 
+function U {
+    param([int[]] $CodePoints)
+    return -join ($CodePoints | ForEach-Object { [char] $_ })
+}
+
 Assert-True (Test-Path -LiteralPath $onboardingScenePath) 'Onboarding scene must exist.'
 Assert-True (Test-Path -LiteralPath $onboardingScriptPath) 'OnboardingUI script must exist.'
 Assert-True (Test-Path -LiteralPath $playModeStartPath) 'Editor play mode start scene helper must exist.'
+Assert-True (Test-Path -LiteralPath $backgroundPath) 'Onboarding hospital horror background image must exist under _Shared Resources.'
+Assert-True (Test-Path -LiteralPath $backgroundMetaPath) 'Onboarding hospital horror background image meta must exist.'
 
 $buildSettings = Get-Content -LiteralPath $buildSettingsPath -Raw -Encoding UTF8
 $onboardingScene = Get-Content -LiteralPath $onboardingScenePath -Raw -Encoding UTF8
 $onboardingScript = Get-Content -LiteralPath $onboardingScriptPath -Raw -Encoding UTF8
 $playModeStart = Get-Content -LiteralPath $playModeStartPath -Raw -Encoding UTF8
+$backgroundMeta = Get-Content -LiteralPath $backgroundMetaPath -Raw -Encoding UTF8
+$gameStart = U 0xAC8C,0xC784,0x0020,0xC2DC,0xC791
+$gameSettings = U 0xAC8C,0xC784,0x0020,0xC124,0xC815
+$gameDescription = U 0xAC8C,0xC784,0x0020,0xC124,0xBA85
 
 $onboardingBuildIndex = $buildSettings.IndexOf('path: Assets/Onboarding.unity')
 $showBuildIndex = $buildSettings.IndexOf('path: Assets/Room02_Operating/Scenes/Show.unity')
@@ -32,9 +45,20 @@ Assert-True ($onboardingScene -match 'roomSceneName:\s*Show') 'Onboarding scene 
 Assert-True ($onboardingScript -match 'private\s+string\s+roomSceneName\s*=\s*"Show"') 'OnboardingUI must load Show by default.'
 Assert-True ($onboardingScript -match 'SceneManager\.LoadScene\s*\(\s*roomSceneName\s*\)') 'OnboardingUI must load the configured room scene.'
 Assert-True ($onboardingScript -notmatch 'Scene_OperatingRoom') 'OnboardingUI must not load Scene_OperatingRoom.'
+Assert-True ($onboardingScript -match 'BackgroundResourcePath\s*=\s*"Onboarding/HospitalHorrorBackground"') 'OnboardingUI must load the hospital horror background from Resources.'
+Assert-True ($onboardingScript -match 'Resources\.Load<Sprite>\s*\(\s*BackgroundResourcePath\s*\)') 'OnboardingUI must load the onboarding background sprite.'
+Assert-True ($onboardingScript -match 'OnboardingHospitalHorrorBackground') 'OnboardingUI must create a named hospital horror background object.'
+Assert-True ($onboardingScript -match 'OnboardingDarkVignetteOverlay') 'OnboardingUI must add a dark overlay over the background image.'
+Assert-True ($onboardingScript.Contains($gameStart) -or $onboardingScript -match '\\uAC8C\\uC784\s+\\uC2DC\\uC791') 'OnboardingUI must label the start button as game start.'
+Assert-True ($onboardingScript.Contains($gameSettings) -or $onboardingScript -match '\\uAC8C\\uC784\s+\\uC124\\uC815') 'OnboardingUI must label the settings button as game settings.'
+Assert-True (-not $onboardingScript.Contains($gameDescription) -and $onboardingScript -notmatch '\\uAC8C\\uC784\s+\\uC124\\uBA85') 'OnboardingUI main menu must not keep the old game description label.'
+Assert-True ($onboardingScript -match 'characterSpacing' -and $onboardingScript -match 'EnsureOutline') 'OnboardingUI must apply stronger horror typography styling.'
 
 Assert-True ($playModeStart -match 'OnboardingScenePath\s*=\s*"Assets/Onboarding\.unity"') 'Editor helper must target Assets/Onboarding.unity.'
 Assert-True ($playModeStart -match 'EditorSceneManager\.playModeStartScene') 'Editor helper must set the Play button start scene.'
 Assert-True ($playModeStart -match 'AssetDatabase\.LoadAssetAtPath<SceneAsset>') 'Editor helper must load the onboarding SceneAsset safely.'
+
+Assert-True ($backgroundMeta -match 'textureType:\s*8') 'Onboarding background texture must import as a Sprite.'
+Assert-True ($backgroundMeta -match 'spriteMode:\s*1') 'Onboarding background texture must be a single sprite.'
 
 Write-Host 'Onboarding start scene checks passed.'
