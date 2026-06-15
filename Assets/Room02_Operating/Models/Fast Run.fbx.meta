@@ -1,0 +1,34 @@
+fileFormatVersion: 2
+guid: b793b6554cd649b5a08a72102e565223
+ModelImporter:
+  serializedVersion: 21
+  materialImportMode: 0
+  materialName: 0
+  materialSearch: 1
+  importMaterials: 0
+  animationType: 2
+  avatarSetup: 0
+  importAnimation: 1
+  importCameras: 0
+  importLights: 0
+  importBlendShapes: 1
+  importVisibility: 1
+  importConstraints: 0
+  importNormals: 1
+  importTangents: 3
+  meshCompression: 0
+  isReadable: 0
+  optimizeMeshForGPU: 1
+  keepQuads: 0
+  weldVertices: 1
+  globalScale: 1
+  useFileScale: 1
+  generateSecondaryUV: 0
+  swapUVChannels: 0
+  preserveHierarchy: 0
+  indexFormat: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData:
+  assetBundleName:
+  assetBundleVariant:

@@ -24,11 +24,17 @@ namespace EscapeRoom
         [SerializeField] private Button mainMenuButton;
         [SerializeField] private Animator jumpscareAnimator;
         [SerializeField] private GameObject jumpscareModelPrefab;
+        [SerializeField] private AnimationClip jumpscareRunAnimationClip;
         [SerializeField] private string jumpscareModelResourcesPath = "Room02_Models/Ch45_nonPBR";
         [SerializeField] private string editorJumpscareModelAssetPath = "Assets/Room02_Operating/Models/Ch45_nonPBR.fbx";
-        [SerializeField] private float jumpscareDistance = 1.15f;
+        [SerializeField] private string jumpscareRunAnimationResourcesPath = "Room02_Models/Fast Run";
+        [SerializeField] private string editorJumpscareRunAnimationAssetPath = "Assets/Room02_Operating/Models/Fast Run.fbx";
+        [SerializeField] private float lungeStartDistance = 5.2f;
+        [SerializeField] private float lungeImpactDistance = 0.85f;
+        [SerializeField] private float lungeDuration = 0.62f;
         [SerializeField] private float jumpscareVerticalOffset = -0.18f;
-        [SerializeField] private float jumpscareScale = 1.35f;
+        [SerializeField] private float jumpscareScale = 1.22f;
+        [SerializeField] private float jumpscareWidthScale = 0.82f;
         [SerializeField] private float blackoutDelay = 0.38f;
         [SerializeField] private string mainMenuSceneName = "RoomSelect";
 
@@ -110,7 +116,14 @@ namespace EscapeRoom
             }
 
             PlayDudungTakImpact();
-            yield return new WaitForSecondsRealtime(blackoutDelay);
+            if (spawnedJumpscareModel != null)
+            {
+                yield return StartCoroutine(LungeJumpscareModel(spawnedJumpscareModel));
+            }
+            else
+            {
+                yield return new WaitForSecondsRealtime(blackoutDelay);
+            }
 
             ShowFinalGameOver(reason);
         }
@@ -130,13 +143,9 @@ namespace EscapeRoom
             if (targetCamera != null)
             {
                 position = targetCamera.transform.position +
-                           targetCamera.transform.forward * jumpscareDistance +
+                           targetCamera.transform.forward * lungeStartDistance +
                            targetCamera.transform.up * jumpscareVerticalOffset;
-                Vector3 lookDirection = position - targetCamera.transform.position;
-                if (lookDirection.sqrMagnitude > 0.001f)
-                {
-                    rotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
-                }
+                rotation = CreateCameraFacingRotation(position, targetCamera.transform);
             }
 
             if (spawnedJumpscareModel != null)
@@ -146,9 +155,137 @@ namespace EscapeRoom
 
             GameObject model = Instantiate(prefab, position, rotation);
             model.name = "GameOverJumpscareModel";
-            model.transform.localScale = Vector3.one * jumpscareScale;
+            model.transform.localScale = new Vector3(
+                jumpscareScale * jumpscareWidthScale,
+                jumpscareScale,
+                jumpscareScale * jumpscareWidthScale);
             model.SetActive(true);
             return model;
+        }
+
+        private IEnumerator LungeJumpscareModel(GameObject model)
+        {
+            Camera targetCamera = Camera.main;
+            if (model == null || targetCamera == null)
+            {
+                yield return new WaitForSecondsRealtime(blackoutDelay);
+                yield break;
+            }
+
+            PlayRunAnimation(model);
+
+            Transform cameraTransform = targetCamera.transform;
+            Vector3 startPosition = model.transform.position;
+            float elapsed = 0f;
+            float duration = Mathf.Max(0.01f, lungeDuration);
+
+            while (elapsed < duration)
+            {
+                if (model == null)
+                {
+                    yield break;
+                }
+
+                float progress = Mathf.Clamp01(elapsed / duration);
+                float easedProgress = Mathf.SmoothStep(0f, 1f, progress);
+                Vector3 impactPosition = GetJumpscareImpactPosition(cameraTransform);
+                model.transform.position = Vector3.Lerp(startPosition, impactPosition, easedProgress);
+                model.transform.rotation = CreateCameraFacingRotation(model.transform.position, cameraTransform);
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            if (model != null)
+            {
+                model.transform.position = GetJumpscareImpactPosition(cameraTransform);
+                model.transform.rotation = CreateCameraFacingRotation(model.transform.position, cameraTransform);
+            }
+
+            yield return new WaitForSecondsRealtime(blackoutDelay);
+        }
+
+        private void PlayRunAnimation(GameObject model)
+        {
+            AnimationClip clip = ResolveJumpscareRunAnimation();
+            if (model == null || clip == null)
+            {
+                return;
+            }
+
+            AnimationClip playableClip = Instantiate(clip);
+            playableClip.name = "GameOverFastRunClip";
+            playableClip.legacy = true;
+
+            Animation animation = model.GetComponent<Animation>();
+            if (animation == null)
+            {
+                animation = model.AddComponent<Animation>();
+            }
+
+            animation.playAutomatically = false;
+            animation.clip = playableClip;
+            animation.AddClip(playableClip, playableClip.name);
+            animation.Play(playableClip.name);
+        }
+
+        private AnimationClip ResolveJumpscareRunAnimation()
+        {
+            if (jumpscareRunAnimationClip != null)
+            {
+                return jumpscareRunAnimationClip;
+            }
+
+            if (!string.IsNullOrWhiteSpace(jumpscareRunAnimationResourcesPath))
+            {
+                jumpscareRunAnimationClip = Resources.Load<AnimationClip>(jumpscareRunAnimationResourcesPath);
+                if (jumpscareRunAnimationClip != null)
+                {
+                    return jumpscareRunAnimationClip;
+                }
+            }
+
+#if UNITY_EDITOR
+            if (!string.IsNullOrWhiteSpace(editorJumpscareRunAnimationAssetPath))
+            {
+                UnityEngine.Object[] importedAssets = AssetDatabase.LoadAllAssetsAtPath(editorJumpscareRunAnimationAssetPath);
+                foreach (UnityEngine.Object importedAsset in importedAssets)
+                {
+                    AnimationClip clip = importedAsset as AnimationClip;
+                    if (clip == null || IsPreviewClip(clip))
+                    {
+                        continue;
+                    }
+
+                    jumpscareRunAnimationClip = clip;
+                    return jumpscareRunAnimationClip;
+                }
+            }
+#endif
+
+            return jumpscareRunAnimationClip;
+        }
+
+        private Vector3 GetJumpscareImpactPosition(Transform cameraTransform)
+        {
+            return cameraTransform.position +
+                   cameraTransform.forward * lungeImpactDistance +
+                   cameraTransform.up * jumpscareVerticalOffset;
+        }
+
+        private static Quaternion CreateCameraFacingRotation(Vector3 position, Transform cameraTransform)
+        {
+            Vector3 lookDirection = cameraTransform.position - position;
+            if (lookDirection.sqrMagnitude <= 0.001f)
+            {
+                return cameraTransform.rotation;
+            }
+
+            return Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
+        }
+
+        private static bool IsPreviewClip(AnimationClip clip)
+        {
+            return clip.name.IndexOf("__preview__", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private GameObject ResolveJumpscareModel()
