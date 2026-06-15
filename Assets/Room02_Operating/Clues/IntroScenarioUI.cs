@@ -7,6 +7,7 @@ namespace EscapeRoom
     public class IntroScenarioUI : MonoBehaviour
     {
         private const string IntroSeparator = "─────────────────────────";
+        private const string IntroSoundResourcePath = "Audio/SFX/Deadly Kombat Free version/guts_and_gore_19";
         private const string IntroBodyText =
             "눈을 떠보니 차가운 병원 복도였다.\n\n" +
             "문은 잠겨 있고, 불빛은 불안하게 깜빡인다.\n" +
@@ -37,12 +38,16 @@ namespace EscapeRoom
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private TextMeshProUGUI bodyText;
         [SerializeField] private TextMeshProUGUI hintText;
+        [SerializeField] private AudioClip introSoundClip;
+        [SerializeField] private float introSoundVolume = 0.85f;
 
         private bool isOpen;
+        private AudioSource introAudioSource;
 
         private void Awake()
         {
             EnsureUI();
+            EnsureIntroAudio();
             SetOpen(true);
         }
 
@@ -66,6 +71,54 @@ namespace EscapeRoom
             {
                 panelRoot.SetActive(open);
             }
+
+            if (open)
+            {
+                PlayIntroSound();
+            }
+            else
+            {
+                StopIntroSound();
+            }
+        }
+
+        private void EnsureIntroAudio()
+        {
+            introAudioSource = GetComponent<AudioSource>();
+            if (introAudioSource == null)
+            {
+                introAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            introAudioSource.playOnAwake = false;
+            introAudioSource.loop = false;
+            introAudioSource.spatialBlend = 0f;
+
+            if (introSoundClip == null)
+            {
+                introSoundClip = Resources.Load<AudioClip>(IntroSoundResourcePath);
+            }
+        }
+
+        private void PlayIntroSound()
+        {
+            if (introAudioSource == null || introSoundClip == null)
+            {
+                return;
+            }
+
+            introAudioSource.Stop();
+            introAudioSource.PlayOneShot(introSoundClip, introSoundVolume);
+        }
+
+        private void StopIntroSound()
+        {
+            if (introAudioSource == null)
+            {
+                return;
+            }
+
+            introAudioSource.Stop();
         }
 
         private void EnsureUI()
