@@ -75,7 +75,7 @@ namespace EscapeRoom
             bodyText = CreateText(
                 "IntroBody",
                 textBox,
-                "눈을 떠보니 차가운 병원 복도였다.\n\n문은 잠겨 있고, 불빛은 불안하게 깜빡인다.\n나는 갇혔다.\n\n누가 나를 여기로 불렀는지, 왜 이 수술실이 아직도 피 냄새를 품고 있는지 알아내야 한다.",
+                "눈을 떠보니 차가운 병원 복도였다.\n\n문은 잠겨 있고, 불빛은 불안하게 깜빡인다. 나는 갇혔다.\n\n탈출구 열쇠는 이 안 어딘가에 있다. 단서를 찾아라. 범인을 밝혀라. 그리고 — 20분 안에 여기서 나가라.",
                 24f,
                 TextAlignmentOptions.Center,
                 HorrorUITheme.TextMain);
