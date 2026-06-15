@@ -376,3 +376,8 @@
 - 인트로 효과음 파일을 Room02 전용 Resources/Audio/Intro 경로에만 남기고 전체 SFX 패키지 폴더를 제거
 - IntroScenarioUI가 Audio/Intro/guts_and_gore_19만 로드하도록 수정
 - 인트로 이전/다음/시작 버튼을 화면 하단 좌우의 화살표 버튼으로 변경
+
+### [2026-06-15 21:51:26]
+- feature/room1의 온보딩 화면에서 Show 씬으로 이동하는 연결 변경만 plus_young 브랜치에 반영
+- Assets/Onboarding.unity와 Assets/_Shared/Scripts/OnboardingUI.cs의 roomSceneName 값을 Show 기준으로 유지
+- Room02_Operating, 방 씬, 단서 및 용의자 수첩 관련 변경은 병합 대상에서 제외
