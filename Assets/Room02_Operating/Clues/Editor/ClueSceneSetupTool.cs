@@ -267,7 +267,7 @@ namespace EscapeRoom.Editor
                 clueObject = existing.gameObject;
             }
 
-            clueObject.transform.position = GetStartClusterWorldPosition(index);
+            clueObject.transform.position = GetVisibleClueStackWorldPosition();
             clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
@@ -345,21 +345,16 @@ namespace EscapeRoom.Editor
                 Undo.RegisterCreatedObjectUndo(culprit, $"Create {CulpritObjectName}");
             }
 
-            culprit.transform.position = GetStartWorldPosition() + new Vector3(0f, 0f, 1.35f);
+            Vector3 stackPosition = GetVisibleClueStackWorldPosition();
+            culprit.transform.position = new Vector3(stackPosition.x, 0f, stackPosition.z);
             culprit.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
             culprit.transform.localScale = Vector3.one;
             EditorUtility.SetDirty(culprit);
         }
 
-        private static Vector3 GetStartClusterWorldPosition(int index)
+        private static Vector3 GetVisibleClueStackWorldPosition()
         {
-            const int columns = 6;
-            const float spacing = 0.6f;
-            int column = index % columns;
-            int row = index / columns;
-            float x = (column - (columns - 1) * 0.5f) * spacing;
-            float z = (row - 2.5f) * spacing;
-            return GetStartWorldPosition() + new Vector3(x, 1.1f, z);
+            return GetStartWorldPosition() + new Vector3(-1.5f, 1.1f, -1.5f);
         }
 
         private static Vector3 GetStartWorldPosition()

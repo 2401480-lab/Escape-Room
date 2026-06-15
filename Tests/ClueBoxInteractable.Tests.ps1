@@ -53,6 +53,7 @@ Assert-True ($box -match 'FindBestTarget\s*\(' -and $box -match 'Vector3\.Dot') 
 Assert-True ($box -match 'promptDistance\s*=\s*2\.2f' -and $box -match 'distance\s*>\s*promptDistance') 'ClueBoxInteractable prompt must be gated by close distance, not broad scan range.'
 Assert-True ($box -match 'inputBufferSeconds\s*=\s*0\.2f' -and $box -match 'lastInteractPressedAt') 'ClueBoxInteractable must buffer F briefly so collection is responsive.'
 Assert-True ($box -match 'currentTarget\s*==\s*this' -and $box -match 'SearchBox\s*\(\s*\)') 'ClueBoxInteractable must collect from the active 360 target, not only an exact raycast hit.'
+Assert-True ($box -match 'bestUnsearched' -and $box -match 'candidate\.isSearched') 'ClueBoxInteractable must prefer unsearched stacked clues so overlapping boxes remain collectible.'
 Assert-True ($box -match 'KeyCode\.F') 'ClueBoxInteractable must search boxes with F.'
 Assert-True ($box -notmatch 'KeyCode\.E') 'ClueBoxInteractable must not consume E because doors own E.'
 Assert-True ($box.Contains($boxPrompt)) 'ClueBoxInteractable must show [F] 박스 조사하기.'

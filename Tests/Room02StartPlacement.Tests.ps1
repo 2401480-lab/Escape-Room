@@ -24,19 +24,18 @@ Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Room02 operating scene.
 
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
 
-$playerStartMatch = [regex]::Match($scene, 'm_Name:\s*PlayerStart.*?--- !u!4 &\d+\s*\r?\nTransform:.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}', 'Singleline')
-Assert-True $playerStartMatch.Success 'Scene must contain PlayerStart with a position.'
-$startX = [double]$playerStartMatch.Groups[1].Value
-$startZ = [double]$playerStartMatch.Groups[3].Value
-
 $clueMatches = [regex]::Matches($scene, 'm_Name:\s+Clue_[^\r\n]+.*?--- !u!4 &\d+\s*\r?\nTransform:.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}', 'Singleline')
 Assert-True ($clueMatches.Count -eq 31) "Expected 31 clue transforms, found $($clueMatches.Count)."
 
+$anchorX = [double]$clueMatches[0].Groups[1].Value
+$anchorY = [double]$clueMatches[0].Groups[2].Value
+$anchorZ = [double]$clueMatches[0].Groups[3].Value
+
 foreach ($match in $clueMatches) {
     $x = [double]$match.Groups[1].Value
+    $y = [double]$match.Groups[2].Value
     $z = [double]$match.Groups[3].Value
-    $distance = [math]::Sqrt([math]::Pow($x - $startX, 2) + [math]::Pow($z - $startZ, 2))
-    Assert-True ($distance -le 2.25) "Every clue must be placed within 2.25m of PlayerStart; found distance $distance at x=$x z=$z."
+    Assert-True ([math]::Abs($x - $anchorX) -lt 0.001 -and [math]::Abs($y - $anchorY) -lt 0.001 -and [math]::Abs($z - $anchorZ) -lt 0.001) "Every clue must be stacked at the same visible box position; found x=$x y=$y z=$z, expected x=$anchorX y=$anchorY z=$anchorZ."
 }
 
 Assert-True ($scene -match 'Culprit_StartPosition') 'Scene must contain the culprit start-position object.'
@@ -44,8 +43,7 @@ $culpritPositionMatch = [regex]::Match($scene, 'Culprit_StartPosition.*?m_LocalP
 if ($culpritPositionMatch.Success) {
     $culpritX = [double]$culpritPositionMatch.Groups[1].Value
     $culpritZ = [double]$culpritPositionMatch.Groups[3].Value
-    $culpritDistance = [math]::Sqrt([math]::Pow($culpritX - $startX, 2) + [math]::Pow($culpritZ - $startZ, 2))
-    Assert-True ($culpritDistance -le 2.25) "Culprit must be placed within 2.25m of PlayerStart; found distance $culpritDistance."
+    Assert-True ([math]::Abs($culpritX - $anchorX) -lt 0.001 -and [math]::Abs($culpritZ - $anchorZ) -lt 0.001) "Culprit must share the visible box x/z position; found x=$culpritX z=$culpritZ, expected x=$anchorX z=$anchorZ."
 }
 
 Write-Host 'Room02 start placement checks passed.'

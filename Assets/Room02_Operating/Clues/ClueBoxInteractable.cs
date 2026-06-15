@@ -117,8 +117,10 @@ namespace EscapeRoom
             }
 
             int hitCount = Physics.OverlapSphereNonAlloc(cam.transform.position, interactDistance, nearbyColliders);
-            ClueBoxInteractable best = null;
-            float bestScore = float.MinValue;
+            ClueBoxInteractable bestUnsearched = null;
+            ClueBoxInteractable bestSearched = null;
+            float bestUnsearchedScore = float.MinValue;
+            float bestSearchedScore = float.MinValue;
 
             for (int i = 0; i < hitCount; i++)
             {
@@ -145,14 +147,25 @@ namespace EscapeRoom
                 float directionScore = Vector3.Dot(cam.transform.forward, toCandidate.normalized);
                 float distanceScore = 1f - Mathf.Clamp01(distance / promptDistance);
                 float score = distanceScore * 1.4f + Mathf.Max(0f, directionScore);
-                if (score > bestScore)
+                if (candidate.isSearched)
                 {
-                    best = candidate;
-                    bestScore = score;
+                    if (score > bestSearchedScore)
+                    {
+                        bestSearched = candidate;
+                        bestSearchedScore = score;
+                    }
+
+                    continue;
+                }
+
+                if (score > bestUnsearchedScore)
+                {
+                    bestUnsearched = candidate;
+                    bestUnsearchedScore = score;
                 }
             }
 
-            return best;
+            return bestUnsearched != null ? bestUnsearched : bestSearched;
         }
 
         private void EnsureManager()
