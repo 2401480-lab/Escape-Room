@@ -24,6 +24,7 @@ Assert-True ($guide -match 'CollectAllCluesAndGrantKey\s*\(') 'Admin guide overl
 Assert-True ($guide -match 'FindObjectsOfType<ClueBoxInteractable>\s*\(\s*true\s*\)') 'Admin skip must include inactive clue boxes so all 15 story clues can be collected.'
 Assert-True ($guide -match 'AdminCollectClue\s*\(') 'Admin skip must collect each clue through the clue box path so journal state stays consistent.'
 Assert-True ($guide -match 'GrantEscapeKeyFromAdminSkip\s*\(') 'Admin skip must immediately grant the escape key after collecting all clues.'
+Assert-True ($guide -match 'GrantEscapeKeyFromAdminSkip\s*\(\s*\)[\s\S]*?EscapeChaseQTE\.StartOrCreate\s*\(\s*\)') 'Y admin skip must immediately continue into the spacebar escape QTE.'
 Assert-True ($guide -match 'BeginSilentAdminKeyGrant\s*\(\s*\)[\s\S]*?try[\s\S]*?AdminCollectClue\s*\(\s*\)[\s\S]*?GrantEscapeKeyFromAdminSkip\s*\(\s*\)[\s\S]*?finally[\s\S]*?EndSilentAdminKeyGrant\s*\(\s*\)') 'Y admin skip must suppress key subtitles during forced clue collection and restore the notice state afterward.'
 Assert-True ($guide -notmatch 'allowRuntimeAdminGuide[\s\S]{0,120}KeyCode\.Y') 'Y skip must not be gated by the runtime admin guide visibility toggle.'
 

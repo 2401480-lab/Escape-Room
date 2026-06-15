@@ -508,3 +508,8 @@
 - 기존 `EscapeExitDoor` 상호작용이 새 `EscapeChaseQTE` 스페이스바 탈출 QTE를 시작하도록 연결
 - `EscapeExitController`가 `Doors` 이름과 door 계열 오브젝트를 인식하고, 이름 붙은 문이 없는 프로토타입 씬에서도 E/F로 QTE를 열 수 있도록 fallback 추가
 - 스페이스바 QTE 연결 경로와 기존 탈출 문 회귀 테스트를 갱신
+
+### [2026-06-16 04:54:01]
+- 관리자 Y 스킵 후 열쇠 획득에서 멈추지 않고 스페이스바 탈출 QTE가 즉시 시작되도록 연결
+- 정답 범인 선택 후에도 `EscapeChaseQTE.StartOrCreate()`를 통해 같은 탈출 QTE로 이어지도록 보강
+- 문 상호작용, 관리자 스킵, 정답 선택 경로가 같은 QTE 시작 함수를 사용하도록 회귀 테스트 갱신

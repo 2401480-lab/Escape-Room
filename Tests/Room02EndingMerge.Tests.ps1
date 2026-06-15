@@ -34,6 +34,7 @@ $legacyExitDoor = Get-Content -LiteralPath $legacyExitDoorPath -Raw -Encoding UT
 
 Assert-True ($qte -match 'class\s+EscapeChaseQTE\s*:\s*MonoBehaviour') 'EscapeChaseQTE must be a runtime MonoBehaviour.'
 Assert-True ($qte -match 'StartQTE\s*\(' -and $qte -match 'KeyCode\.Space') 'EscapeChaseQTE must start a spacebar QTE.'
+Assert-True ($qte -match 'public\s+static\s+void\s+StartOrCreate\s*\(') 'EscapeChaseQTE must expose a shared start helper for skip, suspect, and door flows.'
 Assert-True ($qte -match 'GAME OVER' -and $qte -match 'FINISH!') 'EscapeChaseQTE must include success and failure ending titles.'
 Assert-True ($qte -match 'Room02_CulpritChaser') 'EscapeChaseQTE must load the merged culprit chaser resource.'
 Assert-True ($qte -match 'FontHelper\.Apply\s*\(\s*tmp\s*\)') 'EscapeChaseQTE runtime text must use the project font helper.'
@@ -44,11 +45,11 @@ Assert-True ($bootstrapper -match 'Scene_OperatingRoom' -and $bootstrapper -matc
 
 Assert-True ($exitController -match 'ExitDoor' -and $exitController -match 'KeyCode\.E' -and $exitController -match 'KeyCode\.F') 'EscapeExitController must listen for E/F on ExitDoor.'
 Assert-True ($exitController -match 'EscapeKeyState\.HasKey') 'EscapeExitController must use the shared escape-key state.'
-Assert-True ($exitController -match 'StartQTE\s*\(\s*\)') 'EscapeExitController must start the chase QTE after door interaction.'
+Assert-True ($exitController -match 'StartOrCreate\s*\(\s*\)') 'EscapeExitController must start the chase QTE after door interaction.'
 Assert-True ($exitController -match '"Doors"' -and $exitController -match 'Contains\s*\(\s*"door"\s*\)') 'EscapeExitController must recognize existing scene door naming patterns.'
 Assert-True ($exitController -match 'HasKnownExitDoor\s*\(\s*\)' -and $exitController -match 'return\s+true;\s*// Prototype fallback') 'EscapeExitController must allow E/F to start QTE in prototype scenes without a named door.'
 
-Assert-True ($legacyExitDoor -match 'EscapeChaseQTE' -and $legacyExitDoor -match 'StartQTE\s*\(\s*\)') 'Existing EscapeExitDoor must be wired to start the spacebar QTE.'
+Assert-True ($legacyExitDoor -match 'EscapeChaseQTE' -and $legacyExitDoor -match 'StartOrCreate\s*\(\s*\)') 'Existing EscapeExitDoor must be wired to start the spacebar QTE.'
 
 Assert-True ($debugGrant -match 'KeyCode\.F9' -and $debugGrant -match 'EscapeKeyState\.GrantKey\s*\(\s*\)') 'EscapeKeyDebugGrant must grant the shared key for editor testing.'
 

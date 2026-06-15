@@ -71,6 +71,7 @@ Assert-True ($endingUI -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*1f\s*,\s*1f\
 Assert-True ($endingUI -match 'OnCorrectSuspectSelected' -and $endingUI -match 'OnWrongSuspectSelected') 'EndingUI must expose correct/wrong selection events.'
 Assert-True ($storyManager -match 'GrantEscapeKeyFromCorrectSuspect') 'StoryProgressManager must have a direct key grant path for correct culprit deduction.'
 Assert-True ($endingUI -match 'GrantEscapeKeyFromCorrectSuspect\s*\(\s*\);[\s\S]*?BeginChase\s*\(\s*\)') 'Correct culprit selection must grant the escape key before the chase begins.'
+Assert-True ($endingUI -match 'CorrectAnswer[\s\S]*?EscapeChaseQTE\.StartOrCreate\s*\(\s*\)') 'Correct culprit selection must continue into the spacebar escape QTE.'
 Assert-True ($endingUI -match 'StartChase') 'EndingUI must start chase on correct answer.'
 Assert-True ($endingUI -match 'WrongAnswer') 'EndingUI must route wrong answer to GameOver.'
 
@@ -95,7 +96,7 @@ Assert-True ($chase -match 'OnVignetteChanged' -and $chase -match 'OnHeartbeatRe
 Assert-True ($chase -match 'PlayHeartbeat') 'ChaseController must request AudioManager heartbeat playback.'
 
 Assert-True ($exitDoor -match 'class\s+EscapeExitDoor\s*:\s*MonoBehaviour') 'EscapeExitDoor must be a scene-placeable exit door component.'
-Assert-True ($exitDoor -match 'TryOpenExit' -and $exitDoor -match 'HasEscapeKey' -and $exitDoor -match 'EscapeChaseQTE' -and $exitDoor -match 'StartQTE') 'EscapeExitDoor must open only with the escape key and trigger the escape QTE.'
+Assert-True ($exitDoor -match 'TryOpenExit' -and $exitDoor -match 'HasEscapeKey' -and $exitDoor -match 'EscapeChaseQTE' -and $exitDoor -match 'StartOrCreate') 'EscapeExitDoor must open only with the escape key and trigger the escape QTE.'
 
 Assert-True ($gameOver -match 'PlayGameOver' -and $gameOver -match 'Restart' -and $gameOver -match 'MainMenu') 'GameOverUI must support game over, restart, and main menu.'
 Assert-True ($gameOver -match 'ScreenSpaceOverlay') 'GameOverUI must use Screen Space Overlay canvas.'

@@ -26,14 +26,7 @@ namespace EscapeRoom
             if (IsLookingAtExitDoor())
             {
                 qteStarted = true;
-                EscapeChaseQTE qte = EscapeChaseQTE.Instance ?? Object.FindFirstObjectByType<EscapeChaseQTE>();
-                if (qte == null)
-                {
-                    GameObject qteObject = new GameObject("EscapeChaseQTE");
-                    qte = qteObject.AddComponent<EscapeChaseQTE>();
-                }
-
-                qte.StartQTE();
+                EscapeChaseQTE.StartOrCreate();
             }
 #if UNITY_EDITOR
             else

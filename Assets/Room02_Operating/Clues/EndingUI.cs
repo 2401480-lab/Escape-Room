@@ -141,6 +141,7 @@ namespace EscapeRoom
             storyManager?.GrantEscapeKeyFromCorrectSuspect();
             storyManager?.BeginChase();
             StartChase();
+            EscapeChaseQTE.StartOrCreate();
         }
 
         private void WrongAnswer()

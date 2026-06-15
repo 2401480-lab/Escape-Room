@@ -66,14 +66,7 @@ namespace EscapeRoom
 
         private static bool TryStartEscapeQTE()
         {
-            EscapeChaseQTE qte = EscapeChaseQTE.Instance ?? Object.FindFirstObjectByType<EscapeChaseQTE>();
-            if (qte == null)
-            {
-                GameObject qteObject = new GameObject("EscapeChaseQTE");
-                qte = qteObject.AddComponent<EscapeChaseQTE>();
-            }
-
-            qte.StartQTE();
+            EscapeChaseQTE.StartOrCreate();
             return true;
         }
 

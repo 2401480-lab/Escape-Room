@@ -92,6 +92,18 @@ namespace EscapeRoom
             activeSequence = StartCoroutine(PlayWarningThenStartQTE());
         }
 
+        public static void StartOrCreate()
+        {
+            EscapeChaseQTE qte = Instance ?? Object.FindFirstObjectByType<EscapeChaseQTE>();
+            if (qte == null)
+            {
+                GameObject qteObject = new GameObject("EscapeChaseQTE");
+                qte = qteObject.AddComponent<EscapeChaseQTE>();
+            }
+
+            qte.StartQTE();
+        }
+
         private IEnumerator PlayWarningThenStartQTE()
         {
             isRunning = false;
