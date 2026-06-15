@@ -25,33 +25,12 @@ namespace EscapeRoom.Editor
         private const string ShowScenePath = "Assets/Room02_Operating/Scenes/Show.unity";
         private const int ExpectedStoryClueCount = 15;
         private static readonly Vector3 CluesRootPosition = Vector3.zero;
-        private static readonly Dictionary<string, Vector3> IntegratedCluePositions = new Dictionary<string, Vector3>
-        {
-            // Corridor
-            { "normal_cast_notice", new Vector3(-8.2f, 0.45f, -20.4f) },
-            { "normal_memorial_frame", new Vector3(-10.6f, 0.55f, -22.2f) },
-            { "normal_conversation_memo", new Vector3(-13.4f, 0.45f, -23.7f) },
-
-            // Ward
-            { "normal_medical_certificate", new Vector3(-30.5f, 0.45f, -22.0f) },
-            { "normal_ward_calendar", new Vector3(-33.2f, 0.65f, -23.5f) },
-            { "clue_hasho_will", new Vector3(-36.1f, 0.45f, -24.2f) },
-            { "key_clue_coldest_place", new Vector3(-34.8f, 0.4f, -27.6f) },
-
-            // Storage / cold room
-            { "key_clue_temperature_warning", new Vector3(11.1f, 0.45f, -12.4f) },
-            { "normal_bong_rebuttal", new Vector3(13.5f, 0.45f, -13.2f) },
-            { "key_clue_fridge_scratches", new Vector3(15.8f, 0.55f, -14.8f) },
-
-            // Dressing room
-            { "normal_makeup_toolbox", new Vector3(-9.4f, 0.35f, -8.8f) },
-            { "normal_sumi_memo", new Vector3(-12.0f, 0.45f, -9.6f) },
-            { "clue_makeup_diary", new Vector3(-14.5f, 0.45f, -11.2f) },
-
-            // Operating room
-            { "normal_under_table_space", new Vector3(8.7f, 0.45f, -23.4f) },
-            { "normal_mirror_message", new Vector3(13.8f, 0.65f, -22.8f) }
-        };
+        private const int StartAreaGridColumns = 5;
+        private const float StartAreaFirstX = -2.4f;
+        private const float StartAreaFirstZ = 2.4f;
+        private const float StartAreaXSpacing = 1.2f;
+        private const float StartAreaZSpacing = 1.1f;
+        private const float StartAreaClueY = 0.45f;
 
         static ClueSceneSetupTool()
         {
@@ -276,7 +255,7 @@ namespace EscapeRoom.Editor
                 clueObject = existing.gameObject;
             }
 
-            clueObject.transform.position = GetRoomDistributedClueWorldPosition(entry.clueID, index);
+            clueObject.transform.position = GetStartAreaClueWorldPosition(index);
             clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
@@ -364,16 +343,14 @@ namespace EscapeRoom.Editor
             EditorUtility.SetDirty(culprit);
         }
 
-        private static Vector3 GetRoomDistributedClueWorldPosition(string clueID, int index)
+        private static Vector3 GetStartAreaClueWorldPosition(int index)
         {
-            if (IntegratedCluePositions.TryGetValue(clueID, out Vector3 position))
-            {
-                return position;
-            }
-
-            int column = index % 6;
-            int row = index / 6;
-            return new Vector3(-2f + (column * 1.25f), 0.45f, -6f - (row * 1.25f));
+            int column = index % StartAreaGridColumns;
+            int row = index / StartAreaGridColumns;
+            return new Vector3(
+                StartAreaFirstX + (column * StartAreaXSpacing),
+                StartAreaClueY,
+                StartAreaFirstZ + (row * StartAreaZSpacing));
         }
 
         private static Vector3 GetCameraVisibleCulpritWorldPosition()

@@ -87,7 +87,7 @@ namespace EscapeRoom
             panelRect.anchorMin = new Vector2(0.5f, 0.5f);
             panelRect.anchorMax = new Vector2(0.5f, 0.5f);
             panelRect.pivot = new Vector2(0.5f, 0.5f);
-            panelRect.sizeDelta = new Vector2(560f, 420f);
+            panelRect.sizeDelta = new Vector2(620f, 560f);
             panelRect.anchoredPosition = Vector2.zero;
 
             TextMeshProUGUI title = CreateText("SettingsTitle", panelRect, "설정", 32f, TextAlignmentOptions.Left);
@@ -145,12 +145,43 @@ namespace EscapeRoom
             rect.offsetMin = new Vector2(28f, 34f);
             rect.offsetMax = new Vector2(-28f, -140f);
 
-            string controls = "WASD 이동\nShift 달리기\n마우스 시점 이동\nE 문 열기\nF 조사하기 / 박스 조사하기\nJ 수집 증거\nK 용의자 수첩\nESC 설정";
-            TextMeshProUGUI text = CreateText("ControlsText", rect, controls, 22f, TextAlignmentOptions.Left);
-            text.rectTransform.anchorMin = Vector2.zero;
-            text.rectTransform.anchorMax = Vector2.one;
-            text.rectTransform.offsetMin = Vector2.zero;
-            text.rectTransform.offsetMax = Vector2.zero;
+            VerticalLayoutGroup layout = controlsTabRoot.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(0, 0, 8, 8);
+            layout.spacing = 6f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = false;
+            layout.childForceExpandHeight = false;
+
+            CreateControlRow(rect, "WASD", "이동", "앞/뒤/왼쪽/오른쪽으로 이동");
+            CreateControlRow(rect, "Left Shift", "달리기", "누르고 있는 동안 빠르게 이동");
+            CreateControlRow(rect, "Mouse", "시점 이동", "마우스로 360도 둘러보기");
+            CreateControlRow(rect, "F", "조사/수집", "단서 상자와 조사 가능한 오브젝트 확인");
+            CreateControlRow(rect, "J / Tab", "수사 노트", "수집 증거 기록 열기/닫기");
+            CreateControlRow(rect, "K", "용의자 수첩", "인물별 힌트 카드 열기/닫기");
+            CreateControlRow(rect, "단서 10개 후", "범인 추적", "오른쪽 위 버튼으로 범인 선택 시작");
+            CreateControlRow(rect, "ESC", "설정", "설정창 열기/닫기");
+            CreateControlRow(rect, "마우스 클릭 / Space", "팝업 닫기", "단서 획득 팝업을 읽은 뒤 닫기");
+        }
+
+        private void CreateControlRow(Transform parent, string keyText, string title, string description)
+        {
+            RectTransform row = CreatePanel($"ControlRow_{title}", parent, HorrorUITheme.PanelDeep);
+            LayoutElement rowElement = row.gameObject.AddComponent<LayoutElement>();
+            rowElement.minHeight = 34f;
+            rowElement.preferredHeight = 34f;
+
+            TextMeshProUGUI key = CreateText("Key", row, keyText, 16f, TextAlignmentOptions.Center);
+            key.color = HorrorUITheme.SickYellow;
+            key.rectTransform.anchorMin = new Vector2(0f, 0f);
+            key.rectTransform.anchorMax = new Vector2(0f, 1f);
+            key.rectTransform.offsetMin = new Vector2(12f, 0f);
+            key.rectTransform.offsetMax = new Vector2(138f, 0f);
+
+            TextMeshProUGUI action = CreateText("Action", row, $"{title}  -  {description}", 16f, TextAlignmentOptions.Left);
+            action.rectTransform.anchorMin = new Vector2(0f, 0f);
+            action.rectTransform.anchorMax = new Vector2(1f, 1f);
+            action.rectTransform.offsetMin = new Vector2(154f, 0f);
+            action.rectTransform.offsetMax = new Vector2(-12f, 0f);
         }
 
         private Slider CreateLabeledSlider(string name, Transform parent, string label, float min, float max, float value)

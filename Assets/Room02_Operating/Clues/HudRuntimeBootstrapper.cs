@@ -24,12 +24,14 @@ namespace EscapeRoom
             EnsurePlayerSetup();
             EnsureRuntimeObject<ClueJournalManager>("ClueJournalManager");
             EnsureRuntimeObject<StoryProgressManager>("StoryProgressManager");
+            EnsureRuntimeObject<EndingUI>("EndingUI");
             EnsureRuntimeObject<ClueJournalUI>("ClueJournalUI");
             EnsureRuntimeObject<TimerUI>("TimerUI");
             EnsureRuntimeObject<SettingsUI>("SettingsUI");
             EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
             EnsureRuntimeObject<ClueBoxRuntimeAdapter>("ClueBoxRuntimeAdapter");
             EnsureRuntimeObject<Room02FlashlightController>("Room02_FlashlightController");
+            EnsureRuntimeObject<Room02BgmPlayer>("Room02_BGM");
         }
 
         private static void EnsurePlayerSetup()

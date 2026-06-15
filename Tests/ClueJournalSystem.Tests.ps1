@@ -37,6 +37,9 @@ $collectPrompt = '[F] ' + (U 0xC870,0xC0AC,0xD558,0xAE30)
 $evidenceTab = U 0xC218,0xC9D1,0x0020,0xC99D,0xAC70
 $suspectTab = (U 0xC6A9,0xC758,0xC790) + ' ' + (U 0xC218,0xCCA9)
 $explorePlaceholder = (U 0xC774,0x0020,0xAD6C,0xC5ED,0xC744,0x0020,0xD0D0,0xC0C9,0xD558,0xBA74,0x0020,0xC99D,0xAC70,0xB97C,0x0020,0xC218,0xC9D1,0xD560,0x0020,0xC218,0x0020,0xC788,0xC2B5,0xB2C8,0xB2E4)
+$noteTitleJoiner = ' ' + (U 0xB178,0xD2B8) + ' - '
+$hashiho = U 0xD558,0xC2DC,0xD638
+$deceased = U 0xACE0,0xC778
 $people = @(
     (U 0xC720,0xC548,0xB098),
     (U 0xC9C4,0xC138,0xC6C5),
@@ -81,6 +84,11 @@ Assert-True ($ui -match 'KeyCode\.J' -and $ui -match 'KeyCode\.Tab' -and $ui -ma
 Assert-True ($ui -match 'EvidenceHudButton' -and $ui -match 'SuspectHudButton') 'ClueJournalUI must create top-left HUD buttons for evidence and suspects.'
 Assert-True ($ui.Contains($evidenceTab)) 'ClueJournalUI must include the collected evidence tab.'
 Assert-True ($ui.Contains($suspectTab)) 'ClueJournalUI must include the suspect notebook tab.'
+Assert-True ($ui -match 'ScrollRect\s+suspectScrollRect') 'ClueJournalUI suspect notebook must scroll instead of clipping cards.'
+Assert-True ($ui -match 'CreateClueCardTitle' -and $ui.Contains($noteTitleJoiner)) 'Evidence cards must use area-note titles such as "병실 노트 - 단서명".'
+Assert-True ($ui -match 'CreateTextBlock' -and $ui -match 'preferredHeight') 'Evidence and suspect cards must assign stable text heights to prevent overlap.'
+Assert-True ($ui -match 'ShouldShowPerson\s*\(' -and $ui -match 'HasHashihoClue\s*\(') 'ClueJournalUI must hide deceased Hashiho until a Hashiho clue is collected.'
+Assert-True ($ui.Contains($hashiho) -and $ui.Contains($deceased) -and $ui -match 'normal_memorial_frame' -and $ui -match 'clue_hasho_will') 'Hashiho reveal must be tied to Hashiho-related clue IDs.'
 foreach ($person in $people) {
     Assert-True ($ui.Contains($person)) "ClueJournalUI missing person entry: $person"
 }

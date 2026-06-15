@@ -33,6 +33,7 @@ $journalManager = Get-Content -LiteralPath $journalManagerPath -Raw -Encoding UT
 $journalUI = Get-Content -LiteralPath $journalUIPath -Raw -Encoding UTF8
 $allNewCode = "$storyManager`n$lockSystem`n$endingUI`n$silhouette`n$chase`n$exitDoor`n$gameOver"
 $allClueCode = "$clueData`n$journalManager`n$journalUI"
+$culpritChaseText = '범인 추적'
 
 foreach ($code in @($storyManager, $lockSystem, $endingUI, $silhouette, $chase, $exitDoor, $gameOver)) {
     Assert-True ($code -match 'namespace\s+EscapeRoom') 'Every new story system must use namespace EscapeRoom.'
@@ -59,6 +60,10 @@ Assert-True ($lockSystem -match 'TryEnterCode' -and $lockSystem -match 'TryColle
 Assert-True ($lockSystem -match 'HasAllKeyClues') 'LockSystem must gate escape key by all key clues.'
 
 Assert-True ($endingUI -match 'JinSewoong' -and $endingUI -match 'BongTaehyeon' -and $endingUI -match 'MoonSumi' -and $endingUI -match 'OhSejin') 'EndingUI must include all four suspect choices.'
+Assert-True ($endingUI -match 'CulpritChaseButton' -and $endingUI -match 'culpritChaseButton' -and $endingUI.Contains($culpritChaseText)) 'EndingUI must create a visible culprit chase HUD button.'
+Assert-True ($endingUI -match 'OnPhaseChanged\.AddListener' -and $endingUI -match 'StoryPhase\.SuspectSelection') 'EndingUI must show the culprit guess button when suspect selection is unlocked.'
+Assert-True ($endingUI -match 'culpritChaseButton\.onClick\.AddListener\s*\(\s*Show\s*\)') 'The culprit chase HUD button must open the suspect selection UI.'
+Assert-True ($endingUI -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*1f\s*,\s*1f\s*\)' -and $endingUI -match 'anchoredPosition\s*=\s*new\s+Vector2\s*\(\s*-24f\s*,\s*-74f\s*\)') 'The culprit chase HUD button must sit under the top-right settings area so it is easy to find.'
 Assert-True ($endingUI -match 'OnCorrectSuspectSelected' -and $endingUI -match 'OnWrongSuspectSelected') 'EndingUI must expose correct/wrong selection events.'
 Assert-True ($endingUI -match 'StartChase') 'EndingUI must start chase on correct answer.'
 Assert-True ($endingUI -match 'WrongAnswer') 'EndingUI must route wrong answer to GameOver.'

@@ -10,9 +10,10 @@ public class PlayerMove : MonoBehaviour
     public float gravity = -9.81f;
 
     CharacterController characterController;
+    Transform playerCamera;
     Vector3 verticalVelocity;
-    float xRotation = 0f;
-    Camera playerCamera;
+    float yaw;
+    float pitch;
 
     void OnEnable()
     {
@@ -54,15 +55,11 @@ public class PlayerMove : MonoBehaviour
         float mouseX = SafeGetAxis("Mouse X") * mouseSpeed;
         float mouseY = SafeGetAxis("Mouse Y") * mouseSpeed;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        yaw += mouseX;
+        pitch -= mouseY;
+        pitch = Mathf.Clamp(pitch, -90f, 90f);
 
-        if (playerCamera != null)
-        {
-            playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        }
-
-        transform.Rotate(Vector3.up * mouseX);
+        ApplyLookRotation();
     }
 
     private void SetupControllerAndCamera()
@@ -82,16 +79,49 @@ public class PlayerMove : MonoBehaviour
             gameObject.AddComponent<DoorInteractor>();
         }
 
-        playerCamera = Camera.main;
-        if (playerCamera != null && playerCamera.transform.parent != transform)
+        playerCamera = FindPlayerCamera();
+        yaw = transform.eulerAngles.y;
+        pitch = playerCamera != null ? playerCamera.localEulerAngles.x : 0f;
+        if (pitch > 180f)
         {
-            playerCamera.transform.SetParent(transform, false);
-            playerCamera.transform.localPosition = new Vector3(0f, 1.65f, 0f);
-            playerCamera.transform.localRotation = Quaternion.identity;
+            pitch -= 360f;
         }
 
         TrySetPlayerTag();
+        ApplyLookRotation();
         LockCursor();
+    }
+
+    private Transform FindPlayerCamera()
+    {
+        Camera camera = GetComponentInChildren<Camera>(true);
+        if (camera == null)
+        {
+            camera = Camera.main;
+        }
+
+        if (camera == null)
+        {
+            return null;
+        }
+
+        if (camera.transform.parent != transform)
+        {
+            camera.transform.SetParent(transform, false);
+        }
+
+        camera.transform.localPosition = new Vector3(0f, 1.7f, 0f);
+        return camera.transform;
+    }
+
+    private void ApplyLookRotation()
+    {
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        if (playerCamera != null)
+        {
+            playerCamera.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        }
     }
 
     private static Vector2 GetMoveInput()
@@ -146,7 +176,7 @@ public class PlayerMove : MonoBehaviour
         }
         catch
         {
-            // The scene can still find the player by object name when the tag is not defined.
+            // Name lookup still works in project copies where the Player tag is missing.
         }
     }
 }
