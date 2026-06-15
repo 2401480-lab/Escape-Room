@@ -25,7 +25,7 @@ $guide = Get-Content -LiteralPath $guidePath -Raw -Encoding UTF8
 $storyManager = Get-Content -LiteralPath $storyManagerPath -Raw -Encoding UTF8
 $endingUI = Get-Content -LiteralPath $endingUIPath -Raw -Encoding UTF8
 $settings = Get-Content -LiteralPath $settingsPath -Raw -Encoding UTF8
-$culpritChaseText = (U 0xBC94,0xC778) + ' ' + (U 0xCC3E,0xAE30)
+$culpritChaseText = (U 0xBC94,0xC778) + (U 0xCC3E,0xAE30) + ' (G)'
 
 Assert-True ($guide -match 'Input\.GetKeyDown\s*\(\s*KeyCode\.U\s*\)') 'Admin guide overlay must trigger the failure shortcut with the U key.'
 Assert-True ($guide -match 'TriggerFiveSecondFailure\s*\(') 'Admin guide overlay must isolate the U-key failure shortcut.'
@@ -43,6 +43,18 @@ Assert-True ($endingUI -match 'Input\.GetKeyDown\s*\(\s*KeyCode\.G\s*\)') 'Endin
 Assert-True ($endingUI -match 'TryShowCulpritSelectionShortcut\s*\(') 'EndingUI must isolate the G-key culprit finding shortcut.'
 Assert-True ($endingUI -match 'TryShowCulpritSelectionShortcut[\s\S]*?CanSelectSuspect') 'G shortcut must respect the existing suspect-selection unlock condition.'
 Assert-True ($endingUI -match 'TryShowCulpritSelectionShortcut[\s\S]*?Show\s*\(\s*\)') 'G shortcut must open the same culprit selection UI as the HUD button.'
-Assert-True ($settings.Contains('CreateControlRow(rect, "G",') -and $settings.Contains($culpritChaseText)) 'Settings controls must list G as the culprit finding shortcut.'
+Assert-True ($endingUI.Contains($culpritChaseText)) 'EndingUI HUD button must show the culprit finding shortcut as 범인찾기 (G).'
+Assert-True ($endingUI -match 'HandleSuspectNumberShortcuts\s*\(') 'EndingUI must isolate keyboard number selection for suspects.'
+foreach ($key in @('Alpha1', 'Alpha2', 'Alpha3', 'Alpha4', 'Keypad1', 'Keypad2', 'Keypad3', 'Keypad4')) {
+    Assert-True ($endingUI -match "KeyCode\.$key") "EndingUI must support $key for cursor-free suspect selection."
+}
+Assert-True ($endingUI -match 'ConfirmSuspect\s*\(\s*SuspectChoice\.JinSewoong\s*\)' -and
+             $endingUI -match 'ConfirmSuspect\s*\(\s*SuspectChoice\.BongTaehyeon\s*\)' -and
+             $endingUI -match 'ConfirmSuspect\s*\(\s*SuspectChoice\.MoonSumi\s*\)' -and
+             $endingUI -match 'ConfirmSuspect\s*\(\s*SuspectChoice\.OhSejin\s*\)') 'Number keys must immediately confirm the selected suspect without mouse input.'
+foreach ($prefix in @('1. ', '2. ', '3. ', '4. ')) {
+    Assert-True ($endingUI.Contains($prefix)) "EndingUI suspect buttons must show numeric prefix $prefix."
+}
+Assert-True ($settings.Contains('CreateControlRow(rect, "G",') -and $settings.Contains($culpritChaseText)) 'Settings controls must list G as 범인찾기 (G).'
 
 Write-Host 'Admin shortcut key checks passed.'

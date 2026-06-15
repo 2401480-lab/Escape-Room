@@ -170,7 +170,7 @@ namespace EscapeRoom
             CreateControlRow(rect, "F", "조사/수집", "단서 상자와 조사 가능한 오브젝트 확인");
             CreateControlRow(rect, "J / Tab", "수사 노트", "수집 증거 기록 열기/닫기");
             CreateControlRow(rect, "K", "용의자 수첩", "인물별 힌트 카드 열기/닫기");
-            CreateControlRow(rect, "G", "범인 찾기", "범인 선택 화면 열기");
+            CreateControlRow(rect, "G", "범인찾기 (G)", "범인 선택 화면 열기");
             CreateControlRow(rect, "ESC", "설정", "설정창 열기/닫기");
             CreateControlRow(rect, "마우스 클릭 / Space", "팝업 닫기", "단서 획득 팝업을 읽은 뒤 닫기");
         }

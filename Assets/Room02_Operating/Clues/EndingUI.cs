@@ -43,6 +43,8 @@ namespace EscapeRoom
 
         private void Update()
         {
+            HandleSuspectNumberShortcuts();
+
             if (Input.GetKeyDown(KeyCode.G))
             {
                 TryShowCulpritSelectionShortcut();
@@ -217,10 +219,10 @@ namespace EscapeRoom
             title.rectTransform.anchoredPosition = new Vector2(0f, -120f);
             title.rectTransform.sizeDelta = new Vector2(600f, 60f);
 
-            CreateSuspectButton(panelRect, "진세웅", new Vector2(0f, 80f), ChooseJinSewoong);
-            CreateSuspectButton(panelRect, "봉태현", new Vector2(0f, 20f), ChooseBongTaehyeon);
-            CreateSuspectButton(panelRect, "문수미", new Vector2(0f, -40f), ChooseMoonSumi);
-            CreateSuspectButton(panelRect, "오세진", new Vector2(0f, -100f), ChooseOhSejin);
+            CreateSuspectButton(panelRect, "1. 진세웅", new Vector2(0f, 80f), ChooseJinSewoong);
+            CreateSuspectButton(panelRect, "2. 봉태현", new Vector2(0f, 20f), ChooseBongTaehyeon);
+            CreateSuspectButton(panelRect, "3. 문수미", new Vector2(0f, -40f), ChooseMoonSumi);
+            CreateSuspectButton(panelRect, "4. 오세진", new Vector2(0f, -100f), ChooseOhSejin);
         }
 
         private void EnsureCulpritChaseButton()
@@ -237,7 +239,7 @@ namespace EscapeRoom
                 culpritChaseButton = rect.gameObject.AddComponent<Button>();
                 HorrorUITheme.ApplyButton(culpritChaseButton, rect.GetComponent<Image>());
 
-                TextMeshProUGUI text = CreateText("Label", rect, "범인 찾기", 21f);
+                TextMeshProUGUI text = CreateText("Label", rect, "범인찾기 (G)", 21f);
                 text.color = HorrorUITheme.TextMain;
                 text.rectTransform.anchorMin = Vector2.zero;
                 text.rectTransform.anchorMax = Vector2.one;
@@ -288,6 +290,32 @@ namespace EscapeRoom
 
             bool panelIsOpen = panelRoot != null && panelRoot.activeSelf;
             culpritChaseButton.gameObject.SetActive(isVisible && !panelIsOpen);
+        }
+
+        private void HandleSuspectNumberShortcuts()
+        {
+            bool panelIsOpen = panelRoot != null && panelRoot.activeSelf;
+            if (!panelIsOpen)
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                ConfirmSuspect(SuspectChoice.JinSewoong);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                ConfirmSuspect(SuspectChoice.BongTaehyeon);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                ConfirmSuspect(SuspectChoice.MoonSumi);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4))
+            {
+                ConfirmSuspect(SuspectChoice.OhSejin);
+            }
         }
 
         private void TryShowCulpritSelectionShortcut()

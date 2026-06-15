@@ -33,7 +33,7 @@ $journalManager = Get-Content -LiteralPath $journalManagerPath -Raw -Encoding UT
 $journalUI = Get-Content -LiteralPath $journalUIPath -Raw -Encoding UTF8
 $allNewCode = "$storyManager`n$lockSystem`n$endingUI`n$silhouette`n$chase`n$exitDoor`n$gameOver"
 $allClueCode = "$clueData`n$journalManager`n$journalUI"
-$culpritChaseText = '범인 찾기'
+$culpritChaseText = '범인찾기 (G)'
 
 foreach ($code in @($storyManager, $lockSystem, $endingUI, $silhouette, $chase, $exitDoor, $gameOver)) {
     Assert-True ($code -match 'namespace\s+EscapeRoom') 'Every new story system must use namespace EscapeRoom.'
