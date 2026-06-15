@@ -45,7 +45,7 @@ namespace EscapeRoom
         private ClueJournalManager observedJournalManager;
 
         public StoryPhase CurrentPhase => currentPhase;
-        public bool HasEscapeKey => hasEscapeKey;
+        public bool HasEscapeKey => hasEscapeKey || EscapeKeyState.HasKey;
         public bool CanSelectSuspect => collectedClueIDs.Count >= requiredClueCount;
         public bool HasAllStoryClues => collectedClueIDs.Count >= requiredEscapeKeyClueCount;
         public float DeductionTimeRemaining => deductionTimeRemaining;
@@ -92,7 +92,7 @@ namespace EscapeRoom
                 return;
             }
 
-            if (!useDeductionTimer || currentPhase == StoryPhase.ChaseEscape || currentPhase == StoryPhase.GameOver || hasEscapeKey)
+            if (!useDeductionTimer || currentPhase == StoryPhase.ChaseEscape || currentPhase == StoryPhase.GameOver || HasEscapeKey)
             {
                 return;
             }
@@ -143,12 +143,14 @@ namespace EscapeRoom
 
         public void CollectEscapeKey()
         {
-            if (!HasAllKeyClues() || hasEscapeKey)
+            if (!HasAllKeyClues() || HasEscapeKey)
             {
                 return;
             }
 
             hasEscapeKey = true;
+            EscapeKeyState.GrantKey();
+            EscapeKeyNoticeUI.ShowKeyAcquired();
             if (CanSelectSuspect)
             {
                 SetPhase(StoryPhase.SuspectSelection);
@@ -159,24 +161,28 @@ namespace EscapeRoom
 
         public void GrantEscapeKeyFromCorrectSuspect()
         {
-            if (hasEscapeKey)
+            if (HasEscapeKey)
             {
                 return;
             }
 
             hasEscapeKey = true;
+            EscapeKeyState.GrantKey();
+            EscapeKeyNoticeUI.ShowKeyAcquired();
             OnEscapeKeyCollected?.Invoke();
             OnEscapeKeyReady?.Invoke();
         }
 
         public void GrantEscapeKeyFromAdminSkip()
         {
-            if (hasEscapeKey)
+            if (HasEscapeKey)
             {
                 return;
             }
 
             hasEscapeKey = true;
+            EscapeKeyState.GrantKey();
+            EscapeKeyNoticeUI.ShowKeyAcquired();
             if (CanSelectSuspect)
             {
                 SetPhase(StoryPhase.SuspectSelection);
@@ -251,7 +257,7 @@ namespace EscapeRoom
 
             TryAutoCollectEscapeKey();
 
-            if (HasAllKeyClues() || hasEscapeKey)
+            if (HasAllKeyClues() || HasEscapeKey)
             {
                 OnEscapeKeyReady?.Invoke();
             }
@@ -264,12 +270,14 @@ namespace EscapeRoom
 
         private void TryAutoCollectEscapeKey()
         {
-            if (hasEscapeKey || collectedClueIDs.Count < requiredEscapeKeyClueCount)
+            if (HasEscapeKey || collectedClueIDs.Count < requiredEscapeKeyClueCount)
             {
                 return;
             }
 
             hasEscapeKey = true;
+            EscapeKeyState.GrantKey();
+            EscapeKeyNoticeUI.ShowKeyAcquired();
             OnEscapeKeyCollected?.Invoke();
         }
 

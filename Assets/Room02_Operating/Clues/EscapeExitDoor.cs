@@ -14,11 +14,15 @@ namespace EscapeRoom
         public UnityEvent OnEscapeDoorOpened = new UnityEvent();
         public UnityEvent OnEscapeDoorLocked = new UnityEvent();
 
-        private const string OpenPrompt = "[E] 입구 문 열기";
+        public const string ExitDoorObjectName = "ExitDoor";
+
+        private const string OpenPrompt = "[E/F] 입구 문 열기";
         private const string LockedPrompt = "탈출 열쇠가 필요하다";
 
         private void Awake()
         {
+            gameObject.name = ExitDoorObjectName;
+
             if (chaseController == null)
             {
                 chaseController = FindObjectOfType<ChaseController>();
@@ -31,7 +35,7 @@ namespace EscapeRoom
             bool inRange = target != null && Vector3.Distance(target.position, transform.position) <= interactDistance;
             SetPrompt(inRange);
 
-            if (inRange && Input.GetKeyDown(KeyCode.E))
+            if (inRange && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.F)))
             {
                 TryOpenExit();
             }
@@ -39,7 +43,7 @@ namespace EscapeRoom
 
         public bool TryOpenExit()
         {
-            if (StoryProgressManager.Instance == null || !StoryProgressManager.Instance.HasEscapeKey)
+            if (!HasEscapeKey())
             {
                 OnEscapeDoorLocked?.Invoke();
                 return false;
@@ -61,9 +65,15 @@ namespace EscapeRoom
                 return;
             }
 
-            bool hasEscapeKey = StoryProgressManager.Instance != null && StoryProgressManager.Instance.HasEscapeKey;
+            bool hasEscapeKey = HasEscapeKey();
             promptText.text = hasEscapeKey ? OpenPrompt : LockedPrompt;
             promptText.gameObject.SetActive(visible);
+        }
+
+        private static bool HasEscapeKey()
+        {
+            return EscapeKeyState.HasKey ||
+                   (StoryProgressManager.Instance != null && StoryProgressManager.Instance.HasEscapeKey);
         }
 
         private Transform GetPlayer()
