@@ -266,3 +266,8 @@
 ### [2026-06-15 09:20:57]
 - 미커밋 상태로 남아 있던 Room02 운영 씬, Show 씬, TMP 한글 폰트 에셋, 추가 배경음 파일들을 커밋 대상에 포함
 - Scene_OperatingRoom에서 빠져 있던 Show 맵 프리팹 연결을 복구하여 Room02 플레이 씬에 실제 맵 참조가 유지되도록 수정
+
+### [2026-06-15 11:51:49]
+- Scene_OperatingRoom에서 단서 31개를 PlayerStart 주변 시작 위치로 모아 배치
+- Room02 범인 에셋 char_shadow를 Culprit_StartPosition 오브젝트로 시작 위치 앞에 배치
+- 단서 설명과 획득 팝업 문구를 공포 게임 분위기로 수정하고 생성기와 에셋 데이터를 동기화

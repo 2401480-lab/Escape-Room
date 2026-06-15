@@ -23,11 +23,13 @@ foreach ($path in @($vignettePath, $popupPath, $confirmPath, $endingPath, $chase
 
 $vignette = Get-Content -LiteralPath $vignettePath -Raw -Encoding UTF8
 $popup = Get-Content -LiteralPath $popupPath -Raw -Encoding UTF8
+$popupDecoded = [regex]::Unescape($popup)
 $confirm = Get-Content -LiteralPath $confirmPath -Raw -Encoding UTF8
 $ending = Get-Content -LiteralPath $endingPath -Raw -Encoding UTF8
 $chase = Get-Content -LiteralPath $chasePath -Raw -Encoding UTF8
 $allFeedbackCode = "$vignette`n$popup`n$confirm`n$ending`n$chase"
-$evidenceCollected = U 0xC99D,0xAC70,0xB97C,0x0020,0xD655,0xBCF4,0xD588,0xB2E4
+$clueTouched = U 0xB2E8,0xC11C,0xAC00,0x0020,0xC190,0xC5D0,0x0020,0xB2FF,0xC558,0xB2E4
+$remainingTrace = U 0xB0A8,0xC740,0x0020,0xD754,0xC801
 $reallyText = U 0xC815,0xB9D0
 $culpritQuestion = U 0xBC94,0xC778,0xC785,0xB2C8,0xAE4C
 
@@ -46,7 +48,7 @@ Assert-True ($chase -match 'OnVignetteChanged\?\.Invoke\s*\(\s*0\.3f\s*\)' -and 
 
 Assert-True ($popup -match 'class\s+CluePickupPopupUI\s*:\s*MonoBehaviour') 'CluePickupPopupUI must be a MonoBehaviour.'
 Assert-True ($popup -match 'OnClueAdded\s*\+=' -and $popup -match 'OnClueAdded\s*-=' ) 'CluePickupPopupUI must subscribe and unsubscribe from ClueJournalManager.OnClueAdded.'
-Assert-True ($popup.Contains($evidenceCollected)) 'CluePickupPopupUI must show the collected evidence text.'
+Assert-True ($popupDecoded.Contains($clueTouched) -and $popupDecoded.Contains($remainingTrace)) 'CluePickupPopupUI must show the atmospheric clue pickup text.'
 Assert-True ($popup -match 'clueData\.description' -and $popup -match 'clueData\.meaning') 'CluePickupPopupUI must show clue description and meaning when a clue is collected.'
 Assert-True ($popup -match 'displayDuration\s*=\s*2f') 'CluePickupPopupUI must wait 2 seconds before fading out.'
 Assert-True ($popup -match 'fadeDuration\s*=\s*0\.5f') 'CluePickupPopupUI must fade out over 0.5 seconds.'

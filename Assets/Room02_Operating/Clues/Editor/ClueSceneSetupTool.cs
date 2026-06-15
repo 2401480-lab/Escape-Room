@@ -18,7 +18,9 @@ namespace EscapeRoom.Editor
             "OperatingRoom"
         };
 
-        private const string BoxPrefabPath = "Assets/Abandoned_Asylum/Prefabs/Box_V1.prefab";
+        private const string BoxPrefabPath = "Assets/Room02_Operating/Resources/Room02_ClueBox.prefab";
+        private const string CulpritPrefabPath = "Assets/Room02_Operating/Models/char_shadow.fbx";
+        private const string CulpritObjectName = "Culprit_StartPosition";
         private const string OperatingRoomScenePath = "Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity";
 
         [MenuItem("Tools/Room02/Clues/Place Single Test Clue Box")]
@@ -175,6 +177,7 @@ namespace EscapeRoom.Editor
                 placed++;
             }
 
+            EnsureCulpritAtStart();
             return placed;
         }
 
@@ -264,7 +267,7 @@ namespace EscapeRoom.Editor
                 clueObject = existing.gameObject;
             }
 
-            clueObject.transform.localPosition = GetLocalPosition(entry.zone, index);
+            clueObject.transform.position = GetStartClusterWorldPosition(index);
             clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
@@ -329,26 +332,40 @@ namespace EscapeRoom.Editor
             return AssetDatabase.LoadAssetAtPath<ClueData>($"{folder}/{entry.fileName}.asset");
         }
 
-        private static Vector3 GetLocalPosition(string zone, int index)
+        private static void EnsureCulpritAtStart()
         {
-            float row = index % 8;
-            switch (zone)
+            GameObject culprit = GameObject.Find(CulpritObjectName);
+            if (culprit == null)
             {
-                case "Lobby":
-                    return new Vector3(-3f + row * 0.75f, 1.1f, -1.5f);
-                case "Hallway":
-                    return new Vector3(-3f + row * 0.75f, 1.1f, 1.5f);
-                case "Ward":
-                    return new Vector3(-3f + row * 0.75f, 1.1f, 4.5f);
-                case "Storage":
-                    return new Vector3(-2.5f + row * 0.75f, 1.1f, -1f);
-                case "DressingRoom":
-                    return new Vector3(-2f + row * 0.75f, 1.1f, 2f);
-                case "OperatingRoom":
-                    return new Vector3(-1.5f + row * 0.75f, 1.1f, 0.5f);
-                default:
-                    return new Vector3(row * 0.75f, 1.1f, 0f);
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CulpritPrefabPath);
+                culprit = prefab != null
+                    ? (GameObject)PrefabUtility.InstantiatePrefab(prefab)
+                    : GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                culprit.name = CulpritObjectName;
+                Undo.RegisterCreatedObjectUndo(culprit, $"Create {CulpritObjectName}");
             }
+
+            culprit.transform.position = GetStartWorldPosition() + new Vector3(0f, 0f, 1.35f);
+            culprit.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            culprit.transform.localScale = Vector3.one;
+            EditorUtility.SetDirty(culprit);
+        }
+
+        private static Vector3 GetStartClusterWorldPosition(int index)
+        {
+            const int columns = 6;
+            const float spacing = 0.6f;
+            int column = index % columns;
+            int row = index / columns;
+            float x = (column - (columns - 1) * 0.5f) * spacing;
+            float z = (row - 2.5f) * spacing;
+            return GetStartWorldPosition() + new Vector3(x, 1.1f, z);
+        }
+
+        private static Vector3 GetStartWorldPosition()
+        {
+            GameObject playerStart = GameObject.Find("PlayerStart");
+            return playerStart != null ? playerStart.transform.position : new Vector3(0f, 0f, -4f);
         }
     }
 }

@@ -38,6 +38,7 @@ foreach ($metaFile in $culpritMetaFiles) {
 }
 
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
-Assert-True ($scene -notmatch 'char_shadow') 'Culprit visual asset should be imported only; it must not be silently placed into Scene_OperatingRoom.'
+Assert-True ($scene -match 'm_Name:\s*Culprit_StartPosition' -or $scene -match 'value:\s*Culprit_StartPosition') 'Culprit visual asset must be placed in Scene_OperatingRoom near the player start.'
+Assert-True ($scene -match 'guid:\s+fa0856ce0c0b3fb42af36e6c53346129') 'Scene_OperatingRoom must reference the Room02 char_shadow model asset.'
 
 Write-Host 'Culprit asset scope checks passed.'

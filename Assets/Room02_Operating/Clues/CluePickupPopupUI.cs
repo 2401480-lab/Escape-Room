@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -79,7 +79,7 @@ namespace EscapeRoom
 
             EnsureUI();
             popupTitleText.text = clueData.clueName;
-            popupBodyText.text = $"증거를 확보했다\n\n{clueData.description}\n\n의미: {clueData.meaning}";
+            popupBodyText.text = $"\uB2E8\uC11C\uAC00 \uC190\uC5D0 \uB2FF\uC558\uB2E4.\n\n{clueData.description}\n\n\uB0A8\uC740 \uD754\uC801: {clueData.meaning}";
             if (fadeRoutine != null)
             {
                 StopCoroutine(fadeRoutine);
