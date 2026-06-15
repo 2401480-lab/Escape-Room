@@ -5,8 +5,8 @@ $scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $bgmScriptPath = Join-Path $root 'Assets/Room02_Operating/Audio/Room02BgmPlayer.cs'
 $bgmScriptMetaPath = Join-Path $root 'Assets/Room02_Operating/Audio/Room02BgmPlayer.cs.meta'
 $bootstrapperPath = Join-Path $root 'Assets/Room02_Operating/Clues/HudRuntimeBootstrapper.cs'
-$clipPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-theroom.aif'
-$clipMetaPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-theroom.aif.meta'
+$clipPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-atmosphere.aif'
+$clipMetaPath = Join-Path $root 'Assets/Room02_Operating/Audio/music/darkness/dk-atmosphere.aif.meta'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -29,8 +29,8 @@ $clipGuid = ((Select-String -LiteralPath $clipMetaPath -Pattern '^guid:').Line -
 Assert-True ($script -match 'namespace\s+EscapeRoom') 'Room02 BGM player must stay in the EscapeRoom namespace.'
 Assert-True ($script -match 'class\s+Room02BgmPlayer\s*:\s*MonoBehaviour') 'Room02 BGM player must be a MonoBehaviour.'
 Assert-True ($script -match 'AudioClip\s+bgmClip') 'Room02 BGM player must expose a BGM AudioClip.'
-Assert-True ($script -match 'resourcesClipPath\s*=\s*"Room02_Audio/dk-theroom"') 'Room02 BGM player must know the Resources fallback clip path.'
-Assert-True ($script -match 'editorClipAssetPath\s*=\s*"Assets/Room02_Operating/Audio/music/darkness/dk-theroom\.aif"') 'Room02 BGM player must know the editor asset fallback path.'
+Assert-True ($script -match 'resourcesClipPath\s*=\s*"Room02_Audio/dk-atmosphere"') 'Room02 BGM player must know the Resources fallback clip path.'
+Assert-True ($script -match 'editorClipAssetPath\s*=\s*"Assets/Room02_Operating/Audio/music/darkness/dk-atmosphere\.aif"') 'Room02 BGM player must know the editor asset fallback path.'
 Assert-True ($script -match 'ResolveBgmClip\s*\(' -and $script -match 'Resources\.Load<AudioClip>' -and $script -match 'AssetDatabase\.LoadAssetAtPath<AudioClip>') 'Room02 BGM player must resolve its clip at Play time even if the scene reference is missing.'
 Assert-True ($script -match 'AddComponent<AudioSource>\s*\(') 'Room02 BGM player must create an AudioSource when one is missing.'
 Assert-True ($script -match '\.loop\s*=\s*loop' -and $script -match '\.spatialBlend\s*=\s*0f') 'Room02 BGM must play as looping 2D background audio.'

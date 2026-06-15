@@ -409,3 +409,8 @@
 - Play 시작 시 CluePlacementLayout이 Scene에서 수동으로 옮긴 단서 위치를 다시 덮어쓰던 문제 수정
 - Show 씬 자동 복구 로직이 단서 위치 차이를 이유로 수동 배치를 되돌리지 않도록 변경
 - 단서 위치 자동 배치는 에디터 메뉴를 직접 실행할 때만 적용되도록 테스트 갱신
+
+### [2026-06-16 00:27:58]
+- Room02 전체 배경음악을 Dark Ambient Music 패키지의 dk-atmosphere 트랙으로 변경
+- Show 씬의 Room02_BGM 오브젝트와 Room02BgmPlayer 기본 오디오 경로가 새 브금 파일을 참조하도록 수정
+- Room02 BGM 및 범위 검증 테스트를 새 브금 기준으로 갱신

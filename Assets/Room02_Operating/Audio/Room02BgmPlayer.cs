@@ -8,8 +8,8 @@ namespace EscapeRoom
     public class Room02BgmPlayer : MonoBehaviour
     {
         [SerializeField] private AudioClip bgmClip;
-        [SerializeField] private string resourcesClipPath = "Room02_Audio/dk-theroom";
-        [SerializeField] private string editorClipAssetPath = "Assets/Room02_Operating/Audio/music/darkness/dk-theroom.aif";
+        [SerializeField] private string resourcesClipPath = "Room02_Audio/dk-atmosphere";
+        [SerializeField] private string editorClipAssetPath = "Assets/Room02_Operating/Audio/music/darkness/dk-atmosphere.aif";
         [SerializeField, Range(0f, 1f)] private float volume = 0.65f;
         [SerializeField] private bool loop = true;
         [SerializeField] private bool playOnStart = true;

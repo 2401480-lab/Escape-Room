@@ -9816,7 +9816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f460f2db1094d1bbe9153a294e27285, type: 3}
   m_Name:
   m_EditorClassIdentifier:
-  bgmClip: {fileID: 8300000, guid: 2ce062734cf6e47ef99d8fcf01a79a0e, type: 3}
+  bgmClip: {fileID: 8300000, guid: d8a91461a3558488cba8a78113054562, type: 3}
   volume: 0.65
   loop: 1
   playOnStart: 1
@@ -9830,7 +9830,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 2ce062734cf6e47ef99d8fcf01a79a0e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: d8a91461a3558488cba8a78113054562, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.65
   m_Pitch: 1
