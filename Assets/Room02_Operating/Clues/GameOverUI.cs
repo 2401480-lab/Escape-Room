@@ -18,8 +18,8 @@ namespace EscapeRoom
         [SerializeField] private Animator jumpscareAnimator;
         [SerializeField] private string mainMenuSceneName = "RoomSelect";
 
-        public UnityEvent OnJumpscareStarted;
-        public UnityEvent OnSurvivalEndingShown;
+        public UnityEvent OnJumpscareStarted = new UnityEvent();
+        public UnityEvent OnSurvivalEndingShown = new UnityEvent();
 
         private void Awake()
         {

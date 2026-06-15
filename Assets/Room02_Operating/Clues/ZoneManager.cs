@@ -9,7 +9,7 @@ namespace EscapeRoom
 
         [SerializeField] private ZoneType initialZone = ZoneType.Lobby;
 
-        public UnityEvent<string> OnZoneEntered;
+        public UnityEvent<string> OnZoneEntered = new UnityEvent<string>();
 
         public ZoneType CurrentZone { get; private set; }
 

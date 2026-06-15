@@ -29,11 +29,11 @@ namespace EscapeRoom
         [SerializeField] private float deductionTimer = 1200f;
 
         [Header("이벤트")]
-        public UnityEvent<StoryPhase> OnPhaseChanged;
-        public UnityEvent OnTrueCulpritRevealed;
-        public UnityEvent OnEscapeKeyReady;
-        public UnityEvent OnEscapeKeyCollected;
-        public UnityEvent OnDeductionTimerExpired;
+        public UnityEvent<StoryPhase> OnPhaseChanged = new UnityEvent<StoryPhase>();
+        public UnityEvent OnTrueCulpritRevealed = new UnityEvent();
+        public UnityEvent OnEscapeKeyReady = new UnityEvent();
+        public UnityEvent OnEscapeKeyCollected = new UnityEvent();
+        public UnityEvent OnDeductionTimerExpired = new UnityEvent();
 
         private readonly HashSet<string> collectedClueIDs = new HashSet<string>();
         private bool hasEscapeKey;

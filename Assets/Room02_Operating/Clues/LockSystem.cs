@@ -15,10 +15,10 @@ namespace EscapeRoom
         [SerializeField] private GameObject escapeKeyObject;
 
         [Header("이벤트")]
-        public UnityEvent OnStorageLockerUnlocked;
-        public UnityEvent OnWrongStorageLockerCode;
-        public UnityEvent OnFridgeMedicineBoxUnlocked;
-        public UnityEvent OnEscapeKeyCollected;
+        public UnityEvent OnStorageLockerUnlocked = new UnityEvent();
+        public UnityEvent OnWrongStorageLockerCode = new UnityEvent();
+        public UnityEvent OnFridgeMedicineBoxUnlocked = new UnityEvent();
+        public UnityEvent OnEscapeKeyCollected = new UnityEvent();
 
         private bool storageLockerUnlocked;
         private bool fridgeMedicineBoxUnlocked;

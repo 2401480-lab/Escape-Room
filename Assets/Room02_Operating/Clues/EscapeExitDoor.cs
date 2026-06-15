@@ -11,8 +11,8 @@ namespace EscapeRoom
         [SerializeField] private float interactDistance = 2f;
         [SerializeField] private TextMeshProUGUI promptText;
 
-        public UnityEvent OnEscapeDoorOpened;
-        public UnityEvent OnEscapeDoorLocked;
+        public UnityEvent OnEscapeDoorOpened = new UnityEvent();
+        public UnityEvent OnEscapeDoorLocked = new UnityEvent();
 
         private const string OpenPrompt = "[E] 입구 문 열기";
         private const string LockedPrompt = "탈출 열쇠가 필요하다";

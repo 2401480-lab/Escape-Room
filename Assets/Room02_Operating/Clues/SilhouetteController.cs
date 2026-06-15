@@ -22,8 +22,8 @@ namespace EscapeRoom
         [SerializeField] private float appearDuration = 2f;
 
         [Header("이벤트")]
-        public UnityEvent OnFlickerRequested;
-        public UnityEvent OnJumpscareRequested;
+        public UnityEvent OnFlickerRequested = new UnityEvent();
+        public UnityEvent OnJumpscareRequested = new UnityEvent();
 
         private SilhouetteStage currentStage = SilhouetteStage.StageOne;
         private float nextAppearTime;

@@ -19,13 +19,13 @@ namespace EscapeRoom
         [SerializeField] private float chaseTimer = 120f;
         [SerializeField] private bool startDisabled = true;
 
-        public UnityEvent OnChaseStarted;
-        public UnityEvent OnCaughtPlayer;
-        public UnityEvent OnEscapeSucceeded;
-        public UnityEvent OnChaseTimerExpired;
-        public UnityEvent OnBlackoutRequested;
-        public UnityEvent<float> OnVignetteChanged;
-        public UnityEvent OnHeartbeatRequested;
+        public UnityEvent OnChaseStarted = new UnityEvent();
+        public UnityEvent OnCaughtPlayer = new UnityEvent();
+        public UnityEvent OnEscapeSucceeded = new UnityEvent();
+        public UnityEvent OnChaseTimerExpired = new UnityEvent();
+        public UnityEvent OnBlackoutRequested = new UnityEvent();
+        public UnityEvent<float> OnVignetteChanged = new UnityEvent<float>();
+        public UnityEvent OnHeartbeatRequested = new UnityEvent();
 
         private bool chasing;
         private float chaseTimeRemaining;

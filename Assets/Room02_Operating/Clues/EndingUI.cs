@@ -15,10 +15,10 @@ namespace EscapeRoom
         [SerializeField] private SuspectConfirmUI suspectConfirmUI;
         [SerializeField] private Button culpritChaseButton;
 
-        public UnityEvent OnCorrectSuspectSelected;
-        public UnityEvent OnWrongSuspectSelected;
-        public UnityEvent OnBlackoutRequested;
-        public UnityEvent OnJinMaterialized;
+        public UnityEvent OnCorrectSuspectSelected = new UnityEvent();
+        public UnityEvent OnWrongSuspectSelected = new UnityEvent();
+        public UnityEvent OnBlackoutRequested = new UnityEvent();
+        public UnityEvent OnJinMaterialized = new UnityEvent();
 
         private SuspectChoice pendingSuspect;
         private bool wrongAnswerUsed;
