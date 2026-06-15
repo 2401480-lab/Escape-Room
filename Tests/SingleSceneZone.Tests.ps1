@@ -31,19 +31,9 @@ $allCode = "$zoneManager`n$zoneDoor"
 $dontDestroyMatches = & rg 'DontDestroyOnLoad' (Join-Path $root 'Assets') --glob '*.cs'
 $dontDestroyExitCode = $LASTEXITCODE
 
-foreach ($rootName in @(
-    'HUD_Canvas',
-    'Managers',
-    'Player',
-    'Zone_Lobby',
-    'Zone_Corridor',
-    'Zone_Ward',
-    'Zone_Storage',
-    'Zone_DressingRoom',
-    'Zone_OperatingRoom'
-)) {
-    Assert-True ($scene -match "m_Name:\s+$rootName(\r?\n|$)") "Integrated scene missing root object: $rootName"
-}
+Assert-True ($scene -match 'm_Name:\s+Main Camera') 'Show must remain the playable Room02 scene.'
+Assert-True ($scene -match 'm_Name:\s+Clues(\r?\n|$)') 'Show must keep the clue root for Room02 clue placement.'
+Assert-True ($scene -notmatch 'm_Name:\s+HUD_Canvas') 'Show must not be polluted with temporary HUD objects.'
 
 foreach ($zone in @('Lobby', 'Corridor', 'Ward', 'Storage', 'DressingRoom', 'OperatingRoom')) {
     Assert-True ($zoneManager -match $zone) "ZoneManager missing zone enum/member: $zone"

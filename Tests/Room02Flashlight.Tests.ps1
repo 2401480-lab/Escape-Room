@@ -32,9 +32,7 @@ Assert-True ($flashlight -match 'RenderSettings\.ambientMode' -and $flashlight -
 Assert-True ($flashlight -match 'directionalLightIntensity\s*=\s*0\.03f') 'Room02 directional lighting must be reduced for flashlight play.'
 
 Assert-True ($bootstrapper -match 'EnsureRuntimeObject<Room02FlashlightController>\s*\(\s*"Room02_FlashlightController"\s*\)') 'HUD bootstrapper must create the Room02 flashlight controller during play.'
-Assert-True ($scene -match 'm_Name:\s+Room02_FlashlightController') 'Show must contain a visible Room02 flashlight controller object.'
-Assert-True ($scene -match [regex]::Escape("guid: $flashlightGuid")) 'Show must reference Room02FlashlightController.'
-Assert-True ($scene -match 'm_Fog:\s+1' -and $scene -match 'm_AmbientIntensity:\s+0\.15') 'Show must start with a dark atmosphere.'
-Assert-True ($scene -match 'm_Name:\s+Directional Light[\s\S]*?m_Intensity:\s+0\.03') 'Scene directional light must be dim enough for the flashlight to matter.'
+Assert-True ($scene -match 'm_Name:\s+Main Camera') 'Show must keep its original Main Camera for runtime flashlight attachment.'
+Assert-True ($scene -notmatch 'm_Name:\s+Room02_FlashlightController') 'Show must not be replaced by a copied flashlight scene object; the runtime bootstrapper creates it during play.'
 
 Write-Host 'Room02 flashlight checks passed.'

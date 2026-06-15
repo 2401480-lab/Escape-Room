@@ -56,8 +56,8 @@ Assert-True ($bootstrapper -match 'EnsureRuntimeObject<StoryProgressManager>' -a
 Assert-True ($bootstrapper -match 'InputSystemUIInputModule' -and $bootstrapper -match 'EventSystem') 'HUD bootstrapper must create an EventSystem for HUD buttons.'
 
 Assert-True ($setup -match 'EnsureRuntimeObject<SettingsUI>' -and $setup -match 'EnsureRuntimeObject<TimerUI>') 'Scene setup tool must ensure HUD runtime UI objects.'
-Assert-True ($scene -match 'm_Name:\s+SettingsUI' -and $scene -match '8b158d7cbad6487e9163f6a33c4797b7') 'Show must contain SettingsUI runtime object.'
-Assert-True ($scene -match 'm_Name:\s+HUD_Canvas') 'Show must contain HUD_Canvas.'
+Assert-True ($scene -match 'm_Name:\s+Main Camera') 'Show must keep its original playable camera.'
+Assert-True ($scene -notmatch 'm_Name:\s+SettingsUI' -and $scene -notmatch 'm_Name:\s+HUD_Canvas') 'Show must rely on runtime HUD creation instead of embedding temporary HUD objects.'
 
 Assert-True ($allHudCode -notmatch 'Time\.timeScale') 'HUD UI must not change Time.timeScale.'
 Assert-True ($allHudCode -notmatch 'CursorController') 'HUD UI must not touch CursorController.'

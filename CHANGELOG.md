@@ -306,3 +306,7 @@
 - Room02 실제 플레이 기준 씬을 Show.unity로 정리하고 단서 31개, 범인, BGM, 손전등, 관리자 가이드를 Show에 배치
 - Build Settings와 Room02 단서 배치 툴이 Scene_OperatingRoom이 아닌 Show를 대상으로 동작하도록 수정
 - 단서, 범인, BGM, 손전등, HUD 검증 테스트가 Show 기준을 확인하도록 갱신
+### [2026-06-15 14:54:52]
+- 기존 Show 씬의 맵과 조명 구조를 복구하고 Scene_OperatingRoom 전체 복사가 아닌 단서 오브젝트만 Show의 Clues 루트 아래로 이관
+- Show에 남아 있던 임시 TestClue_cast_notice를 제거하고 실제 단서 31개, 범인, BGM 오브젝트만 독립 배치
+- Show 원본 구조 기준으로 단서 배치, HUD 런타임 생성, 손전등 런타임 생성 검증 테스트 수정

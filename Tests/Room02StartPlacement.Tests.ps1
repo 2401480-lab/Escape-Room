@@ -61,9 +61,9 @@ foreach ($match in $clueMatches) {
     $maxX = [math]::Max($maxX, $x)
 
     Assert-True ($z -gt $camera.Z) "Every clue must be in front of Main Camera; found z=$z, camera z=$($camera.Z)."
-    Assert-True ([math]::Abs($z - ($camera.Z + 5.0)) -lt 0.001) "Every clue must sit in the camera-visible clue row; found z=$z, expected $($camera.Z + 5.0)."
-    Assert-True ($x -ge -2.6 -and $x -le 2.6) "Every clue must stay inside the visible camera width; found x=$x."
-    Assert-True ($y -ge 0.5 -and $y -le 2.3) "Every clue must stay inside the visible camera height; found y=$y."
+    Assert-True ([math]::Abs($z - 2.0) -lt 0.001) "Every clue must stay on the original Show clue plane; found z=$z."
+    Assert-True ($x -ge 0.3 -and $x -le 4.0) "Every clue must stay inside the original Show visible clue width; found x=$x."
+    Assert-True ($y -ge 3.2 -and $y -le 4.6) "Every clue must stay inside the original Show visible clue height; found y=$y."
 }
 
 Assert-True ($uniquePositions.Count -eq 31) "All 31 clues must be individually visible, not stacked; found only $($uniquePositions.Count) unique positions."
