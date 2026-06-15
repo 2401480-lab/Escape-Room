@@ -5,6 +5,7 @@ $guidePath = Join-Path $root 'Assets/Room02_Operating/Clues/ClueAdminGuideOverla
 $storyManagerPath = Join-Path $root 'Assets/Room02_Operating/Clues/StoryProgressManager.cs'
 $endingUIPath = Join-Path $root 'Assets/Room02_Operating/Clues/EndingUI.cs'
 $settingsPath = Join-Path $root 'Assets/Room02_Operating/Clues/SettingsUI.cs'
+$bootstrapperPath = Join-Path $root 'Assets/Room02_Operating/Clues/HudRuntimeBootstrapper.cs'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -20,11 +21,13 @@ Assert-True (Test-Path -LiteralPath $guidePath) 'Missing Room02 admin guide over
 Assert-True (Test-Path -LiteralPath $storyManagerPath) 'Missing Room02 story progress manager script.'
 Assert-True (Test-Path -LiteralPath $endingUIPath) 'Missing Room02 ending UI script.'
 Assert-True (Test-Path -LiteralPath $settingsPath) 'Missing Room02 settings UI script.'
+Assert-True (Test-Path -LiteralPath $bootstrapperPath) 'Missing Room02 HUD runtime bootstrapper script.'
 
 $guide = Get-Content -LiteralPath $guidePath -Raw -Encoding UTF8
 $storyManager = Get-Content -LiteralPath $storyManagerPath -Raw -Encoding UTF8
 $endingUI = Get-Content -LiteralPath $endingUIPath -Raw -Encoding UTF8
 $settings = Get-Content -LiteralPath $settingsPath -Raw -Encoding UTF8
+$bootstrapper = Get-Content -LiteralPath $bootstrapperPath -Raw -Encoding UTF8
 $culpritChaseText = (U 0xBC94,0xC778) + (U 0xCC3E,0xAE30) + ' (G)'
 
 Assert-True ($guide -match 'Input\.GetKeyDown\s*\(\s*KeyCode\.U\s*\)') 'Admin guide overlay must trigger the failure shortcut with the U key.'
@@ -38,6 +41,10 @@ Assert-True ($storyManager -match 'forceDeductionFailureCountdown\s*=\s*true') '
 Assert-True ($storyManager -match 'CurrentTimerRemaining\s*=>\s*forceDeductionFailureCountdown\s*\?\s*deductionTimeRemaining') 'Timer UI must show the 5-second admin failure countdown before any chase timer.'
 Assert-True ($storyManager -match 'TickDeductionTimer\s*\(') 'StoryProgressManager must share normal and admin timer expiry logic.'
 Assert-True ($storyManager -match 'DeductionTimerExpired\s*\(\s*\)') 'Admin failure countdown must reuse the existing deduction failure GameOver path.'
+Assert-True ($storyManager -match 'GetOrCreateGameOverUI\s*\(\s*\)\?\.PlayGameOver\s*\(\s*GameOverReason\.DeductionTimerExpired\s*\)') 'Deduction timer expiry must show GameOver through a guaranteed GameOverUI instance.'
+Assert-True ($storyManager -match 'new\s+GameObject\s*\(\s*"GameOverUI"\s*\)[\s\S]*?AddComponent<GameOverUI>\s*\(\s*\)') 'StoryProgressManager must create GameOverUI when the scene did not bootstrap one.'
+Assert-True ($storyManager -notmatch 'GameOverUI\.Instance\?\.PlayGameOver\s*\(\s*GameOverReason\.DeductionTimerExpired\s*\)') 'Deduction timer expiry must not silently skip visible GameOver when GameOverUI.Instance is null.'
+Assert-True ($bootstrapper -match 'EnsureRuntimeObject<GameOverUI>\s*\(\s*"GameOverUI"\s*\)') 'Room02 runtime bootstrapper must create GameOverUI for visible admin U failures.'
 
 Assert-True ($endingUI -match 'Input\.GetKeyDown\s*\(\s*KeyCode\.G\s*\)') 'EndingUI must open culprit finding with the G key.'
 Assert-True ($endingUI -match 'TryShowCulpritSelectionShortcut\s*\(') 'EndingUI must isolate the G-key culprit finding shortcut.'

@@ -46,6 +46,7 @@ foreach ($method in @('CollectEscapeKey', 'GrantEscapeKeyFromCorrectSuspect', 'G
 }
 
 Assert-True ($storyManager -match 'HasEscapeKey\s*=>[\s\S]*?EscapeKeyState\.HasKey') 'StoryProgressManager.HasEscapeKey must reflect EscapeKeyState.HasKey.'
+Assert-True ($storyManager -match 'GrantEscapeKeyFromCorrectSuspect[\s\S]*?if\s*\(\s*HasEscapeKey\s*\)\s*\{\s*EscapeKeyNoticeUI\.ShowKeyAcquired\s*\(\s*\);\s*return\s*;\s*\}') 'Correct culprit selection must still show the key acquisition notice when the key was already granted.'
 Assert-True ($adminGuide -match 'CollectAllCluesAndGrantKey\s*\(\s*\)[\s\S]*?GrantEscapeKeyFromAdminSkip\s*\(\s*\)') 'Y admin skip must still grant the key through the StoryProgressManager path.'
 Assert-True ($endingUI -match 'GrantEscapeKeyFromCorrectSuspect\s*\(\s*\);[\s\S]*?BeginChase\s*\(\s*\)') 'Correct culprit selection must grant the key before chase/QTE handoff.'
 

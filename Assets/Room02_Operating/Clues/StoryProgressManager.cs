@@ -163,6 +163,7 @@ namespace EscapeRoom
         {
             if (HasEscapeKey)
             {
+                EscapeKeyNoticeUI.ShowKeyAcquired();
                 return;
             }
 
@@ -321,7 +322,24 @@ namespace EscapeRoom
             forceDeductionFailureCountdown = false;
             OnDeductionTimerExpired?.Invoke();
             MarkGameOver();
-            GameOverUI.Instance?.PlayGameOver(GameOverReason.DeductionTimerExpired);
+            GetOrCreateGameOverUI()?.PlayGameOver(GameOverReason.DeductionTimerExpired);
+        }
+
+        private static GameOverUI GetOrCreateGameOverUI()
+        {
+            if (GameOverUI.Instance != null)
+            {
+                return GameOverUI.Instance;
+            }
+
+            GameOverUI existingUI = UnityEngine.Object.FindFirstObjectByType<GameOverUI>();
+            if (existingUI != null)
+            {
+                return existingUI;
+            }
+
+            GameObject gameOverObject = new GameObject("GameOverUI");
+            return gameOverObject.AddComponent<GameOverUI>();
         }
 
         private void SetPhase(StoryPhase nextPhase)
