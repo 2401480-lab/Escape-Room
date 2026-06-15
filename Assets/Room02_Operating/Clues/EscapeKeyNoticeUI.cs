@@ -8,6 +8,7 @@ namespace EscapeRoom
     public class EscapeKeyNoticeUI : MonoBehaviour
     {
         public const string KeyAcquiredMessage = "열쇠를 얻었습니다";
+        public const string EscapeKeyAcquiredMessage = "탈출 열쇠를 얻었습니다";
 
         [SerializeField] private Canvas noticeCanvas;
         [SerializeField] private RectTransform panelRoot;
@@ -20,6 +21,11 @@ namespace EscapeRoom
         public static void ShowKeyAcquired()
         {
             Instance.Show(KeyAcquiredMessage);
+        }
+
+        public static void ShowEscapeKeyAcquired()
+        {
+            Instance.Show(EscapeKeyAcquiredMessage);
         }
 
         private static EscapeKeyNoticeUI Instance

@@ -85,16 +85,26 @@ namespace EscapeRoom
 
         private void CollectAllCluesAndGrantKey()
         {
-            ClueBoxInteractable[] clueBoxes = FindObjectsOfType<ClueBoxInteractable>(true);
-            foreach (ClueBoxInteractable clueBox in clueBoxes)
-            {
-                if (clueBox != null)
-                {
-                    clueBox.AdminCollectClue();
-                }
-            }
+            StoryProgressManager storyManager = StoryProgressManager.Instance;
+            storyManager?.BeginSilentAdminKeyGrant();
 
-            StoryProgressManager.Instance?.GrantEscapeKeyFromAdminSkip();
+            try
+            {
+                ClueBoxInteractable[] clueBoxes = FindObjectsOfType<ClueBoxInteractable>(true);
+                foreach (ClueBoxInteractable clueBox in clueBoxes)
+                {
+                    if (clueBox != null)
+                    {
+                        clueBox.AdminCollectClue();
+                    }
+                }
+
+                storyManager?.GrantEscapeKeyFromAdminSkip();
+            }
+            finally
+            {
+                storyManager?.EndSilentAdminKeyGrant();
+            }
         }
 
         private void TriggerFiveSecondFailure()

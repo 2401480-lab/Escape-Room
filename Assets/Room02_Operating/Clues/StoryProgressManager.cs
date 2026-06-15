@@ -40,6 +40,7 @@ namespace EscapeRoom
         private readonly HashSet<string> collectedClueIDs = new HashSet<string>();
         private bool hasEscapeKey;
         private bool forceDeductionFailureCountdown;
+        private bool suppressKeyAcquiredNotice;
         private float deductionTimeRemaining;
         private ChaseController chaseController;
         private ClueJournalManager observedJournalManager;
@@ -150,7 +151,7 @@ namespace EscapeRoom
 
             hasEscapeKey = true;
             EscapeKeyState.GrantKey();
-            EscapeKeyNoticeUI.ShowKeyAcquired();
+            ShowKeyAcquiredNotice();
             if (CanSelectSuspect)
             {
                 SetPhase(StoryPhase.SuspectSelection);
@@ -163,13 +164,13 @@ namespace EscapeRoom
         {
             if (HasEscapeKey)
             {
-                EscapeKeyNoticeUI.ShowKeyAcquired();
+                EscapeKeyNoticeUI.ShowEscapeKeyAcquired();
                 return;
             }
 
             hasEscapeKey = true;
             EscapeKeyState.GrantKey();
-            EscapeKeyNoticeUI.ShowKeyAcquired();
+            EscapeKeyNoticeUI.ShowEscapeKeyAcquired();
             OnEscapeKeyCollected?.Invoke();
             OnEscapeKeyReady?.Invoke();
         }
@@ -183,7 +184,6 @@ namespace EscapeRoom
 
             hasEscapeKey = true;
             EscapeKeyState.GrantKey();
-            EscapeKeyNoticeUI.ShowKeyAcquired();
             if (CanSelectSuspect)
             {
                 SetPhase(StoryPhase.SuspectSelection);
@@ -191,6 +191,16 @@ namespace EscapeRoom
 
             OnEscapeKeyCollected?.Invoke();
             OnEscapeKeyReady?.Invoke();
+        }
+
+        public void BeginSilentAdminKeyGrant()
+        {
+            suppressKeyAcquiredNotice = true;
+        }
+
+        public void EndSilentAdminKeyGrant()
+        {
+            suppressKeyAcquiredNotice = false;
         }
 
         public void TriggerAdminFailureCountdown()
@@ -278,8 +288,16 @@ namespace EscapeRoom
 
             hasEscapeKey = true;
             EscapeKeyState.GrantKey();
-            EscapeKeyNoticeUI.ShowKeyAcquired();
+            ShowKeyAcquiredNotice();
             OnEscapeKeyCollected?.Invoke();
+        }
+
+        private void ShowKeyAcquiredNotice()
+        {
+            if (!suppressKeyAcquiredNotice)
+            {
+                EscapeKeyNoticeUI.ShowKeyAcquired();
+            }
         }
 
         private void EnsureJournalSubscription()
