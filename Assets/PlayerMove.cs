@@ -10,8 +10,10 @@ public class PlayerMove : MonoBehaviour
     public float gravity = -9.81f;
 
     CharacterController characterController;
+    Transform playerCamera;
     Vector3 verticalVelocity;
-    float xRotation = 0f;
+    float yaw;
+    float pitch;
 
     void Start()
     {
@@ -30,7 +32,13 @@ public class PlayerMove : MonoBehaviour
             gameObject.AddComponent<DoorInteractor>();
         }
 
+        playerCamera = FindPlayerCamera();
+        yaw = transform.eulerAngles.y;
+        pitch = 0f;
+        ApplyLookRotation();
+
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
@@ -54,11 +62,42 @@ public class PlayerMove : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSpeed;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSpeed;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        yaw += mouseX;
+        pitch -= mouseY;
+        pitch = Mathf.Clamp(pitch, -90f, 90f);
 
-        Camera.main.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        ApplyLookRotation();
+    }
 
-        transform.Rotate(Vector3.up * mouseX);
+    Transform FindPlayerCamera()
+    {
+        Camera camera = GetComponentInChildren<Camera>(true);
+        if (camera == null)
+        {
+            camera = Camera.main;
+        }
+
+        if (camera == null)
+        {
+            return null;
+        }
+
+        if (camera.transform.parent != transform)
+        {
+            camera.transform.SetParent(transform, false);
+        }
+
+        camera.transform.localPosition = new Vector3(0f, 1.7f, 0f);
+        return camera.transform;
+    }
+
+    void ApplyLookRotation()
+    {
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+
+        if (playerCamera != null)
+        {
+            playerCamera.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        }
     }
 }
