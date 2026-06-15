@@ -23,11 +23,52 @@ namespace EscapeRoom.Editor
         private const string CulpritPrefabPath = "Assets/Room02_Operating/Models/char_shadow.fbx";
         private const string CulpritObjectName = "Culprit_StartPosition";
         private const string ShowScenePath = "Assets/Room02_Operating/Scenes/Show.unity";
-        private const int VisibleClueColumns = 8;
-        private const float VisibleClueDistanceFromCamera = 5.0f;
-        private const float VisibleClueSpacingX = 0.7f;
-        private const float VisibleClueSpacingY = 0.55f;
-        private const float VisibleClueFirstRowYOffset = -0.45f;
+        private static readonly Vector3 CluesRootPosition = Vector3.zero;
+        private static readonly Dictionary<string, Vector3> IntegratedCluePositions = new Dictionary<string, Vector3>
+        {
+            // Lobby / notice area
+            { "normal_cast_notice", new Vector3(0.4f, 0.45f, -2.2f) },
+            { "normal_production_plan", new Vector3(-1.2f, 0.45f, -3.2f) },
+            { "normal_memorial_frame", new Vector3(1.9f, 0.55f, -3.6f) },
+            { "normal_conversation_memo", new Vector3(-0.4f, 0.45f, -4.8f) },
+            { "clue_hasho_will", new Vector3(2.7f, 0.45f, -4.6f) },
+
+            // Corridor / security area
+            { "normal_security_log", new Vector3(-8.4f, 0.45f, -20.2f) },
+            { "normal_cctv_notice", new Vector3(-10.2f, 0.45f, -21.7f) },
+            { "normal_deleted_entry_trace", new Vector3(-12.4f, 0.45f, -23.6f) },
+            { "normal_hidden_camera", new Vector3(-14.2f, 0.75f, -19.2f) },
+            { "normal_torn_letter_a", new Vector3(-7.2f, 0.45f, -23.8f) },
+            { "normal_torn_letter_b", new Vector3(-15.0f, 0.45f, -21.0f) },
+
+            // Ward
+            { "normal_ward_calendar", new Vector3(-30.5f, 0.7f, -22.0f) },
+            { "normal_medical_certificate", new Vector3(-33.2f, 0.45f, -23.5f) },
+            { "normal_poison_ampoule", new Vector3(-36.1f, 0.45f, -24.2f) },
+            { "normal_nurse_inventory_log", new Vector3(-31.6f, 0.45f, -27.0f) },
+            { "normal_under_table_space", new Vector3(-34.8f, 0.4f, -27.6f) },
+            { "normal_yoanna_relic", new Vector3(-37.2f, 0.45f, -21.5f) },
+
+            // Storage / cold room
+            { "key_clue_coldest_place", new Vector3(11.1f, 0.45f, -12.4f) },
+            { "normal_gloves", new Vector3(13.5f, 0.45f, -13.2f) },
+            { "key_clue_fridge_scratches", new Vector3(15.8f, 0.55f, -14.8f) },
+            { "key_clue_temperature_warning", new Vector3(10.2f, 0.7f, -16.9f) },
+            { "normal_locker_document", new Vector3(14.6f, 0.45f, -17.4f) },
+
+            // Dressing room
+            { "normal_mirror_message", new Vector3(-7.0f, 0.7f, -7.4f) },
+            { "normal_paint_footprints", new Vector3(-9.4f, 0.35f, -8.8f) },
+            { "normal_makeup_toolbox", new Vector3(-12.0f, 0.45f, -9.6f) },
+            { "clue_makeup_diary", new Vector3(-14.5f, 0.45f, -11.2f) },
+            { "normal_jin_sneakers", new Vector3(-8.4f, 0.4f, -12.7f) },
+
+            // Operating room
+            { "normal_yoanna_memo", new Vector3(6.4f, 0.45f, -21.6f) },
+            { "normal_sumi_memo", new Vector3(8.7f, 0.45f, -23.4f) },
+            { "normal_bong_rebuttal", new Vector3(11.2f, 0.45f, -25.4f) },
+            { "normal_oh_threat_memo", new Vector3(13.8f, 0.45f, -22.8f) }
+        };
 
         static ClueSceneSetupTool()
         {
@@ -137,6 +178,9 @@ namespace EscapeRoom.Editor
             EnsureRuntimeObject<SettingsUI>("SettingsUI");
 
             GameObject cluesRoot = EnsureRoot("Clues");
+            cluesRoot.transform.position = CluesRootPosition;
+            cluesRoot.transform.rotation = Quaternion.identity;
+            cluesRoot.transform.localScale = Vector3.one;
             List<ClueAssetGenerator.ClueEntry> entriesToPlace = new List<ClueAssetGenerator.ClueEntry>();
             HashSet<string> expectedNames = new HashSet<string>();
             foreach (ClueAssetGenerator.ClueEntry entry in ClueAssetGenerator.GetEntries())
@@ -249,7 +293,7 @@ namespace EscapeRoom.Editor
                 clueObject = existing.gameObject;
             }
 
-            clueObject.transform.position = GetCameraVisibleClueWorldPosition(index);
+            clueObject.transform.position = GetRoomDistributedClueWorldPosition(entry.clueID, index);
             clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
@@ -337,24 +381,23 @@ namespace EscapeRoom.Editor
             EditorUtility.SetDirty(culprit);
         }
 
-        private static Vector3 GetCameraVisibleClueWorldPosition(int index)
+        private static Vector3 GetRoomDistributedClueWorldPosition(string clueID, int index)
         {
-            int column = index % VisibleClueColumns;
-            int row = index / VisibleClueColumns;
-            float xOffset = (column - ((VisibleClueColumns - 1) * 0.5f)) * VisibleClueSpacingX;
-            float yOffset = VisibleClueFirstRowYOffset + (row * VisibleClueSpacingY);
-            return GetPlacementCameraPosition()
-                + (GetPlacementCameraForward() * VisibleClueDistanceFromCamera)
-                + (GetPlacementCameraRight() * xOffset)
-                + (GetPlacementCameraUp() * yOffset);
+            if (IntegratedCluePositions.TryGetValue(clueID, out Vector3 position))
+            {
+                return position;
+            }
+
+            int column = index % 6;
+            int row = index / 6;
+            return new Vector3(-2f + (column * 1.25f), 0.45f, -6f - (row * 1.25f));
         }
 
         private static Vector3 GetCameraVisibleCulpritWorldPosition()
         {
-            float xOffset = (((VisibleClueColumns - 1) * 0.5f) + 0.75f) * VisibleClueSpacingX;
             return GetPlacementCameraPosition()
-                + (GetPlacementCameraForward() * (VisibleClueDistanceFromCamera + 0.4f))
-                + (GetPlacementCameraRight() * xOffset)
+                + (GetPlacementCameraForward() * 5.4f)
+                + (GetPlacementCameraRight() * 3.0f)
                 - (GetPlacementCameraUp() * GetPlacementCameraPosition().y);
         }
 
