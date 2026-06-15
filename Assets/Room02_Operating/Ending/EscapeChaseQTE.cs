@@ -13,12 +13,11 @@ namespace EscapeRoom
 
         [SerializeField] private float durationSeconds = 5f;
         [SerializeField] private int requiredSpacePresses = 30;
-        [SerializeField] private float warningSeconds = 0.5f;
-        [SerializeField] private float culpritRushSeconds = 0.32f;
+        [SerializeField] private float culpritRushSeconds = 0.36f;
         [SerializeField] private float culpritStartDistance = 8f;
-        [SerializeField] private float culpritEndDistance = 0.08f;
-        [SerializeField] private float culpritFinalScaleMultiplier = 6.2f;
-        [SerializeField] private float culpritPreviewYOffset = -2.3f;
+        [SerializeField] private float culpritEndDistance = 0.04f;
+        [SerializeField] private float culpritFinalScaleMultiplier = 12.5f;
+        [SerializeField] private float culpritPreviewYOffset = 0.25f;
         [SerializeField] private GameObject culpritPrefab;
         [SerializeField] private string culpritResourcesPath = "Room02_CulpritChaser";
 
@@ -31,6 +30,7 @@ namespace EscapeRoom
         private GameObject progressBarRoot;
         private Image progressFill;
         private Image endingBackground;
+        private RectTransform fireworksRoot;
         private Button homeButton;
         private Camera chasePreviewCamera;
         private RenderTexture chasePreviewTexture;
@@ -39,6 +39,7 @@ namespace EscapeRoom
         private float startedAt;
         private int pressCount;
         private bool isRunning;
+        private bool endingStarted;
         private Coroutine activeSequence;
 
         private void Awake()
@@ -96,60 +97,97 @@ namespace EscapeRoom
             isRunning = false;
             PrepareOverlay();
             SetProgressBarVisible(false);
-            endingTitleText.gameObject.SetActive(false);
-            homeButton.gameObject.SetActive(false);
-
-            messageText.text = "\uc9c4\ubc94\uc744 \uc54c\uc544\ucc58\uc9c0\ub9cc,\n\ub108\ubb34 \ub2a6\uc5c8\ub2e4.";
-            yield return new WaitForSecondsRealtime(warningSeconds);
-
-            SetChaseWindowVisible(true);
-            SetupChasePreviewScene();
-            SpawnCulpritInPreview();
-            yield return RushCulpritInPreviewWindow();
-            CleanupCulprit();
             SetChaseWindowVisible(false);
+            CleanupCulprit();
+            endingTitleText.gameObject.SetActive(false);
+            endingBackground.gameObject.SetActive(false);
+            if (fireworksRoot != null)
+            {
+                fireworksRoot.gameObject.SetActive(false);
+            }
+            homeButton.gameObject.SetActive(false);
+            endingStarted = false;
+
+            messageText.gameObject.SetActive(true);
 
             startedAt = Time.unscaledTime;
             pressCount = 0;
             isRunning = true;
             SetProgressBarVisible(true);
             RefreshProgress();
+            yield return null;
             activeSequence = null;
         }
 
         private void CompleteSuccess()
         {
+            if (endingStarted)
+            {
+                return;
+            }
+
             isRunning = false;
-            ShowEnding(true);
+            endingStarted = true;
+            Debug.Log("[EscapeChaseQTE] Success ending started.");
+            StartCoroutine(PlaySuccessEnding());
         }
 
         private void CompleteFailure()
         {
+            if (endingStarted)
+            {
+                return;
+            }
+
             isRunning = false;
-            ShowEnding(false);
+            endingStarted = true;
+            Debug.Log("[EscapeChaseQTE] Failure ending started.");
+            StartCoroutine(PlayFailureEnding());
         }
 
-        private void ShowEnding(bool success)
+        private IEnumerator PlaySuccessEnding()
         {
             PrepareOverlay();
             SetProgressBarVisible(false);
             SetChaseWindowVisible(false);
             CleanupCulprit();
 
-            endingBackground.gameObject.SetActive(true);
-            endingBackground.color = success ? Color.white : Color.black;
-
-            messageText.text = success ? "\ubc29\ud0c8\ucd9c\uc744 \uc131\uacf5\ud588\uc2b5\ub2c8\ub2e4!" : "";
-            messageText.color = success ? Color.black : Color.white;
-
-            endingTitleText.text = success ? "FINISH" : "GAME OVER";
-            endingTitleText.color = success ? new Color(0.08f, 0.08f, 0.08f, 1f) : Color.red;
-            endingTitleText.rectTransform.localScale = Vector3.one;
-            endingTitleText.gameObject.SetActive(true);
-            HideYellowClueMarkers();
-
-            ShowHomeButton();
+            endingTitleText.gameObject.SetActive(false);
+            homeButton.gameObject.SetActive(false);
+            messageText.gameObject.SetActive(true);
+            messageText.text = "\ubc29\ud0c8\ucd9c\uc5d0 \uc131\uacf5\ud558\uc168\uc2b5\ub2c8\ub2e4!";
+            messageText.color = Color.white;
             OrderEndingLayers();
+
+            yield return new WaitForSecondsRealtime(1f);
+            yield return FadeEnding(Color.white, 0.9f);
+            messageText.text = "";
+            ShowEndingTitle("FINISH!", new Color(0.08f, 0.08f, 0.08f, 1f));
+            StartCoroutine(PlayFireworks());
+            yield return PopEndingTitle();
+            ShowHomeButton();
+        }
+
+        private IEnumerator PlayFailureEnding()
+        {
+            PrepareOverlay();
+            SetProgressBarVisible(false);
+            SetChaseWindowVisible(false);
+            CleanupCulprit();
+
+            endingTitleText.gameObject.SetActive(false);
+            homeButton.gameObject.SetActive(false);
+            messageText.gameObject.SetActive(true);
+            messageText.text = "\uc9c4\ubc94\uc744 \uc54c\uc544\ucc58\uc9c0\ub9cc,\n\ub108\ubb34 \ub2a6\uc5c8\ub2e4.";
+            messageText.color = Color.white;
+            OrderEndingLayers();
+
+            yield return new WaitForSecondsRealtime(1f);
+            yield return FadeEnding(Color.black, 0.9f);
+            messageText.text = "";
+            ShowEndingTitle("GAME OVER", Color.red);
+            yield return PopEndingTitle();
+            ShowHomeButton();
         }
 
         private void RefreshProgress()
@@ -196,6 +234,7 @@ namespace EscapeRoom
 
             if (panelRoot != null)
             {
+                EnsureLateUIElements((RectTransform)panelRoot.transform);
                 return;
             }
 
@@ -261,8 +300,34 @@ namespace EscapeRoom
             endingTitleText.rectTransform.sizeDelta = new Vector2(920f, 140f);
             endingTitleText.gameObject.SetActive(false);
 
+            fireworksRoot = new GameObject("Fireworks").AddComponent<RectTransform>();
+            fireworksRoot.SetParent(panelRect, false);
+            fireworksRoot.anchorMin = Vector2.zero;
+            fireworksRoot.anchorMax = Vector2.one;
+            fireworksRoot.offsetMin = Vector2.zero;
+            fireworksRoot.offsetMax = Vector2.zero;
+            fireworksRoot.gameObject.SetActive(false);
+
             homeButton = CreateHomeButton(panelRect);
             homeButton.gameObject.SetActive(false);
+        }
+
+        private void EnsureLateUIElements(RectTransform panelRect)
+        {
+            if (fireworksRoot == null)
+            {
+                Transform existingFireworks = panelRect.Find("Fireworks");
+                fireworksRoot = existingFireworks != null
+                    ? (RectTransform)existingFireworks
+                    : new GameObject("Fireworks").AddComponent<RectTransform>();
+
+                fireworksRoot.SetParent(panelRect, false);
+                fireworksRoot.anchorMin = Vector2.zero;
+                fireworksRoot.anchorMax = Vector2.one;
+                fireworksRoot.offsetMin = Vector2.zero;
+                fireworksRoot.offsetMax = Vector2.zero;
+                fireworksRoot.gameObject.SetActive(false);
+            }
         }
 
         private void SetVisible(bool visible)
@@ -303,6 +368,10 @@ namespace EscapeRoom
             {
                 messageText.transform.SetAsLastSibling();
             }
+            if (fireworksRoot != null && fireworksRoot.gameObject.activeSelf)
+            {
+                fireworksRoot.SetAsLastSibling();
+            }
             if (endingTitleText != null)
             {
                 endingTitleText.transform.SetAsLastSibling();
@@ -310,6 +379,117 @@ namespace EscapeRoom
             if (homeButton != null)
             {
                 homeButton.transform.SetAsLastSibling();
+            }
+        }
+
+        private IEnumerator FadeEnding(Color targetColor, float seconds)
+        {
+            endingBackground.gameObject.SetActive(true);
+            OrderEndingLayers();
+
+            Color start = new Color(targetColor.r, targetColor.g, targetColor.b, 0f);
+            Color end = new Color(targetColor.r, targetColor.g, targetColor.b, 1f);
+            float startedFadeAt = Time.unscaledTime;
+
+            while (Time.unscaledTime - startedFadeAt < seconds)
+            {
+                float t = Mathf.Clamp01((Time.unscaledTime - startedFadeAt) / seconds);
+                endingBackground.color = Color.Lerp(start, end, t);
+                yield return null;
+            }
+
+            endingBackground.color = end;
+        }
+
+        private void ShowEndingTitle(string text, Color color)
+        {
+            endingTitleText.text = text;
+            endingTitleText.color = color;
+            endingTitleText.rectTransform.localScale = Vector3.zero;
+            endingTitleText.gameObject.SetActive(true);
+            OrderEndingLayers();
+        }
+
+        private IEnumerator PopEndingTitle()
+        {
+            float startedPopAt = Time.unscaledTime;
+            const float popSeconds = 0.28f;
+
+            while (Time.unscaledTime - startedPopAt < popSeconds)
+            {
+                float t = Mathf.Clamp01((Time.unscaledTime - startedPopAt) / popSeconds);
+                float scale = Mathf.Lerp(0.1f, 1.2f, Mathf.Sin(t * Mathf.PI * 0.5f));
+                endingTitleText.rectTransform.localScale = Vector3.one * scale;
+                yield return null;
+            }
+
+            endingTitleText.rectTransform.localScale = Vector3.one;
+        }
+
+        private IEnumerator PlayFireworks()
+        {
+            fireworksRoot.gameObject.SetActive(true);
+            fireworksRoot.SetAsLastSibling();
+            ClearFireworks();
+
+            Color[] colors =
+            {
+                new Color(1f, 0.18f, 0.18f, 1f),
+                new Color(1f, 0.82f, 0.12f, 1f),
+                new Color(0.18f, 0.5f, 1f, 1f),
+                new Color(0.22f, 0.9f, 0.45f, 1f)
+            };
+
+            for (int burst = 0; burst < 5; burst++)
+            {
+                Vector2 center = new Vector2(Random.Range(-520f, 520f), Random.Range(-260f, 260f));
+                for (int i = 0; i < 30; i++)
+                {
+                    RectTransform spark = CreatePanel("Spark", fireworksRoot, colors[(burst + i) % colors.Length]);
+                    spark.anchorMin = new Vector2(0.5f, 0.5f);
+                    spark.anchorMax = new Vector2(0.5f, 0.5f);
+                    spark.pivot = new Vector2(0.5f, 0.5f);
+                    spark.anchoredPosition = center;
+                    spark.sizeDelta = new Vector2(18f, 18f);
+                    StartCoroutine(AnimateSpark(spark, center, i, 30));
+                }
+
+                yield return new WaitForSecondsRealtime(0.18f);
+            }
+        }
+
+        private IEnumerator AnimateSpark(RectTransform spark, Vector2 center, int index, int count)
+        {
+            Image image = spark.GetComponent<Image>();
+            float angle = index * Mathf.PI * 2f / count;
+            Vector2 target = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * Random.Range(130f, 300f);
+            float startedSparkAt = Time.unscaledTime;
+            const float sparkSeconds = 0.85f;
+
+            while (Time.unscaledTime - startedSparkAt < sparkSeconds)
+            {
+                float t = Mathf.Clamp01((Time.unscaledTime - startedSparkAt) / sparkSeconds);
+                spark.anchoredPosition = Vector2.Lerp(center, target, t);
+                spark.localScale = Vector3.one * Mathf.Lerp(1f, 0.2f, t);
+                Color color = image.color;
+                color.a = 1f - t;
+                image.color = color;
+                yield return null;
+            }
+
+            Destroy(spark.gameObject);
+        }
+
+        private void ClearFireworks()
+        {
+            if (fireworksRoot == null)
+            {
+                return;
+            }
+
+            for (int i = fireworksRoot.childCount - 1; i >= 0; i--)
+            {
+                Destroy(fireworksRoot.GetChild(i).gameObject);
             }
         }
 
@@ -334,8 +514,8 @@ namespace EscapeRoom
 
                 chasePreviewCamera = cameraObject.AddComponent<Camera>();
                 chasePreviewCamera.clearFlags = CameraClearFlags.SolidColor;
-                chasePreviewCamera.backgroundColor = Color.black;
-                chasePreviewCamera.fieldOfView = 36f;
+                chasePreviewCamera.backgroundColor = new Color(0.18f, 0.13f, 0.13f, 1f);
+                chasePreviewCamera.fieldOfView = 34f;
                 chasePreviewCamera.nearClipPlane = 0.03f;
                 chasePreviewCamera.farClipPlane = 40f;
             }
@@ -377,6 +557,7 @@ namespace EscapeRoom
                 chasePreviewRig);
 
             ApplyCulpritPreviewLook(spawnedCulprit);
+            FrameCulpritForPreview(spawnedCulprit);
             TryPlayCulpritAnimation(spawnedCulprit);
         }
 
@@ -398,17 +579,67 @@ namespace EscapeRoom
             {
                 float t = Mathf.Clamp01((Time.unscaledTime - startedRushAt) / culpritRushSeconds);
                 float eased = t * t * (3f - 2f * t);
+                float runShake = Mathf.Sin(Time.unscaledTime * 65f) * Mathf.Lerp(0.08f, 0.24f, eased);
                 Vector3 endPosition = cameraTransform.position
                     + cameraTransform.forward * culpritEndDistance
                     + Vector3.up * culpritPreviewYOffset;
 
-                culprit.position = Vector3.Lerp(startPosition, endPosition, eased);
-                culprit.rotation = Quaternion.LookRotation(cameraTransform.position - culprit.position, Vector3.up);
+                culprit.position = Vector3.Lerp(startPosition, endPosition, eased) + Vector3.up * runShake;
+                Quaternion lookRotation = Quaternion.LookRotation(cameraTransform.position - culprit.position, Vector3.up);
+                culprit.rotation = lookRotation * Quaternion.Euler(runShake * 30f, 0f, runShake * 18f);
                 culprit.localScale = Vector3.Lerp(startScale, startScale * culpritFinalScaleMultiplier, eased);
                 yield return null;
             }
 
             yield return new WaitForSecondsRealtime(0.12f);
+        }
+
+        private void FrameCulpritForPreview(GameObject culprit)
+        {
+            Bounds bounds = GetRendererBounds(culprit);
+            if (bounds.size == Vector3.zero)
+            {
+                return;
+            }
+
+            float height = Mathf.Max(bounds.size.y, 0.1f);
+            float targetHeight = 3.2f;
+            float scaleMultiplier = targetHeight / height;
+            culprit.transform.localScale *= scaleMultiplier;
+
+            bounds = GetRendererBounds(culprit);
+            Vector3 cameraPosition = chasePreviewCamera.transform.position;
+            Vector3 targetCenter = cameraPosition
+                + chasePreviewCamera.transform.forward * culpritStartDistance
+                + Vector3.up * 0.35f;
+
+            culprit.transform.position += targetCenter - bounds.center;
+        }
+
+        private static Bounds GetRendererBounds(GameObject target)
+        {
+            Renderer[] renderers = target.GetComponentsInChildren<Renderer>(true);
+            Bounds bounds = new Bounds(target.transform.position, Vector3.zero);
+            bool hasBounds = false;
+
+            foreach (Renderer renderer in renderers)
+            {
+                if (renderer == null || !renderer.enabled)
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = renderer.bounds;
+                    hasBounds = true;
+                    continue;
+                }
+
+                bounds.Encapsulate(renderer.bounds);
+            }
+
+            return hasBounds ? bounds : new Bounds(target.transform.position, Vector3.zero);
         }
 
         private void ApplyCulpritPreviewLook(GameObject culprit)
@@ -437,6 +668,35 @@ namespace EscapeRoom
 
                 renderer.sharedMaterials = materials;
             }
+
+            HideLowDuplicateRenderers(culprit);
+        }
+
+        private static void HideLowDuplicateRenderers(GameObject culprit)
+        {
+            Renderer[] renderers = culprit.GetComponentsInChildren<Renderer>(true);
+            Bounds visibleBounds = GetRendererBounds(culprit);
+            if (visibleBounds.size == Vector3.zero)
+            {
+                return;
+            }
+
+            float lowerCutoff = visibleBounds.center.y - visibleBounds.extents.y * 0.62f;
+            foreach (Renderer renderer in renderers)
+            {
+                if (renderer == null || !renderer.enabled)
+                {
+                    continue;
+                }
+
+                string rendererName = renderer.name.ToLowerInvariant();
+                bool suspiciousName = rendererName.Contains("shadow") || rendererName.Contains("char_shadow");
+                bool entirelyBelowBody = renderer.bounds.max.y < lowerCutoff;
+                if (suspiciousName || entirelyBelowBody)
+                {
+                    renderer.enabled = false;
+                }
+            }
         }
 
         private static bool ShouldHideCulpritRenderer(Renderer renderer)
@@ -462,10 +722,15 @@ namespace EscapeRoom
 
                 string materialName = material.name.ToLowerInvariant();
                 string shaderName = material.shader != null ? material.shader.name.ToLowerInvariant() : "";
+                Color materialColor = material.HasProperty("_Color") ? material.color : Color.black;
+                bool brokenPink = materialColor.r > 0.8f && materialColor.b > 0.8f && materialColor.g < 0.25f;
                 if (materialName.Contains("char_shadow") ||
                     materialName.Contains("pink") ||
                     materialName.Contains("magenta") ||
-                    shaderName.Contains("reflective/diffuse"))
+                    shaderName.Contains("reflective/diffuse") ||
+                    shaderName.Contains("internalerror") ||
+                    shaderName.Contains("error") ||
+                    brokenPink)
                 {
                     return true;
                 }
@@ -489,6 +754,13 @@ namespace EscapeRoom
 
         private void TryPlayCulpritAnimation(GameObject culprit)
         {
+            Animator animator = culprit.GetComponentInChildren<Animator>();
+            if (animator != null)
+            {
+                animator.enabled = true;
+                animator.speed = 1.7f;
+            }
+
             AnimationClip[] clips = Resources.LoadAll<AnimationClip>(culpritResourcesPath);
             if (clips == null || clips.Length == 0)
             {
@@ -504,6 +776,7 @@ namespace EscapeRoom
                 }
 
                 clip.wrapMode = WrapMode.Loop;
+                clip.legacy = true;
                 animation.AddClip(clip, clip.name);
                 animation.clip = clip;
                 animation.Play(clip.name);
@@ -518,62 +791,6 @@ namespace EscapeRoom
                 Destroy(spawnedCulprit);
                 spawnedCulprit = null;
             }
-        }
-
-        private void HideYellowClueMarkers()
-        {
-            TMP_Text[] texts = FindObjectsOfType<TMP_Text>(true);
-            foreach (TMP_Text text in texts)
-            {
-                if (text == null || (panelRoot != null && text.transform.IsChildOf(panelRoot.transform)))
-                {
-                    continue;
-                }
-
-                Color color = text.color;
-                bool yellowColor = color.r > 0.7f && color.g > 0.45f && color.b < 0.35f;
-                bool markerText = text.text.Contains("\u25bc") || text.text.Contains("\u25be");
-                if (yellowColor || markerText)
-                {
-                    DisableMarkerObject(text.transform);
-                }
-            }
-
-            Graphic[] graphics = FindObjectsOfType<Graphic>(true);
-            foreach (Graphic graphic in graphics)
-            {
-                if (graphic == null || (panelRoot != null && graphic.transform.IsChildOf(panelRoot.transform)))
-                {
-                    continue;
-                }
-
-                Color color = graphic.color;
-                bool yellowColor = color.r > 0.7f && color.g > 0.45f && color.b < 0.35f;
-                if (yellowColor)
-                {
-                    DisableMarkerObject(graphic.transform);
-                }
-            }
-        }
-
-        private void DisableMarkerObject(Transform marker)
-        {
-            Transform target = marker;
-            while (target.parent != null && panelRoot != null && !target.parent.IsChildOf(panelRoot.transform))
-            {
-                string parentName = target.parent.name.ToLowerInvariant();
-                if (!parentName.Contains("clue") &&
-                    !parentName.Contains("marker") &&
-                    !parentName.Contains("label") &&
-                    !parentName.Contains("canvas"))
-                {
-                    break;
-                }
-
-                target = target.parent;
-            }
-
-            target.gameObject.SetActive(false);
         }
 
         private Button CreateHomeButton(Transform parent)
