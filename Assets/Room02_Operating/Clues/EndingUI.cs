@@ -43,6 +43,11 @@ namespace EscapeRoom
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                TryShowCulpritSelectionShortcut();
+            }
+
             if (observedStoryManager != StoryProgressManager.Instance)
             {
                 RefreshCulpritChaseButton();
@@ -283,6 +288,21 @@ namespace EscapeRoom
 
             bool panelIsOpen = panelRoot != null && panelRoot.activeSelf;
             culpritChaseButton.gameObject.SetActive(isVisible && !panelIsOpen);
+        }
+
+        private void TryShowCulpritSelectionShortcut()
+        {
+            StoryProgressManager manager = StoryProgressManager.Instance;
+            if (manager == null || !manager.CanSelectSuspect)
+            {
+                return;
+            }
+
+            bool panelIsOpen = panelRoot != null && panelRoot.activeSelf;
+            if (!panelIsOpen)
+            {
+                Show();
+            }
         }
 
         private static void CreateSuspectButton(RectTransform parent, string label, Vector2 anchoredPosition, UnityAction action)

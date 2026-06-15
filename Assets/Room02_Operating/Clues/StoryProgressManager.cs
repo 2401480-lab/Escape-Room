@@ -28,6 +28,7 @@ namespace EscapeRoom
         [Header("타이머")]
         [SerializeField] private bool useDeductionTimer = true;
         [SerializeField] private float deductionTimer = 1200f;
+        [SerializeField] private float adminFailureCountdownSeconds = 5f;
 
         [Header("이벤트")]
         public UnityEvent<StoryPhase> OnPhaseChanged = new UnityEvent<StoryPhase>();
@@ -38,6 +39,7 @@ namespace EscapeRoom
 
         private readonly HashSet<string> collectedClueIDs = new HashSet<string>();
         private bool hasEscapeKey;
+        private bool forceDeductionFailureCountdown;
         private float deductionTimeRemaining;
         private ChaseController chaseController;
         private ClueJournalManager observedJournalManager;
@@ -48,9 +50,11 @@ namespace EscapeRoom
         public bool HasAllStoryClues => collectedClueIDs.Count >= requiredEscapeKeyClueCount;
         public float DeductionTimeRemaining => deductionTimeRemaining;
         public bool IsChaseTimerActive => currentPhase == StoryPhase.ChaseEscape;
-        public float CurrentTimerRemaining => IsChaseTimerActive && chaseController != null
-            ? chaseController.ChaseTimeRemaining
-            : deductionTimeRemaining;
+        public float CurrentTimerRemaining => forceDeductionFailureCountdown
+            ? deductionTimeRemaining
+            : IsChaseTimerActive && chaseController != null
+                ? chaseController.ChaseTimeRemaining
+                : deductionTimeRemaining;
 
         private void Awake()
         {
@@ -82,11 +86,22 @@ namespace EscapeRoom
         {
             EnsureJournalSubscription();
 
+            if (forceDeductionFailureCountdown)
+            {
+                TickDeductionTimer();
+                return;
+            }
+
             if (!useDeductionTimer || currentPhase == StoryPhase.ChaseEscape || currentPhase == StoryPhase.GameOver || hasEscapeKey)
             {
                 return;
             }
 
+            TickDeductionTimer();
+        }
+
+        private void TickDeductionTimer()
+        {
             deductionTimeRemaining -= Time.deltaTime;
             if (deductionTimeRemaining <= 0f)
             {
@@ -169,6 +184,17 @@ namespace EscapeRoom
 
             OnEscapeKeyCollected?.Invoke();
             OnEscapeKeyReady?.Invoke();
+        }
+
+        public void TriggerAdminFailureCountdown()
+        {
+            if (currentPhase == StoryPhase.GameOver)
+            {
+                return;
+            }
+
+            deductionTimeRemaining = adminFailureCountdownSeconds;
+            forceDeductionFailureCountdown = true;
         }
 
         public void BeginSuspectSelection()
@@ -284,6 +310,7 @@ namespace EscapeRoom
 
         private void DeductionTimerExpired()
         {
+            forceDeductionFailureCountdown = false;
             OnDeductionTimerExpired?.Invoke();
             MarkGameOver();
             GameOverUI.Instance?.PlayGameOver(GameOverReason.DeductionTimerExpired);

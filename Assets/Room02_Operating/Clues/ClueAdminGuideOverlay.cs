@@ -50,6 +50,11 @@ namespace EscapeRoom
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                TriggerFiveSecondFailure();
+            }
+
             if (Input.GetKeyDown(KeyCode.Y))
             {
                 CollectAllCluesAndGrantKey();
@@ -90,6 +95,11 @@ namespace EscapeRoom
             }
 
             StoryProgressManager.Instance?.GrantEscapeKeyFromAdminSkip();
+        }
+
+        private void TriggerFiveSecondFailure()
+        {
+            StoryProgressManager.Instance?.TriggerAdminFailureCountdown();
         }
 
 #if UNITY_EDITOR
