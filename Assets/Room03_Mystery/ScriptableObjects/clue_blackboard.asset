@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c30ed99e1f77674aad9c576906d5e5d, type: 3}
+  m_Name: clue_blackboard
+  m_EditorClassIdentifier: 
+  clueID: clue_blackboard
+  displayName: "\uCE60\uD310"
+  description: "UV\uB97C \uBE44\uCD94\uC790 \uC9C0\uC6CC\uC84C\uB358 \uC22B\uC790\uAC00
+    \uB4DC\uB7EC\uB09C\uB2E4. \uAC70\uC6B8\uC5D0 \uBE44\uCDB0 \uC21C\uC11C\uB97C
+    \uB9DE\uCD94\uBA74: 91"
+  thumbnail: {fileID: 0}
+  detailImage: {fileID: 0}
+  isCollectable: 0
+  hoverLabel: "\uCE60\uD310 \uC0B4\uD3B4\uBCF4\uAE30"

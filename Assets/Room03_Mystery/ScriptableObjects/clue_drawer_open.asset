@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c30ed99e1f77674aad9c576906d5e5d, type: 3}
+  m_Name: clue_drawer_open
+  m_EditorClassIdentifier: 
+  clueID: clue_drawer_open
+  displayName: "07\uBC88 \uBCF4\uAD00\uD568"
+  description: "\uC7A0\uAE08\uC774 \uD480\uB9B0\uB2E4. \uD2B8\uB808\uC774\uAC00 \uC2AC\uB77C\uC774\uB4DC\uB418\uBA70
+    \uC2DC\uCCB4\uAC00 \uBAA8\uC2B5\uC744 \uB4DC\uB7EC\uB0B8\uB2E4."
+  thumbnail: {fileID: 0}
+  detailImage: {fileID: 0}
+  isCollectable: 0
+  hoverLabel: "07\uBC88 \uBCF4\uAD00\uD568 \uC5F4\uAE30"

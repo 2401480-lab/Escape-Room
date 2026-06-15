@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c30ed99e1f77674aad9c576906d5e5d, type: 3}
+  m_Name: clue_locker_07
+  m_EditorClassIdentifier: 
+  clueID: clue_locker_07
+  displayName: "\uC561\uC790 \uC0AC\uC9C4"
+  description: "\uC0AC\uC9C4 \uC18D \uB0A8\uC790... \uC561\uC790\uB97C \uB4A4\uC9D1\uC790
+    \uB4B7\uBA74\uC5D0 \uC801\uD78C \uAE00\uC528: \"\uBCF4\uAD00\uD568 No.07\""
+  thumbnail: {fileID: 0}
+  detailImage: {fileID: 0}
+  isCollectable: 0
+  hoverLabel: "\uC561\uC790 \uB4A4\uC9D1\uC5B4\uBCF4\uAE30"
