@@ -66,6 +66,8 @@ namespace EscapeRoom
             }
 
             EnsureManager();
+            if (CluePickupPopupUI.IsPopupVisible) { HidePrompt(); return; }
+
             ClueBoxInteractable bestTarget = FindBestTarget();
             if (bestTarget != null)
             {
@@ -78,9 +80,15 @@ namespace EscapeRoom
                 return;
             }
 
-            SetPrompt(isSearched ? SearchedPrompt : SearchPrompt, true);
+            if (isSearched)
+            {
+                HidePrompt();
+                return;
+            }
 
-            if (!isSearched && HasBufferedInteractInput())
+            SetPrompt(SearchPrompt, true);
+
+            if (HasBufferedInteractInput())
             {
                 lastInteractPressedAt = -999f;
                 SearchBox();
@@ -99,7 +107,7 @@ namespace EscapeRoom
             {
                 isSearched = true;
                 MarkSearchedVisual();
-                SetPrompt(SearchedPrompt, true);
+                HidePrompt();
             }
         }
 

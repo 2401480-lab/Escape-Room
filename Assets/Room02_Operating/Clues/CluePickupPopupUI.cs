@@ -10,11 +10,13 @@ namespace EscapeRoom
         [SerializeField] private Canvas popupCanvas;
         [SerializeField] private CanvasGroup popupGroup;
         [SerializeField] private Image popupPanelImage;
+        [SerializeField] private Button popupDismissButton;
         [SerializeField] private TextMeshProUGUI popupTitleText;
         [SerializeField] private TextMeshProUGUI popupBodyText;
 
         private bool subscribed;
-        private bool popupVisible;
+
+        public static bool IsPopupVisible { get; private set; }
 
         private void Awake()
         {
@@ -39,7 +41,7 @@ namespace EscapeRoom
                 TrySubscribe();
             }
 
-            if (popupVisible && Input.GetMouseButtonDown(0))
+            if (IsPopupVisible && Input.GetMouseButtonDown(0))
             {
                 DismissPopup();
             }
@@ -80,9 +82,9 @@ namespace EscapeRoom
 
             SetPopupActive(true);
             popupGroup.alpha = 1f;
-            popupGroup.blocksRaycasts = false;
-            popupGroup.interactable = false;
-            popupVisible = true;
+            popupGroup.blocksRaycasts = true;
+            popupGroup.interactable = true;
+            IsPopupVisible = true;
         }
 
         private void DismissPopup()
@@ -92,7 +94,7 @@ namespace EscapeRoom
 
         private void HidePopupImmediate()
         {
-            popupVisible = false;
+            IsPopupVisible = false;
 
             if (popupGroup != null)
             {
@@ -161,7 +163,7 @@ namespace EscapeRoom
                     popupPanelImage = panelObject.AddComponent<Image>();
                 }
 
-                popupPanelImage.raycastTarget = false;
+                popupPanelImage.raycastTarget = true;
                 popupPanelImage.color = new Color(0.045f, 0.04f, 0.035f, 0.94f);
             }
 
@@ -182,6 +184,20 @@ namespace EscapeRoom
             }
 
             popupGroup.blocksRaycasts = false;
+
+            if (popupDismissButton == null)
+            {
+                popupDismissButton = popupPanelImage.GetComponent<Button>();
+                if (popupDismissButton == null)
+                {
+                    popupDismissButton = popupPanelImage.gameObject.AddComponent<Button>();
+                }
+            }
+
+            popupDismissButton.transition = Selectable.Transition.None;
+            popupDismissButton.targetGraphic = popupPanelImage;
+            popupDismissButton.onClick.RemoveListener(DismissPopup);
+            popupDismissButton.onClick.AddListener(DismissPopup);
 
             if (popupTitleText == null)
             {
