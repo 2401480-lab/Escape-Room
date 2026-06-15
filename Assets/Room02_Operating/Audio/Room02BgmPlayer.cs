@@ -8,13 +8,14 @@ namespace EscapeRoom
     public class Room02BgmPlayer : MonoBehaviour
     {
         [SerializeField] private AudioClip bgmClip;
-        [SerializeField] private string resourcesClipPath = "Room02_Audio/dk-atmosphere";
-        [SerializeField] private string editorClipAssetPath = "Assets/Room02_Operating/Audio/music/darkness/dk-atmosphere.aif";
+        [SerializeField] private string resourcesClipPath = "Room02_Audio/grimyth - You shouldn't have come here";
+        [SerializeField] private string editorClipAssetPath = "Assets/Room02_Operating/Audio/Resources/Room02_Audio/grimyth - You shouldn't have come here.wav";
         [SerializeField, Range(0f, 1f)] private float volume = 0.65f;
         [SerializeField] private bool loop = true;
         [SerializeField] private bool playOnStart = true;
 
         private AudioSource audioSource;
+        private AudioClip cachedConfiguredClip;
         private bool missingClipWarningLogged;
 
         private void Awake()
@@ -105,6 +106,13 @@ namespace EscapeRoom
 
         private void ResolveBgmClip()
         {
+            AudioClip configuredClip = LoadConfiguredClip();
+            if (configuredClip != null)
+            {
+                bgmClip = configuredClip;
+                return;
+            }
+
             if (bgmClip != null)
             {
                 return;
@@ -115,22 +123,32 @@ namespace EscapeRoom
                 bgmClip = audioSource.clip;
                 return;
             }
+        }
+
+        private AudioClip LoadConfiguredClip()
+        {
+            if (cachedConfiguredClip != null)
+            {
+                return cachedConfiguredClip;
+            }
 
             if (!string.IsNullOrWhiteSpace(resourcesClipPath))
             {
-                bgmClip = Resources.Load<AudioClip>(resourcesClipPath);
-                if (bgmClip != null)
+                cachedConfiguredClip = Resources.Load<AudioClip>(resourcesClipPath);
+                if (cachedConfiguredClip != null)
                 {
-                    return;
+                    return cachedConfiguredClip;
                 }
             }
 
 #if UNITY_EDITOR
             if (!string.IsNullOrWhiteSpace(editorClipAssetPath))
             {
-                bgmClip = AssetDatabase.LoadAssetAtPath<AudioClip>(editorClipAssetPath);
+                cachedConfiguredClip = AssetDatabase.LoadAssetAtPath<AudioClip>(editorClipAssetPath);
             }
 #endif
+
+            return cachedConfiguredClip;
         }
     }
 }
