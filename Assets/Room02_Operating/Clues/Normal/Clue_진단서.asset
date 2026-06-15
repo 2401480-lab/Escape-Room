@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_medical_certificate
   clueName: "하시호 진단서"
   description: "말기 진단. 담당의: 봉태현."
-  meaning: "수첩: 봉태현 — 하시호 담당의였다. 의료 과실 가능성?"
+  meaning: "수첩: 봉태현 — 사망한 부원 하시호는 불치병 환자였다."
   areaName: Ward
   category: 0
   isRequired: 1

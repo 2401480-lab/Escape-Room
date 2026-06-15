@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_under_table_space
   clueName: "수술대 아래"
   description: "사람 한 명이 숨을 수 있는 공간. 바닥에 긁힌 자국과 붉은 페인트 자국이 남아있다."
-  meaning: "수첩: 진세웅 — 수술대 아래 숨어 알리바이를 만들었다. 결정적 증거"
+  meaning: "수첩: 진세웅 — 범행 당시 수술대 아래 누군가 숨어있었다."
   areaName: OperatingRoom
   category: 0
   isRequired: 1

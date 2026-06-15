@@ -39,7 +39,7 @@ $sensitivityText = U 0xAC10,0xB3C4
 $controlsText = U 0xC870,0xC791,0xBC95
 $investigationNoteText = U 0xC218,0xC0AC,0x0020,0xB178,0xD2B8
 $suspectNotebookText = (U 0xC6A9,0xC758,0xC790) + ' ' + (U 0xC218,0xCCA9)
-$culpritChaseText = (U 0xBC94,0xC778) + ' ' + (U 0xCD94,0xC801)
+$culpritChaseText = (U 0xBC94,0xC778) + ' ' + (U 0xCC3E,0xAE30)
 $popupDismissText = (U 0xD31D,0xC5C5) + ' ' + (U 0xB2EB,0xAE30)
 
 Assert-True ($settings -match 'namespace\s+EscapeRoom' -and $settings -match 'class\s+SettingsUI\s*:\s*MonoBehaviour') 'SettingsUI must be an EscapeRoom MonoBehaviour.'

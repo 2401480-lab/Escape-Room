@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: clue_hasho_will
   clueName: "하시호 유서 사본"
   description: "살 이유를 잃었다. 안나가 그걸 빼앗아 갔다."
-  meaning: "수첩: 공통 — 유안나가 하시호의 죽음과 연관되어 있다"
+  meaning: "수첩: 공통 — 하시호의 죽음과 유안나 사이에 연결고리가 있다."
   areaName: Ward
   category: 0
   isRequired: 1

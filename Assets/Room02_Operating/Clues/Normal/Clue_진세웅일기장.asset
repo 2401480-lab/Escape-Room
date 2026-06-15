@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clueID: clue_makeup_diary
   clueName: "진세웅 일기장"
-  description: "2년을 기다렸다. 오늘이 마지막이다."
-  meaning: "수첩: 진세웅 — 계획적 범행 가능성. 사전 준비했다"
+  description: "더 이상 미룰 수 없다. 오늘이다."
+  meaning: "수첩: 진세웅 — 누군가 오늘을 위해 오래 기다려왔다."
   areaName: DressingRoom
   category: 0
   isRequired: 1

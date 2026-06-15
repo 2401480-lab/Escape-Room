@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_conversation_memo
   clueName: "쓰레기통 메모"
   description: "안나, 네가 한 짓을 잊지 않겠다."
-  meaning: "수첩: 공통 — 유안나에게 원한을 품은 인물이 있다"
+  meaning: "수첩: 공통 — 유안나에게 원한을 품은 인물이 있다. 필체를 기억해둬야 한다."
   areaName: Hallway
   category: 0
   isRequired: 1

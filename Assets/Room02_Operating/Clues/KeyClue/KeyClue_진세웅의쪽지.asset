@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clueID: key_clue_coldest_place
   clueName: "침대 밑 쪽지"
-  description: "제일 차가운 곳을 찾아라."
-  meaning: "수첩: 공통 — 열쇠 힌트 1. 차가운 장소?"
+  description: "이 안에 답이 있다. 끝까지 찾아라."
+  meaning: "수첩: 공통 — 누군가 이 병원 안에 무언가를 숨겨뒀다."
   areaName: Ward
   category: 1
   isRequired: 1

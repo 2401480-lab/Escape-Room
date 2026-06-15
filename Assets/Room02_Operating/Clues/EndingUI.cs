@@ -222,7 +222,7 @@ namespace EscapeRoom
                 culpritChaseButton = rect.gameObject.AddComponent<Button>();
                 HorrorUITheme.ApplyButton(culpritChaseButton, rect.GetComponent<Image>());
 
-                TextMeshProUGUI text = CreateText("Label", rect, "범인 추적", 21f);
+                TextMeshProUGUI text = CreateText("Label", rect, "범인 찾기", 21f);
                 text.color = HorrorUITheme.TextMain;
                 text.rectTransform.anchorMin = Vector2.zero;
                 text.rectTransform.anchorMax = Vector2.one;

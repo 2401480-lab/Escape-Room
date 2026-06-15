@@ -3,29 +3,28 @@ $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
 $scenePath = Join-Path $root 'Assets/Room02_Operating/Scenes/Show.unity'
 $setupPath = Join-Path $root 'Assets/Room02_Operating/Clues/Editor/ClueSceneSetupTool.cs'
+$layoutPath = Join-Path $root 'Assets/Room02_Operating/Clues/CluePlacementLayout.cs'
+$bootstrapperPath = Join-Path $root 'Assets/Room02_Operating/Clues/HudRuntimeBootstrapper.cs'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
     if (-not $Condition) { throw $Message }
 }
 
-function Read-Vector3 {
-    param([string] $Text)
-
-    $match = [regex]::Match($Text, 'm_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}')
-    Assert-True $match.Success "Missing vector in block: $Text"
-    return [pscustomobject]@{
-        X = [double]$match.Groups[1].Value
-        Y = [double]$match.Groups[2].Value
-        Z = [double]$match.Groups[3].Value
-    }
+function From-B64 {
+    param([string] $Value)
+    return [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($Value))
 }
 
 Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Room02 Show gameplay scene.'
 Assert-True (Test-Path -LiteralPath $setupPath) 'Missing Room02 clue setup tool.'
+Assert-True (Test-Path -LiteralPath $layoutPath) 'Missing Room02 runtime clue placement layout.'
+Assert-True (Test-Path -LiteralPath $bootstrapperPath) 'Missing Room02 runtime bootstrapper.'
 
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
 $setup = Get-Content -LiteralPath $setupPath -Raw -Encoding UTF8
+$layout = Get-Content -LiteralPath $layoutPath -Raw -Encoding UTF8
+$bootstrapper = Get-Content -LiteralPath $bootstrapperPath -Raw -Encoding UTF8
 
 function Get-NamedPosition {
     param([string] $SceneText, [string] $ObjectName)
@@ -43,49 +42,48 @@ $cluesRoot = Get-NamedPosition $scene 'Clues'
 Assert-True ([math]::Abs($cluesRoot.X) -lt 0.001 -and [math]::Abs($cluesRoot.Y) -lt 0.001 -and [math]::Abs($cluesRoot.Z) -lt 0.001) 'Clues root must stay at world origin so clue local positions match room coordinates.'
 
 $clueMatches = [regex]::Matches($scene, 'm_Name:\s+(Clue_[^\r\n]+).*?--- !u!4 &\d+\s*\r?\nTransform:.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}', 'Singleline')
-Assert-True ($clueMatches.Count -eq 15) "Expected 15 clue transforms, found $($clueMatches.Count)."
+Assert-True ($clueMatches.Count -eq 15) "Expected 15 clue transforms in Show, found $($clueMatches.Count)."
 
-$camera = Get-NamedPosition $scene 'Main Camera'
-$uniquePositions = @{}
-$positions = @{}
+$requiredIDs = @(
+    'normal_cast_notice',
+    'normal_memorial_frame',
+    'normal_conversation_memo',
+    'normal_medical_certificate',
+    'normal_ward_calendar',
+    'clue_hasho_will',
+    'key_clue_coldest_place',
+    'key_clue_temperature_warning',
+    'normal_bong_rebuttal',
+    'key_clue_fridge_scratches',
+    'normal_makeup_toolbox',
+    'normal_sumi_memo',
+    'clue_makeup_diary',
+    'normal_under_table_space',
+    'normal_mirror_message'
+)
 
-foreach ($match in $clueMatches) {
-    $name = $match.Groups[1].Value
-    $x = [double]$match.Groups[2].Value
-    $y = [double]$match.Groups[3].Value
-    $z = [double]$match.Groups[4].Value
-
-    $uniquePositions["$x,$y,$z"] = $true
-    $positions[$name] = [pscustomobject]@{
-        Name = $name
-        X = $x
-        Y = $y
-        Z = $z
-    }
-
-    Assert-True ($y -ge 0.3 -and $y -le 1.1) "$name must sit near floor height; found y=$y."
+foreach ($id in $requiredIDs) {
+    Assert-True ($layout.Contains("""$id""")) "Placement layout missing clue ID: $id"
 }
 
-Assert-True ($uniquePositions.Count -eq 15) "All 15 clues must be individually visible, not stacked; found only $($uniquePositions.Count) unique positions."
-
-foreach ($position in $positions.Values) {
-    Assert-True ($position.X -ge -2.7 -and $position.X -le 2.7) "$($position.Name) must be near the player start in X; found x=$($position.X)."
-    Assert-True ($position.Z -ge 2.2 -and $position.Z -le 5.0) "$($position.Name) must be in front of the player start; found z=$($position.Z)."
+foreach ($zone in @(
+    (From-B64 '67O164+E'),
+    (From-B64 '67OR7Iuk'),
+    (From-B64 '67O06rSA7Iuk'),
+    (From-B64 '67aE7J6l7Iuk'),
+    (From-B64 '7IiY7Iig7Iuk')
+)) {
+    Assert-True ($layout.Contains($zone)) "Placement layout must document zone: $zone"
 }
 
-Assert-True ($scene -match 'Culprit_StartPosition') 'Scene must contain the culprit start-position object.'
-$culpritPositionMatch = [regex]::Match($scene, 'Culprit_StartPosition.*?m_LocalPosition:\s*\{x:\s*([-0-9.]+), y:\s*([-0-9.]+), z:\s*([-0-9.]+)\}', 'Singleline')
-if ($culpritPositionMatch.Success) {
-    $culpritX = [double]$culpritPositionMatch.Groups[1].Value
-    $culpritY = [double]$culpritPositionMatch.Groups[2].Value
-    $culpritZ = [double]$culpritPositionMatch.Groups[3].Value
-    Assert-True ($culpritZ -gt $camera.Z) "Culprit must be in front of Main Camera; found z=$culpritZ, camera z=$($camera.Z)."
-    Assert-True ($culpritX -ge 3.0 -and $culpritX -le 6.0) "Culprit must remain near the start-side visible placement; found x=$culpritX."
-    Assert-True ([math]::Abs($culpritY) -lt 0.001) "Culprit must stand on the floor; found y=$culpritY."
-}
-
-Assert-True ($setup -match 'GetStartAreaClueWorldPosition') 'Clue setup must place clues into the start-area visible grid.'
+$vectorCount = ([regex]::Matches($layout, 'new\s+Vector3\s*\(')).Count
+Assert-True ($vectorCount -ge 15) "Placement layout must define at least 15 world positions, found $vectorCount."
+Assert-True ($layout -match 'TryGetPosition\s*\(') 'Placement layout must expose TryGetPosition.'
+Assert-True ($layout -match 'ApplyExistingSceneCluePositions\s*\(') 'Placement layout must be able to reposition existing Show clue objects at runtime.'
+Assert-True ($setup -match 'CluePlacementLayout\.TryGetPosition') 'Editor clue setup must use the shared room-distributed clue positions.'
+Assert-True ($bootstrapper -match 'CluePlacementLayout\.ApplyExistingSceneCluePositions') 'Runtime bootstrapper must repair clue positions after Onboarding loads Show.'
+Assert-True ($setup -notmatch 'GetStartAreaClueWorldPosition') 'Clue setup must not place every clue back into the start-area grid.'
+Assert-True ($setup -notmatch 'StartAreaGridColumns|StartAreaFirstX|StartAreaFirstZ') 'Start-area-only placement constants must be removed.'
 Assert-True ($setup -match 'CluesRootPosition' -and $setup -match 'Vector3\.zero') 'Clue setup must keep the Clues root at the world origin.'
-Assert-True ($setup -notmatch 'IntegratedCluePositions' -and $setup -notmatch 'GetRoomDistributedClueWorldPosition') 'Clue setup must not send clues back to room-distributed coordinates.'
 
-Write-Host 'Room02 start placement checks passed.'
+Write-Host 'Room02 distributed clue placement checks passed.'

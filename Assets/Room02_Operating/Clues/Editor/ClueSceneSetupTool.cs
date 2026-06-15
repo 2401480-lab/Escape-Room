@@ -25,12 +25,6 @@ namespace EscapeRoom.Editor
         private const string ShowScenePath = "Assets/Room02_Operating/Scenes/Show.unity";
         private const int ExpectedStoryClueCount = 15;
         private static readonly Vector3 CluesRootPosition = Vector3.zero;
-        private const int StartAreaGridColumns = 5;
-        private const float StartAreaFirstX = -2.4f;
-        private const float StartAreaFirstZ = 2.4f;
-        private const float StartAreaXSpacing = 1.2f;
-        private const float StartAreaZSpacing = 1.1f;
-        private const float StartAreaClueY = 0.45f;
 
         static ClueSceneSetupTool()
         {
@@ -101,12 +95,13 @@ namespace EscapeRoom.Editor
                 }
             }
 
-            if (testClueCount > 0 && realClueCount < ExpectedStoryClueCount)
+            bool needsPositionRepair = CluePlacementLayout.SceneNeedsPositionRepair(cluesRoot);
+            if ((testClueCount > 0 && realClueCount < ExpectedStoryClueCount) || needsPositionRepair)
             {
                 ClueAssetGenerator.GenerateStoryClueAssets();
                 int placed = SetupScene(scene.name);
                 EditorSceneManager.MarkSceneDirty(scene);
-                Debug.LogWarning($"[Clues] Removed stale test clues and restored Room02 clue boxes. Placed/updated: {placed}");
+                Debug.LogWarning($"[Clues] Restored Room02 clue boxes and distributed positions. Placed/updated: {placed}");
             }
         }
 
@@ -255,7 +250,9 @@ namespace EscapeRoom.Editor
                 clueObject = existing.gameObject;
             }
 
-            clueObject.transform.position = GetStartAreaClueWorldPosition(index);
+            clueObject.transform.position = CluePlacementLayout.TryGetPosition(entry.clueID, out Vector3 position)
+                ? position
+                : CluePlacementLayout.GetFallbackPosition(index);
             clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
@@ -341,16 +338,6 @@ namespace EscapeRoom.Editor
                 : Quaternion.Euler(0f, 180f, 0f);
             culprit.transform.localScale = Vector3.one;
             EditorUtility.SetDirty(culprit);
-        }
-
-        private static Vector3 GetStartAreaClueWorldPosition(int index)
-        {
-            int column = index % StartAreaGridColumns;
-            int row = index / StartAreaGridColumns;
-            return new Vector3(
-                StartAreaFirstX + (column * StartAreaXSpacing),
-                StartAreaClueY,
-                StartAreaFirstZ + (row * StartAreaZSpacing));
         }
 
         private static Vector3 GetCameraVisibleCulpritWorldPosition()

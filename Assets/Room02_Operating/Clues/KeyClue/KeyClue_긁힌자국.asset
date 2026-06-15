@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: "KeyClue_\uAE01\uD78C\uC790\uAD6D"
   m_EditorClassIdentifier: 
   clueID: key_clue_fridge_scratches
-  clueName: "냉장 약품함 내부"
-  description: "열쇠가 들어있다. 차갑다."
-  meaning: "수첩: 공통 — 탈출 열쇠 획득"
+  clueName: "약품 목록표"
+  description: "목록에 없는 약품이 하나 반출됐다. 날짜는 오늘."
+  meaning: "수첩: 공통 — 오늘 누군가 이 보관실에서 약품을 가져갔다."
   areaName: Storage
   category: 1
   isRequired: 1

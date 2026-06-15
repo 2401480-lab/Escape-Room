@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_bong_rebuttal
   clueName: "봉태현 메모"
   description: "세웅아 내가 먼저 수술실 들어갈게. / 답: 괜찮아, 내가 할게."
-  meaning: "수첩: 봉태현 — 수술실 입장을 진세웅에게 양보했다. 봉태현은 안에 없었다?"
+  meaning: "수첩: 봉태현 — 당일 수술실 입장 순서에 변동이 있었다."
   areaName: Storage
   category: 0
   isRequired: 1

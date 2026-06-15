@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_memorial_frame
   clueName: "하시호 추모 액자"
   description: "1개월 전 사망. 향년 22세. 동아리 부원 일동."
-  meaning: "수첩: 공통 — 한 달 전 부원이 사망했다"
+  meaning: "수첩: 공통 — 최근 동아리에서 사망자가 있었다. 사인은 불명확하다."
   areaName: Hallway
   category: 0
   isRequired: 1

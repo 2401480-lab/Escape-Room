@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_cast_notice
   clueName: "배역 안내문"
   description: "수술실 담당: 진세웅, 봉태현. 환자 역: 유안나."
-  meaning: "수첩: 봉태현/진세웅 — 수술실 접근 가능"
+  meaning: "수첩: 봉태현/진세웅 — 수술실에 접근할 수 있었던 인물이 특정된다."
   areaName: Hallway
   category: 0
   isRequired: 1

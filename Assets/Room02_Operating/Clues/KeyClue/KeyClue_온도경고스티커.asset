@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: key_clue_temperature_warning
   clueName: "냉장 약품함"
   description: "온도 경고 스티커. 문 모서리에 긁힌 자국이 있다."
-  meaning: "수첩: 공통 — 열쇠 힌트 2. 누군가 최근에 열었다"
+  meaning: "수첩: 공통 — 누군가 최근에 이 약품함을 열었다."
   areaName: Storage
   category: 1
   isRequired: 1

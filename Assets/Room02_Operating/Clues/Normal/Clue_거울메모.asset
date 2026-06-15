@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_mirror_message
   clueName: "벽 메모"
   description: "하시호를 위해서. 미안해, 안나. 쓰레기통 메모와 같은 필체다."
-  meaning: "수첩: 진세웅 — 쓰레기통 메모 필체와 일치. 범인은 진세웅"
+  meaning: "수첩: 진세웅 — 쓰레기통 메모와 같은 필체다. 두 메모를 쓴 인물이 같다."
   areaName: OperatingRoom
   category: 0
   isRequired: 1

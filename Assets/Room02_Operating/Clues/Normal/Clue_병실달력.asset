@@ -15,7 +15,7 @@ MonoBehaviour:
   clueID: normal_ward_calendar
   clueName: "병실 낙서"
   description: "왜 살릴 수 있었는데 살리지 않았어."
-  meaning: "수첩: 봉태현 — 누군가 봉태현을 원망하고 있다"
+  meaning: "수첩: 공통 — 하시호의 죽음에 분노하는 인물이 있다."
   areaName: Ward
   category: 0
   isRequired: 1

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clueID: normal_sumi_memo
   clueName: "문수미 일기장"
-  description: "안나가 하시호한테 그런 짓을 했다면, 진세웅 오빠가 절대 가만있지 않을 것 같다."
-  meaning: "수첩: 진세웅 — 유안나에 대한 원한의 주체로 지목됨"
+  description: "오늘 무슨 일이 생길 것 같다. 나쁜 예감이 든다."
+  meaning: "수첩: 문수미 — 오늘 사건을 미리 눈치챈 인물이 있었던 것 같다."
   areaName: DressingRoom
   category: 0
   isRequired: 1

@@ -51,6 +51,7 @@ namespace EscapeRoom
         private bool previousCursorVisible;
         private bool journalOwnsCursor;
         private JournalTab activeTab = JournalTab.Evidence;
+        private ClueData lastAddedClue;
         public static int LastJournalCloseFrame { get; private set; } = -1;
 
         private void Awake()
@@ -67,6 +68,7 @@ namespace EscapeRoom
             if (journalManager != null)
             {
                 journalManager.OnCluesChanged += RefreshUI;
+                journalManager.OnClueAdded += HandleClueAdded;
             }
 
             RefreshUI();
@@ -77,6 +79,7 @@ namespace EscapeRoom
             if (journalManager != null)
             {
                 journalManager.OnCluesChanged -= RefreshUI;
+                journalManager.OnClueAdded -= HandleClueAdded;
             }
 
             RestoreCursorAfterJournal();
@@ -447,6 +450,11 @@ namespace EscapeRoom
             ApplyActiveTab();
         }
 
+        private void HandleClueAdded(ClueData clueData)
+        {
+            lastAddedClue = clueData;
+        }
+
         private void BuildEvidenceChips()
         {
             ClearChildren(chipContainer);
@@ -490,7 +498,7 @@ namespace EscapeRoom
                 AddContentHeight(ref contentHeight, ref contentItems, AreaHeaderHeight);
                 foreach (ClueData clueData in journalManager.CollectedClues)
                 {
-                    CreateClueCard(clueData, true);
+                    CreateClueCard(clueData, true, clueData == lastAddedClue);
                     AddContentHeight(ref contentHeight, ref contentItems, DiscoveredCardHeight);
                 }
             }
@@ -559,9 +567,9 @@ namespace EscapeRoom
             element.preferredHeight = AreaHeaderHeight;
         }
 
-        private void CreateClueCard(ClueData clueData, bool discovered)
+        private void CreateClueCard(ClueData clueData, bool discovered, bool highlighted = false)
         {
-            RectTransform card = CreatePanel($"Card_{clueData.clueName}", evidenceContent, HorrorUITheme.PanelDeep);
+            RectTransform card = CreatePanel($"Card_{clueData.clueName}", evidenceContent, discovered ? GetDiscoveredCardColor(highlighted) : HorrorUITheme.PanelDeep);
             LayoutElement element = card.gameObject.AddComponent<LayoutElement>();
             element.minHeight = discovered ? DiscoveredCardHeight : UnknownCardHeight;
             element.preferredHeight = discovered ? DiscoveredCardHeight : UnknownCardHeight;
@@ -588,6 +596,11 @@ namespace EscapeRoom
             CreateTextBlock("ClueDescription", card, $"단서 내용: {clueData.description}", 17f, TextAlignmentOptions.Left, 66f);
             TextMeshProUGUI meaningText = CreateTextBlock("ClueMeaning", card, $"수첩 업데이트: {GetNotebookHintText(clueData)}", 17f, TextAlignmentOptions.Left, 54f);
             meaningText.color = HorrorUITheme.SickYellow;
+        }
+
+        private static Color GetDiscoveredCardColor(bool highlighted)
+        {
+            return highlighted ? new Color(0.28f, 0.035f, 0.035f, 0.96f) : HorrorUITheme.PanelDeep;
         }
 
         private void BuildSuspectCards()
