@@ -23,6 +23,9 @@ Assert-True ($guide -match 'FindObjectsOfType<ClueBoxInteractable>\s*\(') 'Admin
 Assert-True ($guide -match 'WorldToViewportPoint' -and $guide -match 'Mathf\.Clamp') 'Admin guide overlay must clamp arrows to the visible screen edge for off-screen clues.'
 Assert-True ($guide -match 'Screen\.width' -and $guide -match 'Screen\.height') 'Admin guide overlay must use screen bounds so guide arrows remain visible.'
 Assert-True ($guide -match 'AdminGuideArrow_' -and $guide -match 'TextMeshProUGUI') 'Admin guide overlay must create visible arrow labels for each clue.'
+Assert-True ($guide -match 'allowRuntimeAdminGuide\s*=\s*false') 'Admin guide overlay must be hidden in gameplay unless an admin explicitly enables runtime arrows.'
+Assert-True ($guide -match 'IsGuideVisible' -and $guide -match 'ClearGuideTargets') 'Admin guide overlay must remove existing arrow labels when disabled.'
+Assert-True ($guide -notmatch 'bool\s+visible\s*=\s*adminGuideEnabled\s*;') 'Runtime clue arrows must not rely only on the serialized adminGuideEnabled scene value.'
 Assert-True ($guide -match '#if\s+UNITY_EDITOR' -and $guide -match 'OnDrawGizmos') 'Admin guide overlay must also draw editor-only Scene view guides.'
 Assert-True ($guide -notmatch 'Handles\.Label') 'Scene view guide must not use Handles.Label because it can trigger Unity 6 editor assertions.'
 Assert-True ($guide -match 'Gizmos\.DrawLine' -and $guide -match 'Gizmos\.DrawSphere') 'Scene view guide must draw obvious clue arrows with editor-safe Gizmos.'
@@ -33,6 +36,5 @@ Assert-True ($guide -notmatch 'Time\.timeScale' -and $guide -notmatch 'CursorCon
 Assert-True ($scene -match 'm_Name:\s+Admin_ClueGuideOverlay') 'Show must contain the admin clue guide overlay object.'
 Assert-True ($scene -match [regex]::Escape("guid: $guideGuid")) 'Show must reference ClueAdminGuideOverlay.'
 Assert-True ($scene -match 'm_TagString:\s+Untagged') 'Admin clue guide overlay scene object must remain loadable during admin playtesting.'
-Assert-True ($scene -match 'drawEditorSceneGuides:\s+1') 'Admin scene guide must be explicitly enabled in Show.'
 
 Write-Host 'Clue admin guide checks passed.'

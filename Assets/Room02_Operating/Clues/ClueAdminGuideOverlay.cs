@@ -12,6 +12,7 @@ namespace EscapeRoom
     public class ClueAdminGuideOverlay : MonoBehaviour
     {
         [SerializeField] private bool adminGuideEnabled = true;
+        [SerializeField] private bool allowRuntimeAdminGuide = false;
         [SerializeField] private bool drawEditorSceneGuides = true;
         [SerializeField] private Vector3 clueWorldOffset = new Vector3(0f, 1.65f, 0f);
         [SerializeField] private Color arrowColor = new Color(1f, 0.82f, 0.18f, 1f);
@@ -27,30 +28,38 @@ namespace EscapeRoom
         private RectTransform canvasRect;
         private float nextRefreshTime;
 
+        private bool IsGuideVisible => adminGuideEnabled && allowRuntimeAdminGuide;
+
         private void Awake()
         {
-            EnsureCanvas();
-            RefreshGuideTargets();
+            if (IsGuideVisible)
+            {
+                EnsureCanvas();
+                RefreshGuideTargets();
+            }
         }
 
         private void OnEnable()
         {
-            EnsureCanvas();
-            RefreshGuideTargets();
+            if (IsGuideVisible)
+            {
+                EnsureCanvas();
+                RefreshGuideTargets();
+            }
         }
 
         private void LateUpdate()
         {
-            bool visible = adminGuideEnabled;
-            if (guideCanvas != null && guideCanvas.gameObject.activeSelf != visible)
-            {
-                guideCanvas.gameObject.SetActive(visible);
-            }
+            bool visible = IsGuideVisible;
+            SetCanvasVisible(visible);
 
             if (!visible)
             {
+                ClearGuideTargets();
                 return;
             }
+
+            EnsureCanvas();
 
             if (Time.unscaledTime >= nextRefreshTime)
             {
@@ -64,7 +73,7 @@ namespace EscapeRoom
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            if (!adminGuideEnabled || !drawEditorSceneGuides)
+            if (!IsGuideVisible || !drawEditorSceneGuides)
             {
                 return;
             }
@@ -107,6 +116,13 @@ namespace EscapeRoom
 
         private void RefreshGuideTargets()
         {
+            if (!IsGuideVisible)
+            {
+                ClearGuideTargets();
+                SetCanvasVisible(false);
+                return;
+            }
+
             EnsureCanvas();
             ClueBoxInteractable[] clueBoxes = FindObjectsOfType<ClueBoxInteractable>(true);
             HashSet<ClueBoxInteractable> activeClues = new HashSet<ClueBoxInteractable>(clueBoxes);
@@ -140,6 +156,19 @@ namespace EscapeRoom
 
                 arrowLabels.Remove(staleClue);
             }
+        }
+
+        private void ClearGuideTargets()
+        {
+            foreach (TextMeshProUGUI label in arrowLabels.Values)
+            {
+                if (label != null)
+                {
+                    Destroy(label.gameObject);
+                }
+            }
+
+            arrowLabels.Clear();
         }
 
         private TextMeshProUGUI CreateArrowLabel(ClueBoxInteractable clueBox)
@@ -248,6 +277,14 @@ namespace EscapeRoom
             }
 
             canvasRect = guideCanvas.GetComponent<RectTransform>();
+        }
+
+        private void SetCanvasVisible(bool visible)
+        {
+            if (guideCanvas != null && guideCanvas.gameObject.activeSelf != visible)
+            {
+                guideCanvas.gameObject.SetActive(visible);
+            }
         }
 
         private static string GetClueId(ClueBoxInteractable clueBox)

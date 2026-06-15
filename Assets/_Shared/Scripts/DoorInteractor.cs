@@ -7,10 +7,13 @@ namespace EscapeGame
     public class DoorInteractor : MonoBehaviour
     {
         public KeyCode interactKey = KeyCode.E;
-        public float interactDistance = 3f;
+        public float interactDistance = 3.5f;
+        public float scanRadius = 0.45f;
         public float openAngle = 90f;
 
+        private const int MaxDoorScanHits = 16;
         private Camera playerCamera;
+        private readonly RaycastHit[] doorScanHits = new RaycastHit[MaxDoorScanHits];
         private readonly HashSet<Transform> openedDoors = new HashSet<Transform>();
 
         private void Awake()
@@ -39,19 +42,64 @@ namespace EscapeGame
             }
 
             Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-            if (!Physics.Raycast(ray, out RaycastHit hit, interactDistance, ~0, QueryTriggerInteraction.Ignore))
+            if (!TryFindDoor(ray, out Transform door, out Vector3 hitPoint))
             {
                 return false;
             }
 
-            Transform door = FindDoorTransform(hit.collider.transform);
-            if (door == null)
-            {
-                return false;
-            }
-
-            OpenDoor(door, hit.point);
+            OpenDoor(door, hitPoint);
             return true;
+        }
+
+        private bool TryFindDoor(Ray ray, out Transform door, out Vector3 hitPoint)
+        {
+            if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, ~0, QueryTriggerInteraction.Ignore))
+            {
+                door = FindDoorTransform(hit.collider.transform);
+                if (door != null && !openedDoors.Contains(door))
+                {
+                    hitPoint = hit.point;
+                    return true;
+                }
+            }
+
+            return TryFindDoorWithSphereCast(ray, out door, out hitPoint);
+        }
+
+        private bool TryFindDoorWithSphereCast(Ray ray, out Transform door, out Vector3 hitPoint)
+        {
+            door = null;
+            hitPoint = Vector3.zero;
+
+            int hitCount = Physics.SphereCastNonAlloc(
+                ray,
+                scanRadius,
+                doorScanHits,
+                interactDistance,
+                ~0,
+                QueryTriggerInteraction.Ignore);
+
+            float closestDistance = float.MaxValue;
+            for (int i = 0; i < hitCount; i++)
+            {
+                RaycastHit hit = doorScanHits[i];
+                if (hit.collider == null)
+                {
+                    continue;
+                }
+
+                Transform candidate = FindDoorTransform(hit.collider.transform);
+                if (candidate == null || openedDoors.Contains(candidate) || hit.distance >= closestDistance)
+                {
+                    continue;
+                }
+
+                door = candidate;
+                hitPoint = hit.point;
+                closestDistance = hit.distance;
+            }
+
+            return door != null;
         }
 
         private Transform FindDoorTransform(Transform target)
@@ -59,7 +107,18 @@ namespace EscapeGame
             Transform current = target;
             while (current != null)
             {
+                if (IsDoorFrameName(current.name))
+                {
+                    current = current.parent;
+                    continue;
+                }
+
                 if (IsDoorName(current.name))
+                {
+                    return current;
+                }
+
+                if (LooksDoorSized(current))
                 {
                     return current;
                 }
@@ -78,12 +137,42 @@ namespace EscapeGame
             }
 
             string normalized = objectName.ToLowerInvariant();
-            if (normalized.Contains("frame"))
+            if (IsDoorFrameName(objectName))
             {
                 return false;
             }
 
-            return normalized.Contains("door");
+            return normalized.Contains("door")
+                || normalized.Contains("gate")
+                || normalized.Contains("entrance")
+                || normalized.Contains("exit")
+                || normalized.Contains("sliding")
+                || normalized.Contains("문");
+        }
+
+        private bool IsDoorFrameName(string objectName)
+        {
+            if (string.IsNullOrWhiteSpace(objectName))
+            {
+                return false;
+            }
+
+            string normalized = objectName.ToLowerInvariant();
+            return normalized.Contains("frame") || normalized.Contains("jamb");
+        }
+
+        private bool LooksDoorSized(Transform target)
+        {
+            Bounds bounds = GetDoorBounds(target);
+            Vector3 size = bounds.size;
+            float horizontalMin = Mathf.Min(size.x, size.z);
+            float horizontalMax = Mathf.Max(size.x, size.z);
+
+            return size.y >= 1.35f
+                && size.y <= 3.2f
+                && horizontalMin <= 0.45f
+                && horizontalMax >= 0.55f
+                && horizontalMax <= 2.4f;
         }
 
         private void OpenDoor(Transform door, Vector3 hitPoint)
