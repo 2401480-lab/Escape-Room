@@ -11,12 +11,14 @@ namespace EscapeRoom
         [SerializeField] private ClueJournalManager journalManager;
         [SerializeField] private Canvas journalCanvas;
         [SerializeField] private GameObject panelRoot;
+        [SerializeField] private ScrollRect chipScrollRect;
         [SerializeField] private RectTransform chipContainer;
         [SerializeField] private TextMeshProUGUI progressText;
         [SerializeField] private ScrollRect evidenceScrollRect;
         [SerializeField] private RectTransform evidenceContent;
         [SerializeField] private GameObject evidenceTabRoot;
         [SerializeField] private GameObject suspectTabRoot;
+        [SerializeField] private ScrollRect suspectScrollRect;
         [SerializeField] private RectTransform suspectContent;
 
         private const string NotebookPrefix = "수첩:";
@@ -30,7 +32,7 @@ namespace EscapeRoom
             new PersonInfo("진세웅", "용의자", "하시호의 복수를 위해 행사를 설계한 인물. 진범."),
             new PersonInfo("봉태현", "용의자", "하시호 담당의였던 인물. 초반 의심을 받지만 수술실 입장을 양보했다."),
             new PersonInfo("문수미", "용의자", "진세웅의 이상한 낌새를 눈치챈 인물."),
-            new PersonInfo("하시호", "고인", "한 달 전 사망한 동아리 부원. 사건의 발단."),
+            new PersonInfo("하시호", "고인", "한 달 전 사망한 동아리 부원. 사건의 발단.", true),
             new PersonInfo(CommonNotebookName, CommonTarget, "인물 하나로 묶이지 않는 사건의 공통 단서.")
         };
 
@@ -237,14 +239,37 @@ namespace EscapeRoom
             bar.offsetMin = new Vector2(32f, -126f);
             bar.offsetMax = new Vector2(-32f, -82f);
 
-            HorizontalLayoutGroup layout = bar.gameObject.AddComponent<HorizontalLayoutGroup>();
+            chipScrollRect = bar.gameObject.AddComponent<ScrollRect>();
+            chipScrollRect.horizontal = true;
+            chipScrollRect.vertical = false;
+
+            RectTransform viewport = CreatePanel("EvidenceChipViewport", bar, new Color(0f, 0f, 0f, 0f));
+            viewport.anchorMin = Vector2.zero;
+            viewport.anchorMax = Vector2.one;
+            viewport.offsetMin = Vector2.zero;
+            viewport.offsetMax = Vector2.zero;
+            Mask mask = viewport.gameObject.AddComponent<Mask>();
+            mask.showMaskGraphic = false;
+
+            chipContainer = CreatePanel("EvidenceChipContent", viewport, new Color(0f, 0f, 0f, 0f));
+            chipContainer.anchorMin = new Vector2(0f, 0f);
+            chipContainer.anchorMax = new Vector2(0f, 1f);
+            chipContainer.pivot = new Vector2(0f, 0.5f);
+            chipContainer.anchoredPosition = Vector2.zero;
+            chipContainer.sizeDelta = Vector2.zero;
+
+            HorizontalLayoutGroup layout = chipContainer.gameObject.AddComponent<HorizontalLayoutGroup>();
             layout.childControlWidth = false;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = false;
             layout.padding = new RectOffset(8, 8, 6, 6);
             layout.spacing = 8f;
 
-            chipContainer = bar;
+            ContentSizeFitter fitter = chipContainer.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            chipScrollRect.viewport = viewport;
+            chipScrollRect.content = chipContainer;
         }
 
         private void CreateTabButtons(RectTransform parent)
@@ -296,6 +321,7 @@ namespace EscapeRoom
             evidenceContent.offsetMax = Vector2.zero;
 
             VerticalLayoutGroup layout = evidenceContent.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(0, 8, 0, 0);
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
@@ -317,17 +343,36 @@ namespace EscapeRoom
             rootRect.offsetMin = new Vector2(32f, 32f);
             rootRect.offsetMax = new Vector2(-32f, -190f);
 
-            suspectContent = CreatePanel("SuspectContent", rootRect, new Color(0f, 0f, 0f, 0f));
-            suspectContent.anchorMin = Vector2.zero;
-            suspectContent.anchorMax = Vector2.one;
+            suspectScrollRect = suspectTabRoot.AddComponent<ScrollRect>();
+            suspectScrollRect.horizontal = false;
+
+            RectTransform viewport = CreatePanel("SuspectViewport", rootRect, new Color(0f, 0f, 0f, 0f));
+            viewport.anchorMin = Vector2.zero;
+            viewport.anchorMax = Vector2.one;
+            viewport.offsetMin = Vector2.zero;
+            viewport.offsetMax = Vector2.zero;
+            Mask mask = viewport.gameObject.AddComponent<Mask>();
+            mask.showMaskGraphic = false;
+
+            suspectContent = CreatePanel("SuspectContent", viewport, new Color(0f, 0f, 0f, 0f));
+            suspectContent.anchorMin = new Vector2(0f, 1f);
+            suspectContent.anchorMax = new Vector2(1f, 1f);
+            suspectContent.pivot = new Vector2(0.5f, 1f);
             suspectContent.offsetMin = Vector2.zero;
             suspectContent.offsetMax = Vector2.zero;
 
             VerticalLayoutGroup layout = suspectContent.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(0, 8, 0, 0);
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
             layout.spacing = 12f;
+
+            ContentSizeFitter fitter = suspectContent.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            suspectScrollRect.viewport = viewport;
+            suspectScrollRect.content = suspectContent;
 
             BuildSuspectCards();
         }
@@ -352,6 +397,12 @@ namespace EscapeRoom
             {
                 ClueData captured = clueData;
                 Button chip = CreateButton($"Chip_{clueData.clueName}", chipContainer, clueData.clueName);
+                LayoutElement element = chip.GetComponent<LayoutElement>();
+                if (element != null)
+                {
+                    element.preferredWidth = Mathf.Clamp(64f + clueData.clueName.Length * 14f, 132f, 240f);
+                }
+
                 chip.onClick.AddListener(() => ScrollToClue(captured));
             }
         }
@@ -409,6 +460,7 @@ namespace EscapeRoom
             TextMeshProUGUI header = CreateText($"Area_{areaName}", evidenceContent, areaName, 24f, TextAlignmentOptions.Left);
             header.color = HorrorUITheme.SickYellow;
             LayoutElement element = header.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = 36f;
             element.preferredHeight = 36f;
         }
 
@@ -416,29 +468,30 @@ namespace EscapeRoom
         {
             RectTransform card = CreatePanel($"Card_{clueData.clueName}", evidenceContent, HorrorUITheme.PanelDeep);
             LayoutElement element = card.gameObject.AddComponent<LayoutElement>();
-            element.preferredHeight = discovered ? 150f : 96f;
+            element.minHeight = discovered ? 196f : 112f;
+            element.preferredHeight = discovered ? 196f : 112f;
             clueCards[clueData] = card;
 
             VerticalLayoutGroup layout = card.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(16, 16, 12, 12);
-            layout.spacing = 6f;
+            layout.padding = new RectOffset(18, 18, 14, 14);
+            layout.spacing = 8f;
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandHeight = false;
 
             if (!discovered)
             {
-                TextMeshProUGUI unknownTitle = CreateText("UnknownTitle", card, "???", 22f, TextAlignmentOptions.Left);
+                TextMeshProUGUI unknownTitle = CreateTextBlock("UnknownTitle", card, $"{GetAreaDisplayName(clueData.areaName)} 노트 - ???", 21f, TextAlignmentOptions.Left, 34f);
                 unknownTitle.color = HorrorUITheme.TextDim;
-                TextMeshProUGUI unknownBody = CreateText("UnknownBody", card, "이 구역을 탐색하면 증거를 수집할 수 있습니다", 18f, TextAlignmentOptions.Left);
+                TextMeshProUGUI unknownBody = CreateTextBlock("UnknownBody", card, "이 구역을 탐색하면 증거를 수집할 수 있습니다", 17f, TextAlignmentOptions.Left, 40f);
                 unknownBody.color = HorrorUITheme.TextDim;
                 return;
             }
 
-            TextMeshProUGUI nameText = CreateText("ClueName", card, clueData.clueName, 22f, TextAlignmentOptions.Left);
+            TextMeshProUGUI nameText = CreateTextBlock("ClueName", card, CreateClueCardTitle(clueData), 21f, TextAlignmentOptions.Left, 34f);
             nameText.color = HorrorUITheme.BloodRed;
-            CreateText("ClueDescription", card, clueData.description, 18f, TextAlignmentOptions.Left);
-            TextMeshProUGUI meaningText = CreateText("ClueMeaning", card, $"힌트: {GetNotebookHintText(clueData)}", 18f, TextAlignmentOptions.Left);
+            CreateTextBlock("ClueDescription", card, $"단서 내용: {clueData.description}", 17f, TextAlignmentOptions.Left, 66f);
+            TextMeshProUGUI meaningText = CreateTextBlock("ClueMeaning", card, $"수첩 업데이트: {GetNotebookHintText(clueData)}", 17f, TextAlignmentOptions.Left, 54f);
             meaningText.color = HorrorUITheme.SickYellow;
         }
 
@@ -452,36 +505,85 @@ namespace EscapeRoom
 
             foreach (PersonInfo person in people)
             {
+                if (!ShouldShowPerson(person))
+                {
+                    continue;
+                }
+
+                List<string> hints = GetCollectedHintsForPerson(person);
                 RectTransform card = CreatePanel($"Person_{person.name}", suspectContent, GetRoleColor(person.role));
                 LayoutElement element = card.gameObject.AddComponent<LayoutElement>();
-                element.preferredHeight = 150f;
+                float cardHeight = Mathf.Max(166f, 128f + Mathf.Max(1, hints.Count) * 44f);
+                element.minHeight = cardHeight;
+                element.preferredHeight = cardHeight;
 
                 VerticalLayoutGroup layout = card.gameObject.AddComponent<VerticalLayoutGroup>();
-                layout.padding = new RectOffset(16, 16, 12, 12);
-                layout.spacing = 4f;
+                layout.padding = new RectOffset(18, 18, 14, 14);
+                layout.spacing = 8f;
                 layout.childControlWidth = true;
                 layout.childControlHeight = true;
                 layout.childForceExpandHeight = false;
 
-                CreateText("PersonName", card, $"{person.name} / {person.role}", 22f, TextAlignmentOptions.Left);
-                CreateText("PersonDescription", card, person.description, 18f, TextAlignmentOptions.Left);
+                CreateTextBlock("PersonName", card, $"{person.name} / {person.role}", 21f, TextAlignmentOptions.Left, 32f);
+                CreateTextBlock("PersonDescription", card, person.description, 17f, TextAlignmentOptions.Left, 42f);
 
-                TextMeshProUGUI hintHeader = CreateText("SuspectHintHeader", card, "수집된 단서 힌트", 18f, TextAlignmentOptions.Left);
+                TextMeshProUGUI hintHeader = CreateTextBlock("SuspectHintHeader", card, "수집된 단서 힌트", 17f, TextAlignmentOptions.Left, 28f);
                 hintHeader.color = HorrorUITheme.SickYellow;
 
-                List<string> hints = GetCollectedHintsForPerson(person);
                 if (hints.Count == 0)
                 {
-                    TextMeshProUGUI empty = CreateText("SuspectHintEmpty", card, "아직 확인된 힌트 없음", 17f, TextAlignmentOptions.Left);
+                    TextMeshProUGUI empty = CreateTextBlock("SuspectHintEmpty", card, "아직 확인된 힌트 없음", 16f, TextAlignmentOptions.Left, 28f);
                     empty.color = HorrorUITheme.TextDim;
                     continue;
                 }
 
                 foreach (string hint in hints)
                 {
-                    CreateText("SuspectHint", card, $"- {hint}", 17f, TextAlignmentOptions.Left);
+                    CreateTextBlock("SuspectHint", card, $"- {hint}", 16f, TextAlignmentOptions.Left, 40f);
                 }
             }
+        }
+
+        private bool ShouldShowPerson(PersonInfo person)
+        {
+            return !person.revealAfterHashihoClue || HasHashihoClue();
+        }
+
+        private bool HasHashihoClue()
+        {
+            if (journalManager == null)
+            {
+                return false;
+            }
+
+            foreach (ClueData clueData in journalManager.CollectedClues)
+            {
+                if (IsHashihoClue(clueData))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsHashihoClue(ClueData clueData)
+        {
+            if (clueData == null)
+            {
+                return false;
+            }
+
+            string clueID = clueData.clueID;
+            if (clueID == "normal_memorial_frame" ||
+                clueID == "clue_hasho_will" ||
+                clueID == "normal_medical_certificate")
+            {
+                return true;
+            }
+
+            string clueText = $"{clueData.clueName} {clueData.description} {clueData.meaning}";
+            return clueText.Contains("하시호");
         }
 
         private List<string> GetCollectedHintsForPerson(PersonInfo person)
@@ -494,7 +596,7 @@ namespace EscapeRoom
                     continue;
                 }
 
-                if (TargetsPerson(targets, person))
+                if (TargetsPerson(targets, person) || ClueMentionsPerson(clueData, person.name))
                 {
                     hints.Add($"{clueData.clueName}: {hint}");
                 }
@@ -562,9 +664,27 @@ namespace EscapeRoom
             return false;
         }
 
+        private static bool ClueMentionsPerson(ClueData clueData, string personName)
+        {
+            if (clueData == null || string.IsNullOrWhiteSpace(personName) || personName == CommonNotebookName)
+            {
+                return false;
+            }
+
+            string clueText = $"{clueData.clueName} {clueData.description} {clueData.meaning}";
+            return clueText.Contains(personName);
+        }
+
         private static string GetNotebookHintText(ClueData clueData)
         {
             return TryParseNotebookHint(clueData, out _, out string hint) ? hint : clueData.meaning;
+        }
+
+        private static string CreateClueCardTitle(ClueData clueData)
+        {
+            string areaName = clueData != null ? GetAreaDisplayName(clueData.areaName) : "미확인 구역";
+            string clueName = clueData != null && !string.IsNullOrWhiteSpace(clueData.clueName) ? clueData.clueName : "???";
+            return $"{areaName} 노트 - {clueName}";
         }
 
         private void ShowEvidenceTab()
@@ -639,6 +759,16 @@ namespace EscapeRoom
             tmp.text = text;
             tmp.alignment = alignment;
             HorrorUITheme.ApplyText(tmp, fontSize);
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
+            return tmp;
+        }
+
+        private static TextMeshProUGUI CreateTextBlock(string name, Transform parent, string text, float fontSize, TextAlignmentOptions alignment, float preferredHeight)
+        {
+            TextMeshProUGUI tmp = CreateText(name, parent, text, fontSize, alignment);
+            LayoutElement element = tmp.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = preferredHeight;
+            element.preferredHeight = preferredHeight;
             return tmp;
         }
 
@@ -713,12 +843,14 @@ namespace EscapeRoom
             public string name;
             public string role;
             public string description;
+            public bool revealAfterHashihoClue;
 
-            public PersonInfo(string name, string role, string description)
+            public PersonInfo(string name, string role, string description, bool revealAfterHashihoClue = false)
             {
                 this.name = name;
                 this.role = role;
                 this.description = description;
+                this.revealAfterHashihoClue = revealAfterHashihoClue;
             }
         }
     }

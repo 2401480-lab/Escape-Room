@@ -37,6 +37,10 @@ $settingsText = U 0xC124,0xC815
 $volumeText = U 0xBCFC,0xB968
 $sensitivityText = U 0xAC10,0xB3C4
 $controlsText = U 0xC870,0xC791,0xBC95
+$investigationNoteText = U 0xC218,0xC0AC,0x0020,0xB178,0xD2B8
+$suspectNotebookText = (U 0xC6A9,0xC758,0xC790) + ' ' + (U 0xC218,0xCCA9)
+$culpritChaseText = (U 0xBC94,0xC778) + ' ' + (U 0xCD94,0xC801)
+$popupDismissText = (U 0xD31D,0xC5C5) + ' ' + (U 0xB2EB,0xAE30)
 
 Assert-True ($settings -match 'namespace\s+EscapeRoom' -and $settings -match 'class\s+SettingsUI\s*:\s*MonoBehaviour') 'SettingsUI must be an EscapeRoom MonoBehaviour.'
 Assert-True ($settings -match 'ScreenSpaceOverlay' -and $settings -match 'HUD_Canvas') 'SettingsUI must use HUD_Canvas as Screen Space Overlay.'
@@ -44,6 +48,10 @@ Assert-True ($settings -match 'KeyCode\.Escape' -and $settings -match 'SettingsH
 Assert-True ($settings -match 'Slider\s+volumeSlider' -and $settings -match 'Slider\s+sensitivitySlider') 'SettingsUI must include volume and sensitivity sliders.'
 Assert-True ($settings.Contains($settingsText) -and $settings.Contains($volumeText) -and $settings.Contains($sensitivityText) -and $settings.Contains($controlsText)) 'SettingsUI must show Korean settings, volume, sensitivity, and controls labels.'
 Assert-True ($settings -match 'VolumeSensitivityTabRoot' -and $settings -match 'ControlsTabRoot') 'SettingsUI must split settings into volume/sensitivity and controls tabs.'
+Assert-True ($settings -match 'CreateControlRow' -and $settings.Contains($investigationNoteText) -and $settings.Contains($suspectNotebookText) -and $settings.Contains($culpritChaseText) -and $settings.Contains($popupDismissText)) 'SettingsUI controls tab must organize keyboard controls into readable rows.'
+foreach ($controlToken in @('WASD', 'Left Shift', 'Mouse', 'F', 'J / Tab', 'K', 'ESC')) {
+    Assert-True ($settings.Contains($controlToken)) "SettingsUI controls tab missing control token: $controlToken"
+}
 
 Assert-True ($journal -match 'EvidenceHudButton' -and $journal -match 'SuspectHudButton') 'ClueJournalUI must create top-left evidence and suspect buttons.'
 Assert-True ($journal -match 'KeyCode\.J' -and $journal -match 'KeyCode\.K') 'ClueJournalUI must toggle evidence with J and suspects with K.'

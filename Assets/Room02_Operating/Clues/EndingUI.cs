@@ -13,7 +13,7 @@ namespace EscapeRoom
         [SerializeField] private SilhouetteController silhouetteController;
         [SerializeField] private GameOverUI gameOverUI;
         [SerializeField] private SuspectConfirmUI suspectConfirmUI;
-        [SerializeField] private Button culpritGuessButton;
+        [SerializeField] private Button culpritChaseButton;
 
         public UnityEvent OnCorrectSuspectSelected;
         public UnityEvent OnWrongSuspectSelected;
@@ -38,7 +38,7 @@ namespace EscapeRoom
         private void Start()
         {
             SubscribeToStoryProgress();
-            RefreshCulpritGuessButton();
+            RefreshCulpritChaseButton();
         }
 
         private void OnDisable()
@@ -53,7 +53,7 @@ namespace EscapeRoom
         public void Show()
         {
             EnsureUI();
-            SetCulpritGuessButtonVisible(false);
+            SetCulpritChaseButtonVisible(false);
             panelRoot.SetActive(true);
             StoryProgressManager.Instance?.BeginSuspectSelection();
         }
@@ -65,7 +65,7 @@ namespace EscapeRoom
                 panelRoot.SetActive(false);
             }
 
-            RefreshCulpritGuessButton();
+            RefreshCulpritChaseButton();
         }
 
         public void ChooseJinSewoong()
@@ -181,7 +181,7 @@ namespace EscapeRoom
                 endingCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             }
 
-            EnsureCulpritGuessButton();
+            EnsureCulpritChaseButton();
 
             if (panelRoot != null)
             {
@@ -208,29 +208,31 @@ namespace EscapeRoom
             CreateSuspectButton(panelRect, "오세진", new Vector2(0f, -100f), ChooseOhSejin);
         }
 
-        private void EnsureCulpritGuessButton()
+        private void EnsureCulpritChaseButton()
         {
-            if (culpritGuessButton == null)
+            if (culpritChaseButton == null)
             {
-                RectTransform rect = CreatePanel("CulpritGuessButton", endingCanvas.transform, new Color(0.16f, 0.02f, 0.03f, 0.92f));
-                rect.anchorMin = new Vector2(1f, 0f);
-                rect.anchorMax = new Vector2(1f, 0f);
-                rect.pivot = new Vector2(1f, 0f);
-                rect.anchoredPosition = new Vector2(-24f, 28f);
-                rect.sizeDelta = new Vector2(190f, 46f);
+                RectTransform rect = CreatePanel("CulpritChaseButton", endingCanvas.transform, new Color(0.18f, 0.015f, 0.025f, 0.96f));
+                rect.anchorMin = new Vector2(1f, 1f);
+                rect.anchorMax = new Vector2(1f, 1f);
+                rect.pivot = new Vector2(1f, 1f);
+                rect.anchoredPosition = new Vector2(-24f, -74f);
+                rect.sizeDelta = new Vector2(210f, 50f);
 
-                culpritGuessButton = rect.gameObject.AddComponent<Button>();
+                culpritChaseButton = rect.gameObject.AddComponent<Button>();
+                HorrorUITheme.ApplyButton(culpritChaseButton, rect.GetComponent<Image>());
 
-                TextMeshProUGUI text = CreateText("Label", rect, "범인 맞추기", 20f);
+                TextMeshProUGUI text = CreateText("Label", rect, "범인 추적", 21f);
+                text.color = HorrorUITheme.TextMain;
                 text.rectTransform.anchorMin = Vector2.zero;
                 text.rectTransform.anchorMax = Vector2.one;
-                text.rectTransform.offsetMin = Vector2.zero;
-                text.rectTransform.offsetMax = Vector2.zero;
+                text.rectTransform.offsetMin = new Vector2(8f, 0f);
+                text.rectTransform.offsetMax = new Vector2(-8f, 0f);
             }
 
-            culpritGuessButton.onClick.RemoveListener(Show);
-            culpritGuessButton.onClick.AddListener(Show);
-            culpritGuessButton.gameObject.SetActive(false);
+            culpritChaseButton.onClick.RemoveListener(Show);
+            culpritChaseButton.onClick.AddListener(Show);
+            culpritChaseButton.gameObject.SetActive(false);
         }
 
         private void SubscribeToStoryProgress()
@@ -252,25 +254,25 @@ namespace EscapeRoom
 
         private void HandlePhaseChanged(StoryPhase phase)
         {
-            SetCulpritGuessButtonVisible(phase == StoryPhase.SuspectSelection);
+            SetCulpritChaseButtonVisible(phase == StoryPhase.SuspectSelection);
         }
 
-        private void RefreshCulpritGuessButton()
+        private void RefreshCulpritChaseButton()
         {
             SubscribeToStoryProgress();
-            SetCulpritGuessButtonVisible(StoryProgressManager.Instance != null &&
+            SetCulpritChaseButtonVisible(StoryProgressManager.Instance != null &&
                                          StoryProgressManager.Instance.CurrentPhase == StoryPhase.SuspectSelection);
         }
 
-        private void SetCulpritGuessButtonVisible(bool isVisible)
+        private void SetCulpritChaseButtonVisible(bool isVisible)
         {
-            if (culpritGuessButton == null)
+            if (culpritChaseButton == null)
             {
                 return;
             }
 
             bool panelIsOpen = panelRoot != null && panelRoot.activeSelf;
-            culpritGuessButton.gameObject.SetActive(isVisible && !panelIsOpen);
+            culpritChaseButton.gameObject.SetActive(isVisible && !panelIsOpen);
         }
 
         private static void CreateSuspectButton(RectTransform parent, string label, Vector2 anchoredPosition, UnityAction action)
