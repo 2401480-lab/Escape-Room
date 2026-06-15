@@ -389,3 +389,7 @@
 ### [2026-06-15 23:24:44]
 - 온보딩 게임 시작 이후 공유 RoomLoader 경로까지 Room02 후레쉬와 HUD가 있는 Show 씬으로 연결되도록 수정
 - 온보딩 테스트에 RoomLoader의 Room02 대상 씬이 Show인지 검증하는 항목 추가
+
+### [2026-06-15 23:28:30]
+- Unity가 열린 상태에서도 Play 진입 직전에 온보딩 씬이 시작 씬으로 다시 설정되도록 보강
+- 온보딩 시작 씬 설정 헬퍼가 PlayModeStateChange.ExitingEditMode 시점에 동작하는지 테스트 추가

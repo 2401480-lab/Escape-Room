@@ -76,6 +76,8 @@ Assert-True ($onboardingScript -match 'characterSpacing' -and $onboardingScript 
 Assert-True ($playModeStart -match 'OnboardingScenePath\s*=\s*"Assets/Onboarding\.unity"') 'Editor helper must target Assets/Onboarding.unity.'
 Assert-True ($playModeStart -match 'EditorSceneManager\.playModeStartScene') 'Editor helper must set the Play button start scene.'
 Assert-True ($playModeStart -match 'AssetDatabase\.LoadAssetAtPath<SceneAsset>') 'Editor helper must load the onboarding SceneAsset safely.'
+Assert-True ($playModeStart -match 'playModeStateChanged') 'Editor helper must refresh the Play button start scene when entering Play mode.'
+Assert-True ($playModeStart -match 'PlayModeStateChange\.ExitingEditMode') 'Editor helper must set Onboarding as the start scene right before Play starts.'
 
 Assert-True ($backgroundMeta -match 'textureType:\s*8') 'Onboarding background texture must import as a Sprite.'
 Assert-True ($backgroundMeta -match 'spriteMode:\s*1') 'Onboarding background texture must be a single sprite.'

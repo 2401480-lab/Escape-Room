@@ -11,6 +11,15 @@ namespace EscapeGame.Editor
         static OnboardingPlayModeStartScene()
         {
             EditorApplication.delayCall += ConfigureStartScene;
+            EditorApplication.playModeStateChanged += HandlePlayModeStateChanged;
+        }
+
+        private static void HandlePlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingEditMode)
+            {
+                ConfigureStartScene();
+            }
         }
 
         private static void ConfigureStartScene()
