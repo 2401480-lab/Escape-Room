@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 namespace EscapeRoom.Editor
 {
-    [InitializeOnLoad]
     public static class ClueSceneSetupTool
     {
         private static readonly HashSet<string> IntegratedZones = new HashSet<string>
@@ -23,19 +22,11 @@ namespace EscapeRoom.Editor
         private const string CulpritPrefabPath = "Assets/Room02_Operating/Models/char_shadow.fbx";
         private const string CulpritObjectName = "Culprit_StartPosition";
         private const string ShowScenePath = "Assets/Room02_Operating/Scenes/Show.unity";
-        private const int ExpectedStoryClueCount = 15;
         private static readonly Vector3 CluesRootPosition = Vector3.zero;
-
-        static ClueSceneSetupTool()
-        {
-            EditorApplication.delayCall += RepairOpenShowCluesIfNeeded;
-        }
 
         [MenuItem("Tools/Room02/Clues/Setup Current Stage Clues")]
         public static void SetupCurrentStageClues()
         {
-            ClueAssetGenerator.GenerateStoryClueAssets();
-
             Scene scene = SceneManager.GetActiveScene();
             int placed = SetupScene(scene.name);
             if (placed < 0)
@@ -62,52 +53,9 @@ namespace EscapeRoom.Editor
             SetupCurrentStageClues();
         }
 
-        private static void RepairOpenShowCluesIfNeeded()
-        {
-            if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                return;
-            }
-
-            Scene scene = SceneManager.GetActiveScene();
-            if (scene.name != "Show")
-            {
-                return;
-            }
-
-            GameObject cluesRoot = GameObject.Find("Clues");
-            if (cluesRoot == null)
-            {
-                return;
-            }
-
-            int realClueCount = 0;
-            int testClueCount = 0;
-            foreach (Transform child in cluesRoot.transform)
-            {
-                if (child.name.StartsWith("Clue_"))
-                {
-                    realClueCount++;
-                }
-                else if (child.name.StartsWith("TestClue"))
-                {
-                    testClueCount++;
-                }
-            }
-
-            if (testClueCount > 0 && realClueCount < ExpectedStoryClueCount)
-            {
-                ClueAssetGenerator.GenerateStoryClueAssets();
-                int placed = SetupScene(scene.name);
-                EditorSceneManager.MarkSceneDirty(scene);
-                Debug.LogWarning($"[Clues] Removed stale test clues and restored Room02 clue boxes. Placed/updated: {placed}");
-            }
-        }
-
         public static void SetupShowSceneForBatch()
         {
             Scene scene = EditorSceneManager.OpenScene(ShowScenePath, OpenSceneMode.Single);
-            ClueAssetGenerator.GenerateStoryClueAssets();
             int placed = SetupScene(scene.name);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -238,6 +186,7 @@ namespace EscapeRoom.Editor
             }
 
             GameObject clueObject;
+            bool isNewClueObject = existing == null;
             if (existing == null)
             {
                 clueObject = CreateBoxObject(objectName, cluesRoot.transform);
@@ -249,10 +198,15 @@ namespace EscapeRoom.Editor
                 clueObject = existing.gameObject;
             }
 
-            clueObject.transform.position = CluePlacementLayout.TryGetPosition(entry.clueID, out Vector3 position)
-                ? position
-                : CluePlacementLayout.GetFallbackPosition(index);
-            clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            if (isNewClueObject)
+            {
+                clueObject.transform.position = CluePlacementLayout.TryGetPosition(entry.clueID, out Vector3 position)
+                    ? position
+                    : CluePlacementLayout.GetFallbackPosition(index);
+                clueObject.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            }
+
+            clueObject.SetActive(true);
 
             BoxCollider collider = clueObject.GetComponent<BoxCollider>();
             if (collider == null)

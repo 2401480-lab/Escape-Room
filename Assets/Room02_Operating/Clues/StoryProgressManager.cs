@@ -23,6 +23,7 @@ namespace EscapeRoom
 
         [Header("범인 선택 조건")]
         [SerializeField] private int requiredClueCount = 10;
+        [SerializeField] private int requiredEscapeKeyClueCount = 15;
 
         [Header("타이머")]
         [SerializeField] private bool useDeductionTimer = true;
@@ -43,7 +44,7 @@ namespace EscapeRoom
         public StoryPhase CurrentPhase => currentPhase;
         public bool HasEscapeKey => hasEscapeKey;
         public bool CanSelectSuspect => collectedClueIDs.Count >= requiredClueCount;
-        public bool HasAllStoryClues => CanSelectSuspect;
+        public bool HasAllStoryClues => collectedClueIDs.Count >= requiredEscapeKeyClueCount;
         public float DeductionTimeRemaining => deductionTimeRemaining;
         public bool IsChaseTimerActive => currentPhase == StoryPhase.ChaseEscape;
         public float CurrentTimerRemaining => IsChaseTimerActive && chaseController != null
@@ -185,7 +186,9 @@ namespace EscapeRoom
                 SetPhase(StoryPhase.KeyClueCollection);
             }
 
-            if (HasAllKeyClues())
+            TryAutoCollectEscapeKey();
+
+            if (HasAllKeyClues() || hasEscapeKey)
             {
                 OnEscapeKeyReady?.Invoke();
             }
@@ -194,6 +197,17 @@ namespace EscapeRoom
             {
                 SetPhase(StoryPhase.SuspectSelection);
             }
+        }
+
+        private void TryAutoCollectEscapeKey()
+        {
+            if (hasEscapeKey || collectedClueIDs.Count < requiredEscapeKeyClueCount)
+            {
+                return;
+            }
+
+            hasEscapeKey = true;
+            OnEscapeKeyCollected?.Invoke();
         }
 
         private bool HasAnyKeyClue()
