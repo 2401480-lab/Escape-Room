@@ -503,3 +503,8 @@
 - `origin/feature/room1`의 `Assets/Room02_Operating/Ending` 폴더에서 탈출 QTE 엔딩 스크립트와 범인 추격 리소스를 병합
 - 기존 `EscapeRoom.EscapeKeyState`와 충돌하지 않도록 엔딩 브랜치의 중복 `EscapeKeyState` 파일은 제외하고 현재 열쇠 상태 연동을 유지
 - 새 엔딩 QTE 런타임 텍스트가 Galmuri 폰트 helper를 사용하도록 보강하고 엔딩 폴더 병합 검증 테스트 추가
+
+### [2026-06-16 04:45:30]
+- 기존 `EscapeExitDoor` 상호작용이 새 `EscapeChaseQTE` 스페이스바 탈출 QTE를 시작하도록 연결
+- `EscapeExitController`가 `Doors` 이름과 door 계열 오브젝트를 인식하고, 이름 붙은 문이 없는 프로토타입 씬에서도 E/F로 QTE를 열 수 있도록 fallback 추가
+- 스페이스바 QTE 연결 경로와 기존 탈출 문 회귀 테스트를 갱신

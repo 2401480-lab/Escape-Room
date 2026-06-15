@@ -25,7 +25,7 @@ namespace EscapeRoom
 
             if (chaseController == null)
             {
-                chaseController = FindObjectOfType<ChaseController>();
+                chaseController = Object.FindFirstObjectByType<ChaseController>();
             }
         }
 
@@ -49,6 +49,12 @@ namespace EscapeRoom
                 return false;
             }
 
+            if (TryStartEscapeQTE())
+            {
+                OnEscapeDoorOpened?.Invoke();
+                return true;
+            }
+
             bool escaped = chaseController != null && chaseController.TryEscape();
             if (escaped)
             {
@@ -56,6 +62,19 @@ namespace EscapeRoom
             }
 
             return escaped;
+        }
+
+        private static bool TryStartEscapeQTE()
+        {
+            EscapeChaseQTE qte = EscapeChaseQTE.Instance ?? Object.FindFirstObjectByType<EscapeChaseQTE>();
+            if (qte == null)
+            {
+                GameObject qteObject = new GameObject("EscapeChaseQTE");
+                qte = qteObject.AddComponent<EscapeChaseQTE>();
+            }
+
+            qte.StartQTE();
+            return true;
         }
 
         private void SetPrompt(bool visible)

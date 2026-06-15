@@ -24,7 +24,7 @@ namespace EscapeRoom
 
         private static void EnsureComponent<T>(string objectName) where T : Component
         {
-            if (Object.FindObjectOfType<T>() != null)
+            if (Object.FindFirstObjectByType<T>() != null)
             {
                 return;
             }

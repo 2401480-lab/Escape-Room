@@ -95,7 +95,7 @@ Assert-True ($chase -match 'OnVignetteChanged' -and $chase -match 'OnHeartbeatRe
 Assert-True ($chase -match 'PlayHeartbeat') 'ChaseController must request AudioManager heartbeat playback.'
 
 Assert-True ($exitDoor -match 'class\s+EscapeExitDoor\s*:\s*MonoBehaviour') 'EscapeExitDoor must be a scene-placeable exit door component.'
-Assert-True ($exitDoor -match 'TryOpenExit' -and $exitDoor -match 'HasEscapeKey' -and $exitDoor -match 'TryEscape') 'EscapeExitDoor must open only with the escape key and trigger escape.'
+Assert-True ($exitDoor -match 'TryOpenExit' -and $exitDoor -match 'HasEscapeKey' -and $exitDoor -match 'EscapeChaseQTE' -and $exitDoor -match 'StartQTE') 'EscapeExitDoor must open only with the escape key and trigger the escape QTE.'
 
 Assert-True ($gameOver -match 'PlayGameOver' -and $gameOver -match 'Restart' -and $gameOver -match 'MainMenu') 'GameOverUI must support game over, restart, and main menu.'
 Assert-True ($gameOver -match 'ScreenSpaceOverlay') 'GameOverUI must use Screen Space Overlay canvas.'

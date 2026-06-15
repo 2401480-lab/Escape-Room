@@ -26,7 +26,7 @@ namespace EscapeRoom
             if (IsLookingAtExitDoor())
             {
                 qteStarted = true;
-                EscapeChaseQTE qte = EscapeChaseQTE.Instance ?? FindObjectOfType<EscapeChaseQTE>();
+                EscapeChaseQTE qte = EscapeChaseQTE.Instance ?? Object.FindFirstObjectByType<EscapeChaseQTE>();
                 if (qte == null)
                 {
                     GameObject qteObject = new GameObject("EscapeChaseQTE");
@@ -54,7 +54,7 @@ namespace EscapeRoom
             Ray ray = new Ray(camera.transform.position, camera.transform.forward);
             if (!Physics.Raycast(ray, out RaycastHit hit, interactDistance, ~0, QueryTriggerInteraction.Ignore))
             {
-                return IsExitDoorNearCamera(camera);
+                return IsExitDoorNearCamera(camera) || IsPrototypeFallbackAvailable();
             }
 
             Transform current = hit.collider.transform;
@@ -68,12 +68,12 @@ namespace EscapeRoom
                 current = current.parent;
             }
 
-            return IsExitDoorNearCamera(camera);
+            return IsExitDoorNearCamera(camera) || IsPrototypeFallbackAvailable();
         }
 
         private bool IsExitDoorNearCamera(Camera camera)
         {
-            GameObject door = GameObject.Find(exitDoorName) ?? GameObject.Find("MainDoor");
+            GameObject door = FindKnownExitDoor();
             if (door == null)
             {
                 return false;
@@ -90,13 +90,35 @@ namespace EscapeRoom
 
         private bool IsExitDoorName(string objectName)
         {
-            if (objectName == exitDoorName || objectName == "MainDoor")
+            if (objectName == exitDoorName || objectName == "MainDoor" || objectName == "Doors")
             {
                 return true;
             }
 
             string lowerName = objectName.ToLowerInvariant();
-            return lowerName.Contains("exit");
+            return lowerName.Contains("exit") || lowerName.Contains("door");
+        }
+
+        private bool IsPrototypeFallbackAvailable()
+        {
+            if (!HasKnownExitDoor())
+            {
+                return true; // Prototype fallback
+            }
+
+            return false;
+        }
+
+        private bool HasKnownExitDoor()
+        {
+            return FindKnownExitDoor() != null;
+        }
+
+        private GameObject FindKnownExitDoor()
+        {
+            return GameObject.Find(exitDoorName) ??
+                   GameObject.Find("MainDoor") ??
+                   GameObject.Find("Doors");
         }
     }
 }
