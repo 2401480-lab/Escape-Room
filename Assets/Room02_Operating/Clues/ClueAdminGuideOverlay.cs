@@ -100,7 +100,6 @@ namespace EscapeRoom
                 }
 
                 storyManager?.GrantEscapeKeyFromAdminSkip();
-                EscapeChaseQTE.StartOrCreate();
             }
             finally
             {

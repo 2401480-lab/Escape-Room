@@ -34,7 +34,7 @@ $legacyExitDoor = Get-Content -LiteralPath $legacyExitDoorPath -Raw -Encoding UT
 
 Assert-True ($qte -match 'class\s+EscapeChaseQTE\s*:\s*MonoBehaviour') 'EscapeChaseQTE must be a runtime MonoBehaviour.'
 Assert-True ($qte -match 'StartQTE\s*\(' -and $qte -match 'KeyCode\.Space') 'EscapeChaseQTE must start a spacebar QTE.'
-Assert-True ($qte -match 'public\s+static\s+void\s+StartOrCreate\s*\(') 'EscapeChaseQTE must expose a shared start helper for skip, suspect, and door flows.'
+Assert-True ($qte -match 'public\s+static\s+void\s+StartOrCreate\s*\(') 'EscapeChaseQTE must expose a shared start helper for correct suspect and door flows.'
 Assert-True ($qte -match 'GAME OVER' -and $qte -match 'FINISH!') 'EscapeChaseQTE must include success and failure ending titles.'
 Assert-True ($qte -match 'Room02_CulpritChaser') 'EscapeChaseQTE must load the merged culprit chaser resource.'
 Assert-True ($qte -match 'FontHelper\.Apply\s*\(\s*tmp\s*\)') 'EscapeChaseQTE runtime text must use the project font helper.'

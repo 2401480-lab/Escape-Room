@@ -24,7 +24,7 @@ Assert-True ($guide -match 'CollectAllCluesAndGrantKey\s*\(') 'Admin guide overl
 Assert-True ($guide -match 'FindObjectsOfType<ClueBoxInteractable>\s*\(\s*true\s*\)') 'Admin skip must include inactive clue boxes so all 15 story clues can be collected.'
 Assert-True ($guide -match 'AdminCollectClue\s*\(') 'Admin skip must collect each clue through the clue box path so journal state stays consistent.'
 Assert-True ($guide -match 'GrantEscapeKeyFromAdminSkip\s*\(') 'Admin skip must immediately grant the escape key after collecting all clues.'
-Assert-True ($guide -match 'GrantEscapeKeyFromAdminSkip\s*\(\s*\)[\s\S]*?EscapeChaseQTE\.StartOrCreate\s*\(\s*\)') 'Y admin skip must immediately continue into the spacebar escape QTE.'
+Assert-True ($guide -notmatch 'GrantEscapeKeyFromAdminSkip\s*\(\s*\)[\s\S]*?EscapeChaseQTE\.StartOrCreate\s*\(\s*\)') 'Y admin skip must stop at suspect selection instead of immediately starting the spacebar escape QTE.'
 Assert-True ($guide -match 'BeginSilentAdminKeyGrant\s*\(\s*\)[\s\S]*?try[\s\S]*?AdminCollectClue\s*\(\s*\)[\s\S]*?GrantEscapeKeyFromAdminSkip\s*\(\s*\)[\s\S]*?finally[\s\S]*?EndSilentAdminKeyGrant\s*\(\s*\)') 'Y admin skip must suppress key subtitles during forced clue collection and restore the notice state afterward.'
 Assert-True ($guide -notmatch 'allowRuntimeAdminGuide[\s\S]{0,120}KeyCode\.Y') 'Y skip must not be gated by the runtime admin guide visibility toggle.'
 
@@ -37,6 +37,7 @@ Assert-True ($storyManager -match 'public\s+void\s+GrantEscapeKeyFromAdminSkip\s
 Assert-True ($storyManager -match 'BeginSilentAdminKeyGrant\s*\(' -and $storyManager -match 'EndSilentAdminKeyGrant\s*\(') 'StoryProgressManager must expose a silent admin key grant scope for Y skip.'
 Assert-True ($storyManager -match 'suppressKeyAcquiredNotice') 'StoryProgressManager must track when key acquisition subtitles are suppressed.'
 Assert-True ($storyManager -match 'GrantEscapeKeyFromAdminSkip[\s\S]*?hasEscapeKey\s*=\s*true') 'Admin skip key grant must set hasEscapeKey.'
+Assert-True ($adminSkipGrant -match 'CanSelectSuspect[\s\S]*?SetPhase\s*\(\s*StoryPhase\.SuspectSelection\s*\)') 'Admin skip must unlock suspect selection so the 범인찾기 (G) prompt appears.'
 Assert-True ($storyManager -match 'GrantEscapeKeyFromAdminSkip[\s\S]*?OnEscapeKeyCollected\?\.Invoke\s*\(\s*\)') 'Admin skip key grant must notify existing key listeners.'
 Assert-True ($storyManager -match 'GrantEscapeKeyFromAdminSkip[\s\S]*?OnEscapeKeyReady\?\.Invoke\s*\(\s*\)') 'Admin skip key grant must notify key-ready listeners.'
 Assert-True ($adminSkipGrant -notmatch 'EscapeKeyNoticeUI\.Show') 'Admin skip key grant must not show a key acquisition subtitle when pressing Y.'
