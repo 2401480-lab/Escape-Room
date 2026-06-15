@@ -40,6 +40,7 @@ namespace EscapeRoom
         private bool hasEscapeKey;
         private float deductionTimeRemaining;
         private ChaseController chaseController;
+        private ClueJournalManager observedJournalManager;
 
         public StoryPhase CurrentPhase => currentPhase;
         public bool HasEscapeKey => hasEscapeKey;
@@ -65,22 +66,22 @@ namespace EscapeRoom
 
         private void OnEnable()
         {
-            if (ClueJournalManager.Instance != null)
-            {
-                ClueJournalManager.Instance.OnClueAdded += HandleClueAdded;
-            }
+            EnsureJournalSubscription();
         }
 
         private void OnDisable()
         {
-            if (ClueJournalManager.Instance != null)
+            if (observedJournalManager != null)
             {
-                ClueJournalManager.Instance.OnClueAdded -= HandleClueAdded;
+                observedJournalManager.OnClueAdded -= HandleClueAdded;
+                observedJournalManager = null;
             }
         }
 
         private void Update()
         {
+            EnsureJournalSubscription();
+
             if (!useDeductionTimer || currentPhase == StoryPhase.ChaseEscape || currentPhase == StoryPhase.GameOver || hasEscapeKey)
             {
                 return;
@@ -96,19 +97,26 @@ namespace EscapeRoom
 
         public void HandleClueAdded(ClueData clueData)
         {
+            if (TryRegisterClue(clueData))
+            {
+                EvaluateProgress();
+            }
+        }
+
+        private bool TryRegisterClue(ClueData clueData)
+        {
             if (clueData == null)
             {
-                return;
+                return false;
             }
 
             string id = GetClueID(clueData);
             if (string.IsNullOrEmpty(id))
             {
-                return;
+                return false;
             }
 
-            collectedClueIDs.Add(id);
-            EvaluateProgress();
+            return collectedClueIDs.Add(id);
         }
 
         public bool HasAllKeyClues()
@@ -132,6 +140,18 @@ namespace EscapeRoom
             }
 
             OnEscapeKeyCollected?.Invoke();
+        }
+
+        public void GrantEscapeKeyFromCorrectSuspect()
+        {
+            if (hasEscapeKey)
+            {
+                return;
+            }
+
+            hasEscapeKey = true;
+            OnEscapeKeyCollected?.Invoke();
+            OnEscapeKeyReady?.Invoke();
         }
 
         public void BeginSuspectSelection()
@@ -208,6 +228,34 @@ namespace EscapeRoom
 
             hasEscapeKey = true;
             OnEscapeKeyCollected?.Invoke();
+        }
+
+        private void EnsureJournalSubscription()
+        {
+            ClueJournalManager manager = ClueJournalManager.Instance;
+            if (manager == null || observedJournalManager == manager)
+            {
+                return;
+            }
+
+            if (observedJournalManager != null)
+            {
+                observedJournalManager.OnClueAdded -= HandleClueAdded;
+            }
+
+            observedJournalManager = manager;
+            observedJournalManager.OnClueAdded += HandleClueAdded;
+
+            bool changed = false;
+            foreach (ClueData clue in observedJournalManager.CollectedClues)
+            {
+                changed |= TryRegisterClue(clue);
+            }
+
+            if (changed)
+            {
+                EvaluateProgress();
+            }
         }
 
         private bool HasAnyKeyClue()

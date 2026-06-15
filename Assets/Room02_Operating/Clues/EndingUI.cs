@@ -41,6 +41,14 @@ namespace EscapeRoom
             RefreshCulpritChaseButton();
         }
 
+        private void Update()
+        {
+            if (observedStoryManager != StoryProgressManager.Instance)
+            {
+                RefreshCulpritChaseButton();
+            }
+        }
+
         private void OnDisable()
         {
             if (observedStoryManager != null)
@@ -122,7 +130,9 @@ namespace EscapeRoom
             OnBlackoutRequested?.Invoke();
             silhouetteController?.MaterializeAsJin();
             OnJinMaterialized?.Invoke();
-            StoryProgressManager.Instance?.BeginChase();
+            StoryProgressManager storyManager = StoryProgressManager.Instance;
+            storyManager?.GrantEscapeKeyFromCorrectSuspect();
+            storyManager?.BeginChase();
             StartChase();
         }
 

@@ -49,6 +49,9 @@ Assert-True ($storyManager -match 'HasAllKeyClues') 'StoryProgressManager must e
 Assert-True ($storyManager -match 'HasEscapeKey') 'StoryProgressManager must track escape key ownership.'
 Assert-True ($storyManager -match 'OnPhaseChanged' -and $storyManager -match 'OnTrueCulpritRevealed' -and $storyManager -match 'OnEscapeKeyReady') 'StoryProgressManager must expose story events.'
 Assert-True ($storyManager -match 'deductionTimer' -and $storyManager -match 'DeductionTimerExpired') 'StoryProgressManager must support deduction timer GameOver.'
+Assert-True ($storyManager -match 'private\s+ClueJournalManager\s+observedJournalManager') 'StoryProgressManager must remember the journal manager it subscribed to.'
+Assert-True ($storyManager -match 'EnsureJournalSubscription\s*\(') 'StoryProgressManager must recover its clue journal subscription when managers are created later.'
+Assert-True ($storyManager -match 'CollectedClues') 'StoryProgressManager must catch up already-collected clues when the journal subscription is repaired.'
 
 Assert-True ($clueData -match 'clueID') 'ClueData must include a clueID field for story progression IDs.'
 Assert-True ($clueData -match 'ClueCategory' -and $clueData -match 'KeyClue') 'ClueData must distinguish general clues and key clues.'
@@ -62,9 +65,12 @@ Assert-True ($lockSystem -match 'HasAllKeyClues') 'LockSystem must gate escape k
 Assert-True ($endingUI -match 'JinSewoong' -and $endingUI -match 'BongTaehyeon' -and $endingUI -match 'MoonSumi' -and $endingUI -match 'OhSejin') 'EndingUI must include all four suspect choices.'
 Assert-True ($endingUI -match 'CulpritChaseButton' -and $endingUI -match 'culpritChaseButton' -and $endingUI.Contains($culpritChaseText)) 'EndingUI must create a visible culprit finding HUD button.'
 Assert-True ($endingUI -match 'OnPhaseChanged\.AddListener' -and $endingUI -match 'StoryPhase\.SuspectSelection') 'EndingUI must show the culprit guess button when suspect selection is unlocked.'
+Assert-True ($endingUI -match 'RefreshCulpritChaseButton\s*\(\s*\);') 'EndingUI must refresh the culprit guess button after runtime manager wiring changes.'
 Assert-True ($endingUI -match 'culpritChaseButton\.onClick\.AddListener\s*\(\s*Show\s*\)') 'The culprit chase HUD button must open the suspect selection UI.'
 Assert-True ($endingUI -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*1f\s*,\s*1f\s*\)' -and $endingUI -match 'anchoredPosition\s*=\s*new\s+Vector2\s*\(\s*-24f\s*,\s*-74f\s*\)') 'The culprit chase HUD button must sit under the top-right settings area so it is easy to find.'
 Assert-True ($endingUI -match 'OnCorrectSuspectSelected' -and $endingUI -match 'OnWrongSuspectSelected') 'EndingUI must expose correct/wrong selection events.'
+Assert-True ($storyManager -match 'GrantEscapeKeyFromCorrectSuspect') 'StoryProgressManager must have a direct key grant path for correct culprit deduction.'
+Assert-True ($endingUI -match 'GrantEscapeKeyFromCorrectSuspect\s*\(\s*\);[\s\S]*?BeginChase\s*\(\s*\)') 'Correct culprit selection must grant the escape key before the chase begins.'
 Assert-True ($endingUI -match 'StartChase') 'EndingUI must start chase on correct answer.'
 Assert-True ($endingUI -match 'WrongAnswer') 'EndingUI must route wrong answer to GameOver.'
 
