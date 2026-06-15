@@ -33,7 +33,12 @@ $manager = Get-Content -LiteralPath $managerPath -Raw -Encoding UTF8
 
 Assert-True ($assetGenerator -match 'GetEntries\s*\(\s*\)') 'ClueAssetGenerator must expose clue entries to the scene setup tool.'
 Assert-True ($assetGenerator -match 'internal\s+readonly\s+struct\s+ClueEntry') 'Clue entries must be shareable with editor setup.'
+Assert-True ($sceneSetup -match '\[InitializeOnLoad\]') 'Scene setup tool must initialize its Room02 scene repair hook after Unity recompiles scripts.'
 Assert-True ($sceneSetup -match 'MenuItem\("Tools/Room02/Clues/Setup Current Stage Clues"\)') 'Scene setup tool must expose a current-scene clue setup menu.'
+Assert-True ($sceneSetup -match 'MenuItem\("Tools/Room02/Clues/Restore All Clue Boxes"\)') 'Scene setup tool must expose an explicit restore-all-clues menu.'
+Assert-True ($sceneSetup -notmatch 'Place Single Test Clue' -and $sceneSetup -notmatch 'TestClueBox') 'Scene setup tool must not expose the old destructive single test clue menu.'
+Assert-True ($sceneSetup -match 'EditorApplication\.delayCall' -and $sceneSetup -match 'RepairOpenOperatingRoomCluesIfNeeded') 'Scene setup tool must auto-repair an open Room02 scene that only has stale test clues.'
+Assert-True ($sceneSetup -match 'testClueCount\s*>\s*0' -and $sceneSetup -match 'realClueCount\s*<\s*31') 'Scene auto-repair must only run when stale test clues are present and real clues are missing.'
 Assert-True ($sceneSetup -notmatch 'SetupAllStageClues') 'Scene setup must not target removed split-scene setup flows.'
 Assert-True ($sceneSetup -match 'SetupOperatingRoomSceneForBatch' -and $sceneSetup -match 'EditorSceneManager\.OpenScene' -and $sceneSetup -match 'EditorSceneManager\.SaveScene') 'Scene setup must expose an explicit batch method for applying and saving Scene_OperatingRoom.'
 Assert-True ($sceneSetup -match 'GenerateStoryClueAssets\s*\(') 'Scene setup must generate missing ClueData assets before wiring scene objects.'
@@ -55,7 +60,9 @@ Assert-True ($keyAssets.Count -eq 3) "Expected 3 generated key clue assets, foun
 $scene = Get-Content -LiteralPath $operatingScenePath -Raw -Encoding UTF8
 $wiredClueCount = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*11400000')).Count
 $emptyClueRefs = ([regex]::Matches($scene, 'clueData:\s*\{fileID:\s*0\}')).Count
+$testClueCount = ([regex]::Matches($scene, 'm_Name:\s+TestClue')).Count
 Assert-True ($wiredClueCount -eq 31) "Scene_OperatingRoom must contain all 31 wired clue boxes, found $wiredClueCount."
 Assert-True ($emptyClueRefs -eq 0) "Scene_OperatingRoom must not contain clue objects with empty clueData references, found $emptyClueRefs."
+Assert-True ($testClueCount -eq 0) "Scene_OperatingRoom must not contain temporary TestClue objects, found $testClueCount."
 
 Write-Host 'Clue scene wiring checks passed.'

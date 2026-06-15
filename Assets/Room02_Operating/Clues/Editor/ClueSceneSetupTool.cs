@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace EscapeRoom.Editor
 {
+    [InitializeOnLoad]
     public static class ClueSceneSetupTool
     {
         private static readonly HashSet<string> IntegratedZones = new HashSet<string>
@@ -28,86 +29,9 @@ namespace EscapeRoom.Editor
         private const float VisibleClueSpacingY = 0.55f;
         private const float VisibleClueFirstRowYOffset = -0.45f;
 
-        [MenuItem("Tools/Room02/Clues/Place Single Test Clue Box")]
-        public static void PlaceSingleTestClueBox()
+        static ClueSceneSetupTool()
         {
-            // Clues 루트 아래 기존 큐브 전부 제거
-            GameObject cluesRoot = GameObject.Find("Clues");
-            if (cluesRoot != null)
-            {
-                var children = new System.Collections.Generic.List<GameObject>();
-                foreach (Transform t in cluesRoot.transform)
-                    children.Add(t.gameObject);
-                foreach (var c in children)
-                    Undo.DestroyObjectImmediate(c);
-            }
-            else
-            {
-                cluesRoot = new GameObject("Clues");
-                Undo.RegisterCreatedObjectUndo(cluesRoot, "Create Clues Root");
-            }
-
-            // 런타임 매니저 확보
-            EnsureRuntimeObject<ClueJournalManager>("ClueJournalManager");
-            EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
-            EnsureRuntimeObject<TimerUI>("TimerUI");
-            EnsureRuntimeObject<SettingsUI>("SettingsUI");
-
-            // PlayerStart 앞 2m 위치 계산
-            GameObject ps = GameObject.Find("PlayerStart");
-            Vector3 spawnPos = ps != null
-                ? ps.transform.position + ps.transform.forward * 2f + Vector3.up * 0.15f
-                : new Vector3(0f, 0.15f, 2f);
-
-            GameObject box = CreateBoxObject("TestClueBox_cast_notice", cluesRoot.transform);
-            box.transform.position = spawnPos;
-            box.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            Undo.RegisterCreatedObjectUndo(box, "Create TestClueBox");
-
-            // ClueInteractable + ClueData 연결 (첫 번째 에셋 자동 사용)
-            ClueAssetGenerator.GenerateStoryClueAssets();
-            AssetDatabase.Refresh();
-
-            ClueBoxInteractable interactable = box.GetComponent<ClueBoxInteractable>();
-            if (interactable == null)
-            {
-                interactable = box.AddComponent<ClueBoxInteractable>();
-            }
-
-            // GetEntries()로 첫 번째 일반 단서 에셋 경로를 정확히 가져옴
-            ClueData asset = null;
-            foreach (ClueAssetGenerator.ClueEntry e in ClueAssetGenerator.GetEntries())
-            {
-                if (e.category != ClueCategory.KeyClue)
-                {
-                    asset = AssetDatabase.LoadAssetAtPath<ClueData>($"Assets/Room02_Operating/Clues/Normal/{e.fileName}.asset");
-                    if (asset != null) break;
-                }
-            }
-
-            if (asset != null)
-            {
-                var so = new SerializedObject(interactable);
-                so.FindProperty("clueData").objectReferenceValue = asset;
-                so.ApplyModifiedProperties();
-                Debug.Log($"[Clues] 테스트 박스에 ClueData 연결: {asset.clueName}");
-            }
-            else
-            {
-                Debug.LogError("[Clues] ClueData 에셋을 찾지 못했습니다. Tools > Room02 > Clues > Generate Story Clue Assets 먼저 실행하세요.");
-            }
-
-            EditorUtility.SetDirty(box);
-            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
-
-            EditorUtility.DisplayDialog("완료",
-                $"테스트 단서 박스 1개 배치 완료!\n\n위치: {spawnPos}\n단서: cast_notice\n\nCtrl+S 저장 후 플레이해서\nF키로 박스 조사 테스트!", "확인");
-        }
-
-        [MenuItem("Tools/Room02/Clues/Place Single Test Clue")]
-        public static void PlaceSingleTestClue()
-        {
-            PlaceSingleTestClueBox();
+            EditorApplication.delayCall += RepairOpenOperatingRoomCluesIfNeeded;
         }
 
         [MenuItem("Tools/Room02/Clues/Setup Current Stage Clues")]
@@ -132,6 +56,54 @@ namespace EscapeRoom.Editor
             if (!Application.isBatchMode)
             {
                 EditorUtility.DisplayDialog("단서 씬 세팅 완료", $"{scene.name} 단서 {placed}개 세팅 완료", "확인");
+            }
+        }
+
+        [MenuItem("Tools/Room02/Clues/Restore All Clue Boxes")]
+        public static void RestoreAllClueBoxes()
+        {
+            SetupCurrentStageClues();
+        }
+
+        private static void RepairOpenOperatingRoomCluesIfNeeded()
+        {
+            if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                return;
+            }
+
+            Scene scene = SceneManager.GetActiveScene();
+            if (scene.name != "Scene_OperatingRoom")
+            {
+                return;
+            }
+
+            GameObject cluesRoot = GameObject.Find("Clues");
+            if (cluesRoot == null)
+            {
+                return;
+            }
+
+            int realClueCount = 0;
+            int testClueCount = 0;
+            foreach (Transform child in cluesRoot.transform)
+            {
+                if (child.name.StartsWith("Clue_"))
+                {
+                    realClueCount++;
+                }
+                else if (child.name.StartsWith("TestClue"))
+                {
+                    testClueCount++;
+                }
+            }
+
+            if (testClueCount > 0 && realClueCount < 31)
+            {
+                ClueAssetGenerator.GenerateStoryClueAssets();
+                int placed = SetupScene(scene.name);
+                EditorSceneManager.MarkSceneDirty(scene);
+                Debug.LogWarning($"[Clues] Removed stale test clues and restored Room02 clue boxes. Placed/updated: {placed}");
             }
         }
 
