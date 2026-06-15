@@ -18,10 +18,9 @@ namespace EscapeRoom
             "눈을 떠보니 차가운 병원 복도였다.\n\n" +
             IntroSeparator + "\n\n" +
             "문은 잠겨 있고, 불빛은 불안하게 깜빡인다.\n" +
-            "나는 갇혔다.",
-
-            "오늘 밤, 이 폐요양 병원에서 한 명이 죽었다.\n\n" +
+            "나는 갇혔다.\n\n" +
             IntroSeparator + "\n\n" +
+            "오늘 밤, 이 폐요양 병원에서 한 명이 죽었다.\n\n" +
             "심령 동아리 부원 유안나.\n" +
             "수술실 수술대 위에서 싸늘하게 식은 채 발견됐다.\n" +
             "독살이었다.",
@@ -206,7 +205,7 @@ namespace EscapeRoom
             bodyText.fontSizeMin = 18f;
             bodyText.fontSizeMax = 24f;
             bodyText.lineSpacing = 8f;
-            pageText = CreateText("IntroPageIndicator", textBox, "1 / 4", 18f, TextAlignmentOptions.Center, HorrorUITheme.SickYellow);
+            pageText = CreateText("IntroPageIndicator", textBox, "1 / 3", 18f, TextAlignmentOptions.Center, HorrorUITheme.SickYellow);
             hintText = CreateText("IntroHint", textBox, "Space / F / 클릭: 다음", 18f, TextAlignmentOptions.Center, HorrorUITheme.TextDim);
 
             AddLayoutHeight(titleText, 48f);

@@ -29,11 +29,6 @@ namespace EscapeGame
         private GameObject menuDarkOverlay;
         private GameObject descriptionRoot;
         private GameObject generatedDescriptionPanel;
-        private GameObject generatedIntroPanel;
-        private GameObject roomIntroObject;
-        private GameObject roomIntroPanel;
-        private bool roomIntroWasActivated;
-        private int roomIntroShownFrame;
         private AudioSource menuAudioSource;
 
         private static readonly Color Blood = new Color(0.66f, 0.02f, 0.02f, 1f);
@@ -57,25 +52,6 @@ namespace EscapeGame
         private void Start()
         {
             ShowMainMenu();
-        }
-
-        private void LateUpdate()
-        {
-            if (!roomIntroWasActivated)
-            {
-                HideRoomIntro();
-                return;
-            }
-
-            if (Time.frameCount == roomIntroShownFrame)
-            {
-                return;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.F) || Input.GetMouseButtonDown(0))
-            {
-                LoadRoom();
-            }
         }
 
         public void OnDescriptionButtonClicked()
@@ -104,7 +80,7 @@ namespace EscapeGame
 
         public void OnStartButtonClicked()
         {
-            ShowStoryIntro();
+            LoadRoom();
         }
 
         public void LoadRoom()
@@ -133,13 +109,6 @@ namespace EscapeGame
             {
                 generatedDescriptionPanel.SetActive(false);
             }
-
-            if (generatedIntroPanel != null)
-            {
-                generatedIntroPanel.SetActive(false);
-            }
-
-            HideRoomIntro();
 
             if (menuBackdrop != null)
             {
@@ -202,34 +171,6 @@ namespace EscapeGame
             }
         }
 
-        private void ShowStoryIntro()
-        {
-            if (menuBackdrop != null)
-            {
-                menuBackdrop.SetActive(false);
-            }
-
-            SetButtonVisible(directStartButton, false);
-            SetButtonVisible(descriptionButton, false);
-
-            if (titleText != null)
-            {
-                titleText.gameObject.SetActive(false);
-            }
-
-            if (descriptionPanel != null)
-            {
-                SetDescriptionVisible(false);
-            }
-
-            if (generatedDescriptionPanel != null)
-            {
-                generatedDescriptionPanel.SetActive(false);
-            }
-
-            ShowGeneratedIntro();
-        }
-
         private void ResolveReferences()
         {
             directStartButton ??= FindButton("Button_DirectStart");
@@ -240,8 +181,6 @@ namespace EscapeGame
                 : descriptionPanel;
             descriptionStartButton ??= FindButton("StartGameButton");
             titleText ??= FindTitleText();
-            roomIntroObject ??= FindObjectByName("IntroScenarioUI");
-            roomIntroPanel ??= FindObjectByName("IntroScenarioPanel");
         }
 
         private void WireButtons()
@@ -331,22 +270,6 @@ namespace EscapeGame
             }
         }
 
-        private void HideRoomIntro()
-        {
-            roomIntroPanel ??= FindObjectByName("IntroScenarioPanel");
-            if (roomIntroPanel != null)
-            {
-                roomIntroPanel.SetActive(false);
-            }
-
-            roomIntroObject ??= FindObjectByName("IntroScenarioUI");
-            GameObject hudCanvas = FindObjectByName("HUD_Canvas");
-            if (hudCanvas != null)
-            {
-                hudCanvas.SetActive(false);
-            }
-        }
-
         private void SetDescriptionVisible(bool visible)
         {
             if (descriptionRoot != null)
@@ -358,79 +281,6 @@ namespace EscapeGame
             {
                 descriptionPanel.SetActive(false);
             }
-        }
-
-        private void ShowGeneratedIntro()
-        {
-            roomIntroWasActivated = true;
-            roomIntroShownFrame = Time.frameCount;
-
-            if (generatedIntroPanel == null)
-            {
-                BuildGeneratedIntroPanel();
-            }
-
-            if (generatedIntroPanel != null)
-            {
-                generatedIntroPanel.SetActive(true);
-                generatedIntroPanel.transform.SetAsLastSibling();
-            }
-        }
-
-        private void BuildGeneratedIntroPanel()
-        {
-            Canvas canvas = GetComponent<Canvas>();
-            if (canvas == null)
-            {
-                return;
-            }
-
-            generatedIntroPanel = new GameObject("GeneratedIntroPanel");
-            generatedIntroPanel.transform.SetParent(canvas.transform, false);
-            Image backdrop = generatedIntroPanel.AddComponent<Image>();
-            backdrop.color = new Color(0f, 0f, 0f, 0.72f);
-
-            RectTransform rootRect = generatedIntroPanel.GetComponent<RectTransform>();
-            rootRect.anchorMin = Vector2.zero;
-            rootRect.anchorMax = Vector2.one;
-            rootRect.offsetMin = Vector2.zero;
-            rootRect.offsetMax = Vector2.zero;
-
-            GameObject box = new GameObject("IntroStoryBox");
-            box.transform.SetParent(generatedIntroPanel.transform, false);
-            Image boxImage = box.AddComponent<Image>();
-            boxImage.color = new Color(0.015f, 0.012f, 0.012f, 0.96f);
-
-            RectTransform boxRect = box.GetComponent<RectTransform>();
-            boxRect.anchorMin = new Vector2(0.5f, 0.5f);
-            boxRect.anchorMax = new Vector2(0.5f, 0.5f);
-            boxRect.pivot = new Vector2(0.5f, 0.5f);
-            boxRect.anchoredPosition = Vector2.zero;
-            boxRect.sizeDelta = new Vector2(640f, 250f);
-
-            VerticalLayoutGroup layout = box.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(46, 46, 28, 24);
-            layout.spacing = 14f;
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandHeight = false;
-
-            TextMeshProUGUI title = CreateText(box.transform, "IntroTitle", "\uC808\uADDC\uC758 \uC218\uC220\uC2E4", 28f, Blood);
-            title.fontStyle = FontStyles.Bold;
-            AddPreferredHeight(title.gameObject, 38f);
-
-            TextMeshProUGUI body = CreateText(
-                box.transform,
-                "IntroBody",
-                "\uB208\uC744 \uB5A0\uBCF4\uB2C8 \uCC28\uAC00\uC6B4 \uBCD1\uC6D0 \uBCF5\uB3C4\uC600\uB2E4.\n\n\uBB38\uC740 \uC7A0\uACA8 \uC788\uACE0, \uBD88\uB7C9\uD55C \uC870\uBA85\uB9CC\uC774 \uB108\uB97C \uBC18\uACA8\uC900\uB2E4.\n\n\uD0C8\uCD9C\uAD6C \uC5F4\uC1E0\uB294 \uC774 \uC548 \uC5B4\uB518\uAC00\uC5D0 \uC788\uB2E4. \uB2E8\uC11C\uB97C \uCC3E\uC544\uB77C. \uBC94\uC778\uC744 \uBC1D\uD600\uB77C.\n\uADF8\uB9AC\uACE0 20\uBD84 \uC548\uC5D0 \uC5EC\uAE30\uC11C \uB098\uAC00\uB77C.",
-                18f,
-                TextMain);
-            AddPreferredHeight(body.gameObject, 118f);
-
-            TextMeshProUGUI hint = CreateText(box.transform, "IntroHint", "Space / F / \uD074\uB9AD: \uC815\uC2E0 \uCC28\uB9AC\uAE30", 15f, TextDim);
-            AddPreferredHeight(hint.gameObject, 28f);
-
-            generatedIntroPanel.SetActive(false);
         }
 
         private void BuildDescriptionPanel()

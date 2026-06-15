@@ -103,6 +103,7 @@ foreach ($line in $introRequiredLines) {
     Assert-True ($intro.Contains($line)) "IntroScenarioUI must show requested opening narration line: $line"
 }
 Assert-True ($intro -match 'IntroPages\s*=' -and $intro -match 'currentPageIndex' -and $intro -match 'UpdateIntroPage\s*\(') 'IntroScenarioUI must split the intro into multiple pages instead of one long body.'
+Assert-True ($intro -match 'IntroPageIndicator",\s*textBox,\s*"1 / 3"' -and $intro -notmatch 'IntroPageIndicator",\s*textBox,\s*"1 / 4"') 'IntroScenarioUI must present the requested Room02 intro as 3 pages.'
 Assert-True ($intro -match 'PreviousIntroPageButton' -and $intro -match 'NextIntroPageButton' -and $intro -match 'PreviousIntroPage\s*\(' -and $intro -match 'NextIntroPage\s*\(') 'IntroScenarioUI must provide side navigation buttons for intro pages.'
 Assert-True ($intro -match 'BottomLeftIntroButtonPosition' -and $intro -match 'BottomRightIntroButtonPosition') 'IntroScenarioUI must place intro navigation buttons at the bottom left and bottom right.'
 Assert-True ($intro.Contains($leftArrow) -and $intro.Contains($rightArrow) -and $intro.Contains($playArrow)) 'IntroScenarioUI must use arrow labels for previous, next, and start.'
