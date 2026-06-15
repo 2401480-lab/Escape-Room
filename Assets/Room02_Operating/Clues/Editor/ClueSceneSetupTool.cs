@@ -95,13 +95,12 @@ namespace EscapeRoom.Editor
                 }
             }
 
-            bool needsPositionRepair = CluePlacementLayout.SceneNeedsPositionRepair(cluesRoot);
-            if ((testClueCount > 0 && realClueCount < ExpectedStoryClueCount) || needsPositionRepair)
+            if (testClueCount > 0 && realClueCount < ExpectedStoryClueCount)
             {
                 ClueAssetGenerator.GenerateStoryClueAssets();
                 int placed = SetupScene(scene.name);
                 EditorSceneManager.MarkSceneDirty(scene);
-                Debug.LogWarning($"[Clues] Restored Room02 clue boxes and distributed positions. Placed/updated: {placed}");
+                Debug.LogWarning($"[Clues] Removed stale test clues and restored Room02 clue boxes. Placed/updated: {placed}");
             }
         }
 

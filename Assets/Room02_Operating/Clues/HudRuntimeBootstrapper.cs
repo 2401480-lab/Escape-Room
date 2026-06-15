@@ -54,7 +54,6 @@ namespace EscapeRoom
             EnsureRuntimeObject<IntroScenarioUI>("IntroScenarioUI");
             EnsureRuntimeObject<Room02FlashlightController>("Room02_FlashlightController");
             EnsureRuntimeObject<Room02BgmPlayer>("Room02_BGM");
-            CluePlacementLayout.ApplyExistingSceneCluePositions();
         }
 
         private static bool IsRoom02Scene(Scene scene)

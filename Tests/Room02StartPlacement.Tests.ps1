@@ -18,7 +18,7 @@ function From-B64 {
 
 Assert-True (Test-Path -LiteralPath $scenePath) 'Missing Room02 Show gameplay scene.'
 Assert-True (Test-Path -LiteralPath $setupPath) 'Missing Room02 clue setup tool.'
-Assert-True (Test-Path -LiteralPath $layoutPath) 'Missing Room02 runtime clue placement layout.'
+Assert-True (Test-Path -LiteralPath $layoutPath) 'Missing Room02 shared clue placement layout.'
 Assert-True (Test-Path -LiteralPath $bootstrapperPath) 'Missing Room02 runtime bootstrapper.'
 
 $scene = Get-Content -LiteralPath $scenePath -Raw -Encoding UTF8
@@ -79,9 +79,9 @@ foreach ($zone in @(
 $vectorCount = ([regex]::Matches($layout, 'new\s+Vector3\s*\(')).Count
 Assert-True ($vectorCount -ge 15) "Placement layout must define at least 15 world positions, found $vectorCount."
 Assert-True ($layout -match 'TryGetPosition\s*\(') 'Placement layout must expose TryGetPosition.'
-Assert-True ($layout -match 'ApplyExistingSceneCluePositions\s*\(') 'Placement layout must be able to reposition existing Show clue objects at runtime.'
 Assert-True ($setup -match 'CluePlacementLayout\.TryGetPosition') 'Editor clue setup must use the shared room-distributed clue positions.'
-Assert-True ($bootstrapper -match 'CluePlacementLayout\.ApplyExistingSceneCluePositions') 'Runtime bootstrapper must repair clue positions after Onboarding loads Show.'
+Assert-True ($setup -notmatch 'SceneNeedsPositionRepair') 'Editor auto-repair must not overwrite manually moved clue positions.'
+Assert-True ($bootstrapper -notmatch 'CluePlacementLayout\.ApplyExistingSceneCluePositions') 'Runtime bootstrapper must preserve manually moved clue positions in Play mode.'
 Assert-True ($setup -notmatch 'GetStartAreaClueWorldPosition') 'Clue setup must not place every clue back into the start-area grid.'
 Assert-True ($setup -notmatch 'StartAreaGridColumns|StartAreaFirstX|StartAreaFirstZ') 'Start-area-only placement constants must be removed.'
 Assert-True ($setup -match 'CluesRootPosition' -and $setup -match 'Vector3\.zero') 'Clue setup must keep the Clues root at the world origin.'
