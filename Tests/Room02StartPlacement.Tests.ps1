@@ -39,19 +39,6 @@ function Get-NamedPosition {
     }
 }
 
-function Assert-InRoom {
-    param(
-        [object] $Position,
-        [string] $RoomName,
-        [double] $MinX,
-        [double] $MaxX,
-        [double] $MinZ,
-        [double] $MaxZ
-    )
-
-    Assert-True ($Position.X -ge $MinX -and $Position.X -le $MaxX -and $Position.Z -ge $MinZ -and $Position.Z -le $MaxZ) "$($Position.Name) must be in $RoomName; found x=$($Position.X), z=$($Position.Z)."
-}
-
 $cluesRoot = Get-NamedPosition $scene 'Clues'
 Assert-True ([math]::Abs($cluesRoot.X) -lt 0.001 -and [math]::Abs($cluesRoot.Y) -lt 0.001 -and [math]::Abs($cluesRoot.Z) -lt 0.001) 'Clues root must stay at world origin so clue local positions match room coordinates.'
 
@@ -81,24 +68,9 @@ foreach ($match in $clueMatches) {
 
 Assert-True ($uniquePositions.Count -eq 15) "All 15 clues must be individually visible, not stacked; found only $($uniquePositions.Count) unique positions."
 
-foreach ($name in @('Clue_normal_cast_notice', 'Clue_normal_memorial_frame', 'Clue_normal_conversation_memo')) {
-    Assert-InRoom $positions[$name] 'Corridor room' -16.0 -6.0 -25.0 -18.0
-}
-
-foreach ($name in @('Clue_normal_ward_calendar', 'Clue_normal_medical_certificate', 'Clue_clue_hasho_will', 'Clue_key_clue_coldest_place')) {
-    Assert-InRoom $positions[$name] 'Ward room' -39.0 -28.0 -29.0 -20.0
-}
-
-foreach ($name in @('Clue_key_clue_temperature_warning', 'Clue_normal_bong_rebuttal', 'Clue_key_clue_fridge_scratches')) {
-    Assert-InRoom $positions[$name] 'Storage/cold room' 9.0 17.5 -18.5 -10.0
-}
-
-foreach ($name in @('Clue_normal_makeup_toolbox', 'Clue_normal_sumi_memo', 'Clue_clue_makeup_diary')) {
-    Assert-InRoom $positions[$name] 'Dressing room' -16.0 -6.0 -14.0 -6.0
-}
-
-foreach ($name in @('Clue_normal_under_table_space', 'Clue_normal_mirror_message')) {
-    Assert-InRoom $positions[$name] 'Operating room' 5.0 15.5 -28.5 -20.0
+foreach ($position in $positions.Values) {
+    Assert-True ($position.X -ge -2.7 -and $position.X -le 2.7) "$($position.Name) must be near the player start in X; found x=$($position.X)."
+    Assert-True ($position.Z -ge 2.2 -and $position.Z -le 5.0) "$($position.Name) must be in front of the player start; found z=$($position.Z)."
 }
 
 Assert-True ($scene -match 'Culprit_StartPosition') 'Scene must contain the culprit start-position object.'
@@ -112,8 +84,8 @@ if ($culpritPositionMatch.Success) {
     Assert-True ([math]::Abs($culpritY) -lt 0.001) "Culprit must stand on the floor; found y=$culpritY."
 }
 
-Assert-True ($setup -match 'GetRoomDistributedClueWorldPosition' -and $setup -match 'IntegratedCluePositions') 'Clue setup must place clues into room-distributed coordinates.'
+Assert-True ($setup -match 'GetStartAreaClueWorldPosition') 'Clue setup must place clues into the start-area visible grid.'
 Assert-True ($setup -match 'CluesRootPosition' -and $setup -match 'Vector3\.zero') 'Clue setup must keep the Clues root at the world origin.'
-Assert-True ($setup -notmatch 'GetVisibleClueStackWorldPosition' -and $setup -notmatch 'GetCameraVisibleClueWorldPosition') 'Clue setup must not stack every clue into the start-camera visible grid.'
+Assert-True ($setup -notmatch 'IntegratedCluePositions' -and $setup -notmatch 'GetRoomDistributedClueWorldPosition') 'Clue setup must not send clues back to room-distributed coordinates.'
 
 Write-Host 'Room02 start placement checks passed.'
