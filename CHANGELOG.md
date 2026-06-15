@@ -262,3 +262,7 @@
 ### [2026-06-14 19:24:04]
 - Assets/Abandoned_Asylum 아래에 남아 있던 Show.unity, Show 라이트맵/반사 프로브 데이터, Show_Assets 관련 파일을 Assets/Room02_Operating/Scenes 아래로 이동
 - Room02 범위 검증 테스트에 Show 관련 씬과 조명 데이터가 Abandoned_Asylum에 남지 않는지 확인하는 항목을 추가
+
+### [2026-06-15 09:20:57]
+- 미커밋 상태로 남아 있던 Room02 운영 씬, Show 씬, TMP 한글 폰트 에셋, 추가 배경음 파일들을 커밋 대상에 포함
+- Scene_OperatingRoom에서 빠져 있던 Show 맵 프리팹 연결을 복구하여 Room02 플레이 씬에 실제 맵 참조가 유지되도록 수정
