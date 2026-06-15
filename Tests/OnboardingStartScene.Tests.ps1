@@ -7,6 +7,8 @@ $onboardingScriptPath = Join-Path $root 'Assets/_Shared/Scripts/OnboardingUI.cs'
 $playModeStartPath = Join-Path $root 'Assets/_Shared/Scripts/Editor/OnboardingPlayModeStartScene.cs'
 $backgroundPath = Join-Path $root 'Assets/_Shared/Resources/Onboarding/HospitalHorrorBackground.png'
 $backgroundMetaPath = Join-Path $root 'Assets/_Shared/Resources/Onboarding/HospitalHorrorBackground.png.meta'
+$onboardingBgmPath = Join-Path $root 'Assets/_Shared/Resources/Audio/BGM/OnboardingHospitalAmbience.aif'
+$onboardingBgmMetaPath = Join-Path $root 'Assets/_Shared/Resources/Audio/BGM/OnboardingHospitalAmbience.aif.meta'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -23,12 +25,15 @@ Assert-True (Test-Path -LiteralPath $onboardingScriptPath) 'OnboardingUI script 
 Assert-True (Test-Path -LiteralPath $playModeStartPath) 'Editor play mode start scene helper must exist.'
 Assert-True (Test-Path -LiteralPath $backgroundPath) 'Onboarding hospital horror background image must exist under _Shared Resources.'
 Assert-True (Test-Path -LiteralPath $backgroundMetaPath) 'Onboarding hospital horror background image meta must exist.'
+Assert-True (Test-Path -LiteralPath $onboardingBgmPath) 'Onboarding looping BGM clip must exist under _Shared Resources.'
+Assert-True (Test-Path -LiteralPath $onboardingBgmMetaPath) 'Onboarding looping BGM clip meta must exist.'
 
 $buildSettings = Get-Content -LiteralPath $buildSettingsPath -Raw -Encoding UTF8
 $onboardingScene = Get-Content -LiteralPath $onboardingScenePath -Raw -Encoding UTF8
 $onboardingScript = Get-Content -LiteralPath $onboardingScriptPath -Raw -Encoding UTF8
 $playModeStart = Get-Content -LiteralPath $playModeStartPath -Raw -Encoding UTF8
 $backgroundMeta = Get-Content -LiteralPath $backgroundMetaPath -Raw -Encoding UTF8
+$onboardingBgmMeta = Get-Content -LiteralPath $onboardingBgmMetaPath -Raw -Encoding UTF8
 $gameStart = U 0xAC8C,0xC784,0x0020,0xC2DC,0xC791
 $gameSettings = U 0xAC8C,0xC784,0x0020,0xC124,0xC815
 $gameDescription = U 0xAC8C,0xC784,0x0020,0xC124,0xBA85
@@ -49,6 +54,12 @@ Assert-True ($onboardingScript -match 'BackgroundResourcePath\s*=\s*"Onboarding/
 Assert-True ($onboardingScript -match 'Resources\.Load<Sprite>\s*\(\s*BackgroundResourcePath\s*\)') 'OnboardingUI must load the onboarding background sprite.'
 Assert-True ($onboardingScript -match 'OnboardingHospitalHorrorBackground') 'OnboardingUI must create a named hospital horror background object.'
 Assert-True ($onboardingScript -match 'OnboardingDarkVignetteOverlay') 'OnboardingUI must add a dark overlay over the background image.'
+Assert-True ($onboardingScript -match 'BackgroundMusicResourcePath\s*=\s*"Audio/BGM/OnboardingHospitalAmbience"') 'OnboardingUI must load its menu BGM from a shared Resources audio path.'
+Assert-True ($onboardingScript -match 'Resources\.Load<AudioClip>\s*\(\s*BackgroundMusicResourcePath\s*\)') 'OnboardingUI must load the onboarding BGM AudioClip.'
+Assert-True ($onboardingScript -match 'AudioSource\s+menuAudioSource') 'OnboardingUI must keep a dedicated menu AudioSource for onboarding BGM.'
+Assert-True ($onboardingScript -match '\.loop\s*=\s*true' -and $onboardingScript -match '\.spatialBlend\s*=\s*0f') 'Onboarding menu BGM must loop as 2D background audio.'
+Assert-True ($onboardingScript -match 'PlayOnboardingMusic\s*\(' -and $onboardingScript -match 'StopOnboardingMusic\s*\(') 'OnboardingUI must start menu BGM on the menu and stop it when leaving onboarding.'
+Assert-True ($onboardingScript -notmatch 'Audio/Intro/guts_and_gore_19' -and $onboardingScript -notmatch 'guts_and_gore') 'Onboarding menu BGM must not use the intro-only SFX.'
 Assert-True ($onboardingScript.Contains($gameStart) -or $onboardingScript -match '\\uAC8C\\uC784\s+\\uC2DC\\uC791') 'OnboardingUI must label the start button as game start.'
 Assert-True ($onboardingScript.Contains($gameSettings) -or $onboardingScript -match '\\uAC8C\\uC784\s+\\uC124\\uC815') 'OnboardingUI must label the settings button as game settings.'
 Assert-True (-not $onboardingScript.Contains($gameDescription) -and $onboardingScript -notmatch '\\uAC8C\\uC784\s+\\uC124\\uBA85') 'OnboardingUI main menu must not keep the old game description label.'
@@ -60,5 +71,6 @@ Assert-True ($playModeStart -match 'AssetDatabase\.LoadAssetAtPath<SceneAsset>')
 
 Assert-True ($backgroundMeta -match 'textureType:\s*8') 'Onboarding background texture must import as a Sprite.'
 Assert-True ($backgroundMeta -match 'spriteMode:\s*1') 'Onboarding background texture must be a single sprite.'
+Assert-True ($onboardingBgmMeta -match 'AudioImporter:' -and $onboardingBgmMeta -match 'preloadAudioData:\s*1') 'Onboarding BGM must import as an AudioClip with preloaded audio data.'
 
 Write-Host 'Onboarding start scene checks passed.'

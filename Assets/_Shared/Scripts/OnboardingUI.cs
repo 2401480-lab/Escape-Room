@@ -10,6 +10,11 @@ namespace EscapeGame
         [Header("Scene")]
         [SerializeField] private string roomSceneName = "Show";
         private const string BackgroundResourcePath = "Onboarding/HospitalHorrorBackground";
+        private const string BackgroundMusicResourcePath = "Audio/BGM/OnboardingHospitalAmbience";
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip backgroundMusicClip;
+        [SerializeField, Range(0f, 1f)] private float backgroundMusicVolume = 0.45f;
 
         [Header("Main Menu")]
         [SerializeField] private TextMeshProUGUI titleText;
@@ -29,6 +34,7 @@ namespace EscapeGame
         private GameObject roomIntroPanel;
         private bool roomIntroWasActivated;
         private int roomIntroShownFrame;
+        private AudioSource menuAudioSource;
 
         private static readonly Color Blood = new Color(0.66f, 0.02f, 0.02f, 1f);
         private static readonly Color ButtonIdle = new Color(0.12f, 0.014f, 0.016f, 0.98f);
@@ -40,6 +46,7 @@ namespace EscapeGame
         private void Awake()
         {
             ResolveReferences();
+            EnsureOnboardingMusic();
             BuildMenuBackdrop();
             WireButtons();
             ApplyInitialLayout();
@@ -102,11 +109,13 @@ namespace EscapeGame
 
         public void LoadRoom()
         {
+            StopOnboardingMusic();
             SceneManager.LoadScene(roomSceneName);
         }
 
         private void ShowMainMenu()
         {
+            PlayOnboardingMusic();
             SetButtonVisible(directStartButton, true);
             SetButtonVisible(descriptionButton, true);
 
@@ -136,6 +145,60 @@ namespace EscapeGame
             {
                 menuBackdrop.SetActive(true);
                 menuBackdrop.transform.SetAsFirstSibling();
+            }
+        }
+
+        private void EnsureOnboardingMusic()
+        {
+            menuAudioSource = GetComponent<AudioSource>();
+            if (menuAudioSource == null)
+            {
+                menuAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            menuAudioSource.playOnAwake = false;
+            menuAudioSource.loop = true;
+            menuAudioSource.spatialBlend = 0f;
+            menuAudioSource.volume = backgroundMusicVolume;
+
+            if (backgroundMusicClip == null)
+            {
+                backgroundMusicClip = Resources.Load<AudioClip>(BackgroundMusicResourcePath);
+            }
+
+            if (backgroundMusicClip != null)
+            {
+                menuAudioSource.clip = backgroundMusicClip;
+            }
+        }
+
+        private void PlayOnboardingMusic()
+        {
+            EnsureOnboardingMusic();
+
+            if (menuAudioSource == null || backgroundMusicClip == null)
+            {
+                return;
+            }
+
+            menuAudioSource.enabled = true;
+            menuAudioSource.mute = false;
+            menuAudioSource.clip = backgroundMusicClip;
+            menuAudioSource.volume = backgroundMusicVolume;
+            menuAudioSource.loop = true;
+            menuAudioSource.spatialBlend = 0f;
+
+            if (!menuAudioSource.isPlaying)
+            {
+                menuAudioSource.Play();
+            }
+        }
+
+        private void StopOnboardingMusic()
+        {
+            if (menuAudioSource != null)
+            {
+                menuAudioSource.Stop();
             }
         }
 
