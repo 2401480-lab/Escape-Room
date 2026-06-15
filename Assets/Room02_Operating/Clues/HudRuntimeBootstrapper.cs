@@ -1,15 +1,46 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace EscapeRoom
 {
     public static class HudRuntimeBootstrapper
     {
+        private const string Room02ScenePath = "Assets/Room02_Operating/Scenes/Show.unity";
+        private static bool subscribedToSceneLoaded;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
+            EnsureSceneLoadedSubscription();
+            BootstrapRoom02Runtime(SceneManager.GetActiveScene());
+        }
+
+        private static void EnsureSceneLoadedSubscription()
+        {
+            if (subscribedToSceneLoaded)
+            {
+                return;
+            }
+
+            SceneManager.sceneLoaded += HandleSceneLoaded;
+            subscribedToSceneLoaded = true;
+        }
+
+        private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            BootstrapRoom02Runtime(scene);
+        }
+
+        private static void BootstrapRoom02Runtime(Scene scene)
+        {
+            if (!IsRoom02Scene(scene))
+            {
+                return;
+            }
+
             EnsureHudCanvas();
             EnsureEventSystem();
             EnsureRuntimeObject<ClueJournalManager>("ClueJournalManager");
@@ -23,6 +54,11 @@ namespace EscapeRoom
             EnsureRuntimeObject<IntroScenarioUI>("IntroScenarioUI");
             EnsureRuntimeObject<Room02FlashlightController>("Room02_FlashlightController");
             EnsureRuntimeObject<Room02BgmPlayer>("Room02_BGM");
+        }
+
+        private static bool IsRoom02Scene(Scene scene)
+        {
+            return scene.name == "Show" || scene.path == Room02ScenePath;
         }
 
         private static void EnsureHudCanvas()
