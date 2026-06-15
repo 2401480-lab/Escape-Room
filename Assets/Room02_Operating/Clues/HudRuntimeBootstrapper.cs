@@ -20,6 +20,7 @@ namespace EscapeRoom
             EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
             EnsureRuntimeObject<ClueBoxRuntimeAdapter>("ClueBoxRuntimeAdapter");
             EnsureRuntimeObject<IntroScenarioUI>("IntroScenarioUI");
+            EnsureRuntimeObject<Room02FlashlightController>("Room02_FlashlightController");
         }
 
         private static void EnsureHudCanvas()

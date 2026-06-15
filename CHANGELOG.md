@@ -291,3 +291,9 @@
 - Room02 단서 배치 툴에서 테스트 단서 1개만 남기는 메뉴를 제거하고 전체 단서 복구 메뉴로 교체
 - Scene_OperatingRoom에서 TestClue만 남고 실제 단서가 부족한 에디터 상태를 스크립트 리로드 시 자동 복구하도록 처리
 - 저장된 Room02 씬에 실제 단서 31개가 유지되고 임시 TestClueBox가 남지 않도록 검증 테스트 강화
+
+### [2026-06-15 14:20:30]
+- Room02 게임 화면을 전반적으로 어둡게 낮추고 Main Camera를 따라가는 원형 손전등 조명과 화면 마스크를 추가
+- Scene_OperatingRoom에 Room02_FlashlightController를 배치하고 런타임 부트스트래퍼에서도 자동 생성되도록 보강
+- Room02_BGM에 AudioSource를 직접 연결하고 재생 중 끊기면 다시 시작되도록 BGM 플레이어를 보강
+- 손전등 조명과 BGM 연결 상태를 검증하는 테스트를 추가 및 강화

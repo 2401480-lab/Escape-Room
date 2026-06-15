@@ -17,11 +17,23 @@ namespace EscapeRoom
             ApplySourceSettings();
         }
 
+        private void OnEnable()
+        {
+            audioSource = GetOrCreateAudioSource();
+            ApplySourceSettings();
+            TryPlay();
+        }
+
         private void Start()
         {
-            if (playOnStart && bgmClip != null && audioSource != null && !audioSource.isPlaying)
+            TryPlay();
+        }
+
+        private void Update()
+        {
+            if (playOnStart && audioSource != null && bgmClip != null && !audioSource.isPlaying)
             {
-                audioSource.Play();
+                TryPlay();
             }
         }
 
@@ -47,12 +59,32 @@ namespace EscapeRoom
 
         private void ApplySourceSettings()
         {
+            if (audioSource == null)
+            {
+                return;
+            }
+
+            if (bgmClip == null && audioSource.clip != null)
+            {
+                bgmClip = audioSource.clip;
+            }
+
             audioSource.clip = bgmClip;
             audioSource.volume = volume;
             audioSource.loop = loop;
-            audioSource.playOnAwake = false;
+            audioSource.playOnAwake = playOnStart;
             audioSource.spatialBlend = 0f;
             audioSource.priority = 128;
+        }
+
+        private void TryPlay()
+        {
+            if (!playOnStart || bgmClip == null || audioSource == null || audioSource.isPlaying)
+            {
+                return;
+            }
+
+            audioSource.Play();
         }
     }
 }

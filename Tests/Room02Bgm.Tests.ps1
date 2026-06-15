@@ -29,11 +29,15 @@ Assert-True ($script -match 'AudioClip\s+bgmClip') 'Room02 BGM player must expos
 Assert-True ($script -match 'AddComponent<AudioSource>\s*\(') 'Room02 BGM player must create an AudioSource when one is missing.'
 Assert-True ($script -match '\.loop\s*=\s*loop' -and $script -match '\.spatialBlend\s*=\s*0f') 'Room02 BGM must play as looping 2D background audio.'
 Assert-True ($script -match '\.Play\s*\(') 'Room02 BGM player must start playback.'
+Assert-True ($script -match 'OnEnable\s*\(' -and $script -match 'TryPlay\s*\(') 'Room02 BGM player must retry playback when enabled.'
+Assert-True ($script -match 'Update\s*\(' -and $script -match '!audioSource\.isPlaying') 'Room02 BGM player must recover if playback stops during play.'
 
 Assert-True ($scene -match 'm_Name:\s+Room02_BGM') 'Scene_OperatingRoom must contain the Room02_BGM object.'
 Assert-True ($scene -match [regex]::Escape("guid: $scriptGuid")) 'Scene_OperatingRoom must reference Room02BgmPlayer.'
 Assert-True ($scene -match [regex]::Escape("guid: $clipGuid")) 'Scene_OperatingRoom must reference the selected BGM clip.'
 Assert-True ($scene -match 'volume:\s+0\.35') 'Room02 BGM volume must be set to a restrained default.'
 Assert-True ($scene -match 'loop:\s+1') 'Room02 BGM must loop.'
+Assert-True ($scene -match 'AudioSource:[\s\S]*?m_GameObject:\s*\{fileID:\s*2003000000\}[\s\S]*?m_audioClip:\s*\{fileID:\s*8300000,\s*guid:\s*' + [regex]::Escape($clipGuid)) 'Room02_BGM must have an AudioSource with the selected clip in the scene.'
+Assert-True ($scene -match 'AudioSource:[\s\S]*?m_PlayOnAwake:\s+1' -and $scene -match 'AudioSource:[\s\S]*?m_Volume:\s+0\.35' -and $scene -match 'AudioSource:[\s\S]*?Loop:\s+1') 'Room02_BGM AudioSource must play on awake, stay restrained, and loop.'
 
 Write-Host 'Room02 BGM checks passed.'
