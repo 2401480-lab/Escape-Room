@@ -63,6 +63,9 @@ $introRequiredLines = @(
     (From-B64 '6re466as6rOgIOKAlCAyMOu2hCDslYjsl5Ag7Jes6riw7IScIOuCmOqwgOudvC4='),
     (From-B64 'U3BhY2UgLyBGIC8g7YG066atOiDri6TsnYw=')
 )
+$leftArrow = U 0x2190
+$rightArrow = U 0x2192
+$playArrow = U 0x25B6
 
 Assert-True ($box -match 'namespace\s+EscapeRoom') 'ClueBoxInteractable must use EscapeRoom namespace.'
 Assert-True ($box -match 'class\s+ClueBoxInteractable\s*:\s*MonoBehaviour') 'ClueBoxInteractable must be a MonoBehaviour.'
@@ -101,8 +104,11 @@ foreach ($line in $introRequiredLines) {
 }
 Assert-True ($intro -match 'IntroPages\s*=' -and $intro -match 'currentPageIndex' -and $intro -match 'UpdateIntroPage\s*\(') 'IntroScenarioUI must split the intro into multiple pages instead of one long body.'
 Assert-True ($intro -match 'PreviousIntroPageButton' -and $intro -match 'NextIntroPageButton' -and $intro -match 'PreviousIntroPage\s*\(' -and $intro -match 'NextIntroPage\s*\(') 'IntroScenarioUI must provide side navigation buttons for intro pages.'
+Assert-True ($intro -match 'BottomLeftIntroButtonPosition' -and $intro -match 'BottomRightIntroButtonPosition') 'IntroScenarioUI must place intro navigation buttons at the bottom left and bottom right.'
+Assert-True ($intro.Contains($leftArrow) -and $intro.Contains($rightArrow) -and $intro.Contains($playArrow)) 'IntroScenarioUI must use arrow labels for previous, next, and start.'
 Assert-True ($intro -match 'currentPageIndex\s*>=\s*IntroPages\.Length\s*-\s*1' -and $intro -match 'SetOpen\s*\(\s*false\s*\)') 'IntroScenarioUI must close only after advancing from the last intro page.'
-Assert-True ($intro -match 'IntroSoundResourcePath' -and $intro -match 'Audio/SFX/Deadly Kombat Free version/guts_and_gore_19') 'IntroScenarioUI must load intro-only SFX from Room02 Resources.'
+Assert-True ($intro -match 'IntroSoundResourcePath' -and $intro -match 'Audio/Intro/guts_and_gore_19') 'IntroScenarioUI must load intro-only SFX from the Room02 intro audio path.'
+Assert-True ($intro -notmatch 'Deadly Kombat Free version') 'IntroScenarioUI must not load the full imported SFX package path for intro audio.'
 Assert-True ($intro -match 'AudioSource\s+introAudioSource' -and $intro -match 'Resources\.Load<AudioClip>' -and $intro -match 'PlayIntroSound\s*\(' -and $intro -match 'PlayOneShot') 'IntroScenarioUI must play a one-shot intro SFX when the text opens.'
 Assert-True ($intro -match 'StopIntroSound\s*\(' -and $intro -match 'introAudioSource\.Stop\s*\(' -and $intro -match 'SetOpen\s*\(\s*false\s*\)') 'IntroScenarioUI must stop the intro SFX when the intro text closes.'
 Assert-True ($intro -match 'KeyCode\.Space' -and $intro -match 'KeyCode\.F' -and $intro -match 'Input\.GetMouseButtonDown') 'IntroScenarioUI must dismiss with Space, F, or click.'

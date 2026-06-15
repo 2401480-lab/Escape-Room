@@ -8,7 +8,11 @@ namespace EscapeRoom
     public class IntroScenarioUI : MonoBehaviour
     {
         private const string IntroSeparator = "─────────────────────────";
-        private const string IntroSoundResourcePath = "Audio/SFX/Deadly Kombat Free version/guts_and_gore_19";
+        private const string IntroSoundResourcePath = "Audio/Intro/guts_and_gore_19";
+        private static readonly Vector2 BottomLeftIntroButtonAnchor = new Vector2(0f, 0f);
+        private static readonly Vector2 BottomRightIntroButtonAnchor = new Vector2(1f, 0f);
+        private static readonly Vector2 BottomLeftIntroButtonPosition = new Vector2(48f, 42f);
+        private static readonly Vector2 BottomRightIntroButtonPosition = new Vector2(-48f, 42f);
         private static readonly string[] IntroPages =
         {
             "눈을 떠보니 차가운 병원 복도였다.\n\n" +
@@ -210,8 +214,8 @@ namespace EscapeRoom
             AddLayoutHeight(pageText, 28f);
             AddLayoutHeight(hintText, 36f);
 
-            previousButton = CreateIntroButton("PreviousIntroPageButton", panelRect, "이전", new Vector2(-610f, 0f), PreviousIntroPage);
-            nextButton = CreateIntroButton("NextIntroPageButton", panelRect, "다음", new Vector2(610f, 0f), NextIntroPage);
+            previousButton = CreateIntroButton("PreviousIntroPageButton", panelRect, "←", BottomLeftIntroButtonAnchor, BottomLeftIntroButtonPosition, PreviousIntroPage);
+            nextButton = CreateIntroButton("NextIntroPageButton", panelRect, "→", BottomRightIntroButtonAnchor, BottomRightIntroButtonPosition, NextIntroPage);
             UpdateIntroPage();
         }
 
@@ -237,7 +241,7 @@ namespace EscapeRoom
 
             if (nextButton != null)
             {
-                SetButtonLabel(nextButton, currentPageIndex >= IntroPages.Length - 1 ? "시작" : "다음");
+                SetButtonLabel(nextButton, currentPageIndex >= IntroPages.Length - 1 ? "▶" : "→");
             }
         }
 
@@ -299,14 +303,14 @@ namespace EscapeRoom
             return tmp;
         }
 
-        private static Button CreateIntroButton(string name, Transform parent, string text, Vector2 position, UnityEngine.Events.UnityAction onClick)
+        private static Button CreateIntroButton(string name, Transform parent, string text, Vector2 anchor, Vector2 position, UnityEngine.Events.UnityAction onClick)
         {
             RectTransform rect = CreatePanel(name, parent, HorrorUITheme.PanelRed);
-            rect.anchorMin = new Vector2(0.5f, 0.5f);
-            rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = anchor;
             rect.anchoredPosition = position;
-            rect.sizeDelta = new Vector2(118f, 54f);
+            rect.sizeDelta = new Vector2(76f, 58f);
 
             Image image = rect.GetComponent<Image>();
             image.raycastTarget = true;
@@ -314,7 +318,7 @@ namespace EscapeRoom
             HorrorUITheme.ApplyButton(button, image);
             button.onClick.AddListener(onClick);
 
-            TextMeshProUGUI label = CreateText("Label", rect, text, 20f, TextAlignmentOptions.Center, HorrorUITheme.TextMain);
+            TextMeshProUGUI label = CreateText("Label", rect, text, 30f, TextAlignmentOptions.Center, HorrorUITheme.TextMain);
             label.rectTransform.anchorMin = Vector2.zero;
             label.rectTransform.anchorMax = Vector2.one;
             label.rectTransform.offsetMin = Vector2.zero;
