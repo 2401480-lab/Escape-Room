@@ -35,6 +35,7 @@ Assert-True ($gameOver -match 'SpawnJumpscareModel') 'GameOverUI must spawn the 
 Assert-True ($gameOver -match 'LungeJumpscareModel') 'GameOverUI must move the jumpscare model toward the player camera.'
 Assert-True ($gameOver -match 'Vector3\.Lerp') 'The lunge must visibly interpolate from far away to close range.'
 Assert-True ($gameOver -match 'lungeStartDistance' -and $gameOver -match 'lungeImpactDistance' -and $gameOver -match 'lungeDuration') 'The lunge distance and duration must be configurable.'
+Assert-True ($gameOver -notmatch 'jumpscareDistance') 'GameOverUI must not reference the removed jumpscareDistance field.'
 Assert-True ($gameOver -match 'Camera\.main') 'GameOverUI must position the jumpscare from the active camera.'
 Assert-True ($gameOver -match 'AssetDatabase\.LoadAssetAtPath<GameObject>') 'GameOverUI must load the Room02 model asset in the Unity editor.'
 Assert-True ($gameOver -match 'Resources\.Load<GameObject>') 'GameOverUI must keep a runtime-safe prefab fallback path.'

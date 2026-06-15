@@ -478,3 +478,7 @@
 - 엔딩/QTE 병합을 위해 `EscapeRoom.EscapeKeyState.GrantKey()`와 `EscapeRoom.EscapeKeyState.HasKey` 전역 열쇠 상태 API 추가
 - 관리자 Y 스킵, 전체 단서 자동 열쇠 획득, 범인 정답 열쇠 획득 경로에서 열쇠 상태 API 호출 및 `열쇠를 얻었습니다` 안내 메시지 표시
 - 출구 문 런타임 이름을 `ExitDoor`로 통일하고 E/F 상호작용과 공유 열쇠 상태 확인을 지원하도록 보강
+
+### [2026-06-16 04:11:17]
+- 게임오버 점프스케어 모델 생성 시 삭제된 `jumpscareDistance` 필드를 참조하던 컴파일 오류 수정
+- 점프스케어 테스트에 제거된 거리 필드 재참조 방지 검증 추가

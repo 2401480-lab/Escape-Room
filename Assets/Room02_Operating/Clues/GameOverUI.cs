@@ -137,7 +137,7 @@ namespace EscapeRoom
             }
 
             Camera targetCamera = Camera.main;
-            Vector3 position = transform.position + transform.forward * jumpscareDistance;
+            Vector3 position = transform.position + transform.forward * lungeStartDistance;
             Quaternion rotation = transform.rotation;
 
             if (targetCamera != null)
