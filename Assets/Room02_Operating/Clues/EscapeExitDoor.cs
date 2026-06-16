@@ -33,6 +33,7 @@ namespace EscapeRoom
         {
             Transform target = GetPlayer();
             bool inRange = target != null && Vector3.Distance(target.position, transform.position) <= interactDistance;
+            ControlHintUI.SetDoorPromptVisible(inRange);
             SetPrompt(inRange);
 
             if (inRange && (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.F)))

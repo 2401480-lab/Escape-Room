@@ -23,7 +23,10 @@ namespace EscapeGame
 
         private void Update()
         {
-            if (Input.GetKeyDown(interactKey))
+            bool canOpenDoor = HasDoorInRange();
+            ControlHintUI.SetDoorPromptVisible(canOpenDoor);
+
+            if (canOpenDoor && Input.GetKeyDown(interactKey))
             {
                 TryOpenDoor();
             }
@@ -49,6 +52,22 @@ namespace EscapeGame
 
             OpenDoor(door, hitPoint);
             return true;
+        }
+
+        private bool HasDoorInRange()
+        {
+            if (playerCamera == null)
+            {
+                playerCamera = Camera.main;
+            }
+
+            if (playerCamera == null)
+            {
+                return false;
+            }
+
+            Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+            return TryFindDoor(ray, out Transform door, out Vector3 hitPoint);
         }
 
         private bool TryFindDoor(Ray ray, out Transform door, out Vector3 hitPoint)

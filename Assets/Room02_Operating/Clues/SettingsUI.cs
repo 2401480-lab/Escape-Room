@@ -165,8 +165,9 @@ namespace EscapeRoom
             layout.childForceExpandHeight = false;
 
             CreateControlRow(rect, "WASD", "이동", "앞/뒤/왼쪽/오른쪽으로 이동");
-            CreateControlRow(rect, "Left Shift", "달리기", "누르고 있는 동안 빠르게 이동");
+            CreateControlRow(rect, "Left Shift", "빨리 달리기", "누르고 있는 동안 빠르게 이동");
             CreateControlRow(rect, "Mouse", "시점 이동", "마우스로 360도 둘러보기");
+            CreateControlRow(rect, "E", "문열기", "문 가까이에서 문 열기");
             CreateControlRow(rect, "F", "조사/수집", "단서 상자와 조사 가능한 오브젝트 확인");
             CreateControlRow(rect, "J / Tab", "수사 노트", "수집 증거 기록 열기/닫기");
             CreateControlRow(rect, "K", "용의자 수첩", "인물별 힌트 카드 열기/닫기");

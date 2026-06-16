@@ -8,6 +8,7 @@ $runtimeTextPaths = @(
     'Assets/Room02_Operating/Clues/ClueBoxInteractable.cs',
     'Assets/Room02_Operating/Clues/ClueJournalUI.cs',
     'Assets/Room02_Operating/Clues/CluePickupPopupUI.cs',
+    'Assets/Room02_Operating/Clues/ControlHintUI.cs',
     'Assets/Room02_Operating/Clues/EndingUI.cs',
     'Assets/Room02_Operating/Clues/GameOverUI.cs',
     'Assets/Room02_Operating/Clues/IntroScenarioUI.cs',

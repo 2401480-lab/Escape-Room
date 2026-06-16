@@ -49,6 +49,7 @@ namespace EscapeRoom
             EnsureRuntimeObject<GameOverUI>("GameOverUI");
             EnsureRuntimeObject<ClueJournalUI>("ClueJournalUI");
             EnsureRuntimeObject<TimerUI>("TimerUI");
+            EnsureRuntimeObject<ControlHintUI>("ControlHintUI");
             EnsureRuntimeObject<SettingsUI>("SettingsUI");
             EnsureRuntimeObject<CluePickupPopupUI>("CluePickupPopupUI");
             EnsureRuntimeObject<ClueBoxRuntimeAdapter>("ClueBoxRuntimeAdapter");
