@@ -6,6 +6,8 @@ $modelPath = Join-Path $root 'Assets/Room02_Operating/Models/Ch45_nonPBR.fbx'
 $modelMetaPath = Join-Path $root 'Assets/Room02_Operating/Models/Ch45_nonPBR.fbx.meta'
 $runAnimationPath = Join-Path $root 'Assets/Room02_Operating/Models/Fast Run.fbx'
 $runAnimationMetaPath = Join-Path $root 'Assets/Room02_Operating/Models/Fast Run.fbx.meta'
+$witchLaughPath = Join-Path $root 'Assets/Room02_Operating/Resources/Audio/GameOver/EvilWitchLaughter.wav'
+$witchLaughMetaPath = Join-Path $root 'Assets/Room02_Operating/Resources/Audio/GameOver/EvilWitchLaughter.wav.meta'
 
 function Assert-True {
     param([bool] $Condition, [string] $Message)
@@ -17,6 +19,8 @@ Assert-True (Test-Path -LiteralPath $modelPath) 'Ch45 jumpscare FBX must live un
 Assert-True (Test-Path -LiteralPath $modelMetaPath) 'Ch45 jumpscare FBX meta must be committed with the model.'
 Assert-True (Test-Path -LiteralPath $runAnimationPath) 'Fast Run FBX must live under Assets/Room02_Operating/Models for the lunge animation.'
 Assert-True (Test-Path -LiteralPath $runAnimationMetaPath) 'Fast Run FBX meta must be committed with the run animation.'
+Assert-True (Test-Path -LiteralPath $witchLaughPath) 'Evil witch laughter GameOver SFX must live under Room02 Resources audio.'
+Assert-True (Test-Path -LiteralPath $witchLaughMetaPath) 'Evil witch laughter GameOver SFX meta must be committed with the audio.'
 
 $gameOver = Get-Content -LiteralPath $gameOverPath -Raw -Encoding UTF8
 $modelMeta = Get-Content -LiteralPath $modelMetaPath -Raw -Encoding UTF8
@@ -45,6 +49,11 @@ Assert-True ($gameOver -match 'AssetDatabase\.LoadAllAssetsAtPath') 'GameOverUI 
 Assert-True ($gameOver -match 'Resources\.Load<AnimationClip>') 'GameOverUI must keep a runtime-safe animation fallback path.'
 Assert-True ($gameOver -match 'AddComponent<Animation>' -and $gameOver -match '\.Play\s*\(') 'GameOverUI must play the Fast Run animation on the spawned model.'
 Assert-True ($gameOver -match 'AudioClip\.Create' -and $gameOver -match 'PlayOneShot') 'GameOverUI must play a procedural dudung-tak impact sound.'
+Assert-True ($gameOver -match 'GameOverWitchLaughterResourcePath') 'GameOverUI must name the evil witch laughter Resources path.'
+Assert-True ($gameOver -match 'Resources\.Load<AudioClip>\s*\(\s*GameOverWitchLaughterResourcePath\s*\)') 'GameOverUI must load the evil witch laughter clip from Resources.'
+Assert-True ($gameOver -match 'private\s+void\s+PlayGameOverLaugh\s*\(') 'GameOverUI must isolate GameOver laughter playback.'
+Assert-True ($gameOver -match 'ShowFinalGameOver[\s\S]*?PlayGameOverLaugh\s*\(\s*\)') 'GameOverUI must play the evil witch laughter when the final Game Over panel appears.'
+Assert-True ($gameOver -match 'witchLaughAudioSource[\s\S]*?PlayOneShot\s*\(\s*witchLaughClip\s*,\s*gameOverLaughVolume\s*\)') 'GameOverUI must play the witch laughter clip as a one-shot UI sound.'
 Assert-True ($gameOver -match 'blackoutImage' -and $gameOver -match 'Color\.black') 'GameOverUI must cover the screen with black darkness.'
 Assert-True ($gameOver -match 'GAME OVER') 'GameOverUI must display GAME OVER text.'
 Assert-True ($gameOver -match 'Color\.red' -or $gameOver -match 'new\s+Color\s*\(\s*1f\s*,\s*0f\s*,\s*0f') 'GAME OVER text must be red.'
@@ -52,5 +61,7 @@ Assert-True ($gameOver -match 'WaitForSecondsRealtime') 'The jumpscare timing mu
 Assert-True ($gameOver -notmatch 'Time\.timeScale') 'GameOverUI must not change Time.timeScale.'
 Assert-True ($modelMeta -match '(?m)^guid:\s*[a-f0-9]{32}') 'Ch45 jumpscare model meta must contain a stable Unity GUID.'
 Assert-True ($runAnimationMeta -match '(?m)^guid:\s*[a-f0-9]{32}') 'Fast Run animation meta must contain a stable Unity GUID.'
+$witchLaughMeta = Get-Content -LiteralPath $witchLaughMetaPath -Raw -Encoding UTF8
+Assert-True ($witchLaughMeta -match '(?m)^guid:\s*[a-f0-9]{32}') 'Evil witch laughter audio meta must contain a stable Unity GUID.'
 
 Write-Host 'GameOver jumpscare checks passed.'

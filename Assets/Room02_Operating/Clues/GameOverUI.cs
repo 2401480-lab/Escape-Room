@@ -14,6 +14,7 @@ namespace EscapeRoom
     public class GameOverUI : MonoBehaviour
     {
         public static GameOverUI Instance { get; private set; }
+        private const string GameOverWitchLaughterResourcePath = "Audio/GameOver/EvilWitchLaughter";
 
         [SerializeField] private Canvas gameOverCanvas;
         [SerializeField] private GameObject panelRoot;
@@ -36,13 +37,16 @@ namespace EscapeRoom
         [SerializeField] private float jumpscareScale = 1.22f;
         [SerializeField] private float jumpscareWidthScale = 0.82f;
         [SerializeField] private float blackoutDelay = 0.38f;
+        [SerializeField] private float gameOverLaughVolume = 0.88f;
         [SerializeField] private string mainMenuSceneName = "RoomSelect";
 
         public UnityEvent OnJumpscareStarted = new UnityEvent();
         public UnityEvent OnSurvivalEndingShown = new UnityEvent();
 
         private AudioSource jumpscareAudioSource;
+        private AudioSource witchLaughAudioSource;
         private AudioClip dudungTakClip;
+        private AudioClip witchLaughClip;
         private GameObject spawnedJumpscareModel;
         private Coroutine gameOverSequence;
 
@@ -334,6 +338,36 @@ namespace EscapeRoom
             jumpscareAudioSource.PlayOneShot(GetOrCreateDudungTakClip());
         }
 
+        private void PlayGameOverLaugh()
+        {
+            if (witchLaughClip == null)
+            {
+                witchLaughClip = Resources.Load<AudioClip>(GameOverWitchLaughterResourcePath);
+            }
+
+            if (witchLaughClip == null)
+            {
+                return;
+            }
+
+            if (witchLaughAudioSource == null)
+            {
+                witchLaughAudioSource = GetComponent<AudioSource>();
+                if (witchLaughAudioSource == null)
+                {
+                    witchLaughAudioSource = gameObject.AddComponent<AudioSource>();
+                }
+            }
+
+            witchLaughAudioSource.playOnAwake = false;
+            witchLaughAudioSource.loop = false;
+            witchLaughAudioSource.spatialBlend = 0f;
+            witchLaughAudioSource.volume = 1f;
+            witchLaughAudioSource.mute = false;
+            witchLaughAudioSource.enabled = true;
+            witchLaughAudioSource.PlayOneShot(witchLaughClip, gameOverLaughVolume);
+        }
+
         private AudioClip GetOrCreateDudungTakClip()
         {
             if (dudungTakClip != null)
@@ -380,6 +414,7 @@ namespace EscapeRoom
             gameOverTitleText.text = "GAME OVER";
             gameOverTitleText.color = Color.red;
             messageText.text = GetMessage(reason);
+            PlayGameOverLaugh();
         }
 
         private static string GetMessage(GameOverReason reason)
