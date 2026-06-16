@@ -82,7 +82,7 @@ namespace EscapeRoom
             rect.anchorMin = new Vector2(1f, 1f);
             rect.anchorMax = new Vector2(1f, 1f);
             rect.pivot = new Vector2(1f, 1f);
-            rect.anchoredPosition = new Vector2(-92f, -24f);
+            rect.anchoredPosition = new Vector2(-160f, -24f);
             rect.sizeDelta = new Vector2(180f, 48f);
         }
 

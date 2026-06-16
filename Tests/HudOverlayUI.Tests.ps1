@@ -62,6 +62,8 @@ Assert-True ($journal -match 'EvidenceHudButton' -and $journal -match 'SuspectHu
 Assert-True ($journal -match 'KeyCode\.J' -and $journal -match 'KeyCode\.K') 'ClueJournalUI must toggle evidence with J and suspects with K.'
 Assert-True ($journal -match 'HUD_Canvas') 'ClueJournalUI must attach UI to HUD_Canvas.'
 Assert-True ($timer -match 'HUD_Canvas' -and $timer -match 'urgentThresholdSeconds\s*=\s*180f') 'TimerUI must live in HUD_Canvas and turn urgent after 3 minutes remain.'
+Assert-True ($timer -match 'anchoredPosition\s*=\s*new\s+Vector2\s*\(\s*-160f\s*,\s*-24f\s*\)') 'TimerUI must sit left of the top-right settings button so they do not overlap.'
+Assert-True ($settings -match 'SettingsHudButton[\s\S]*?anchoredPosition\s*=\s*new\s+Vector2\s*\(\s*-24f\s*,\s*-24f\s*\)') 'SettingsUI button must stay in the top-right corner while timer is offset left.'
 Assert-True ($controlHint -match 'KeyboardControlHintPanel' -and $controlHint.Contains($openDoorText) -and $controlHint.Contains($runFastText)) 'ControlHintUI must show keyboard-style run and door prompts on the HUD.'
 Assert-True ($interactable.Contains($investigatePrompt) -and $interactable -match 'HUD_Canvas') 'ClueInteractable must show [F] investigate on HUD_Canvas.'
 Assert-True ($bootstrapper -match 'RuntimeInitializeOnLoadMethod' -and $bootstrapper -match 'RuntimeInitializeLoadType\.AfterSceneLoad') 'HUD bootstrapper must initialize after the first scene loads.'

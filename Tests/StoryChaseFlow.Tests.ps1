@@ -64,6 +64,8 @@ Assert-True ($lockSystem -match 'HasAllKeyClues') 'LockSystem must gate escape k
 
 Assert-True ($endingUI -match 'JinSewoong' -and $endingUI -match 'BongTaehyeon' -and $endingUI -match 'MoonSumi' -and $endingUI -match 'OhSejin') 'EndingUI must include all four suspect choices.'
 Assert-True ($endingUI -match 'CulpritChaseButton' -and $endingUI -match 'culpritChaseButton' -and $endingUI.Contains($culpritChaseText)) 'EndingUI must create a visible culprit finding HUD button.'
+Assert-True ($endingUI -match 'ApplyCulpritChaseButtonStyle\s*\(') 'EndingUI must isolate the high-visibility culprit finding button style.'
+Assert-True ($endingUI -match 'new\s+Color\s*\(\s*0\.82f\s*,\s*0\.68f\s*,\s*0\.32f\s*,\s*0\.5f\s*\)') 'The culprit finding button background must be yellow at 50% opacity.'
 Assert-True ($endingUI -match 'OnPhaseChanged\.AddListener' -and $endingUI -match 'StoryPhase\.SuspectSelection') 'EndingUI must show the culprit guess button when suspect selection is unlocked.'
 Assert-True ($endingUI -match 'RefreshCulpritChaseButton\s*\(\s*\);') 'EndingUI must refresh the culprit guess button after runtime manager wiring changes.'
 Assert-True ($endingUI -match 'culpritChaseButton\.onClick\.AddListener\s*\(\s*Show\s*\)') 'The culprit chase HUD button must open the suspect selection UI.'

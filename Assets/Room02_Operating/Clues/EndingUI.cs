@@ -230,7 +230,7 @@ namespace EscapeRoom
         {
             if (culpritChaseButton == null)
             {
-                RectTransform rect = CreatePanel("CulpritChaseButton", endingCanvas.transform, new Color(0.18f, 0.015f, 0.025f, 0.96f));
+                RectTransform rect = CreatePanel("CulpritChaseButton", endingCanvas.transform, new Color(0.82f, 0.68f, 0.32f, 0.5f));
                 rect.anchorMin = new Vector2(1f, 1f);
                 rect.anchorMax = new Vector2(1f, 1f);
                 rect.pivot = new Vector2(1f, 1f);
@@ -238,10 +238,10 @@ namespace EscapeRoom
                 rect.sizeDelta = new Vector2(210f, 50f);
 
                 culpritChaseButton = rect.gameObject.AddComponent<Button>();
-                HorrorUITheme.ApplyButton(culpritChaseButton, rect.GetComponent<Image>());
+                ApplyCulpritChaseButtonStyle(culpritChaseButton, rect.GetComponent<Image>());
 
                 TextMeshProUGUI text = CreateText("Label", rect, "범인찾기 (G)", 21f);
-                text.color = HorrorUITheme.TextMain;
+                text.color = Color.black;
                 text.rectTransform.anchorMin = Vector2.zero;
                 text.rectTransform.anchorMax = Vector2.one;
                 text.rectTransform.offsetMin = new Vector2(8f, 0f);
@@ -251,6 +251,32 @@ namespace EscapeRoom
             culpritChaseButton.onClick.RemoveListener(Show);
             culpritChaseButton.onClick.AddListener(Show);
             culpritChaseButton.gameObject.SetActive(false);
+        }
+
+        private static void ApplyCulpritChaseButtonStyle(Button button, Image image)
+        {
+            Color normal = new Color(0.82f, 0.68f, 0.32f, 0.5f);
+            Color highlighted = new Color(0.95f, 0.78f, 0.34f, 0.68f);
+            Color pressed = new Color(0.62f, 0.47f, 0.16f, 0.78f);
+
+            if (image != null)
+            {
+                image.color = normal;
+            }
+
+            if (button == null)
+            {
+                return;
+            }
+
+            ColorBlock colors = button.colors;
+            colors.normalColor = normal;
+            colors.highlightedColor = highlighted;
+            colors.pressedColor = pressed;
+            colors.selectedColor = highlighted;
+            colors.disabledColor = new Color(0.2f, 0.18f, 0.12f, 0.35f);
+            colors.colorMultiplier = 1f;
+            button.colors = colors;
         }
 
         private void SubscribeToStoryProgress()

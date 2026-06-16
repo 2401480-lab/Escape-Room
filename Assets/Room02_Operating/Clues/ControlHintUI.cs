@@ -11,8 +11,9 @@ namespace EscapeRoom
         [SerializeField] private Canvas hintCanvas;
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private GameObject doorOpenHintRow;
+        [SerializeField] private float doorPromptHoldSeconds = 0.18f;
 
-        private static int doorPromptRequestedFrame = -1;
+        private static float doorPromptVisibleUntilTime = -1f;
 
         private void Awake()
         {
@@ -35,7 +36,8 @@ namespace EscapeRoom
         {
             if (visible)
             {
-                doorPromptRequestedFrame = Time.frameCount;
+                float holdSeconds = Instance != null ? Instance.doorPromptHoldSeconds : 0.18f;
+                doorPromptVisibleUntilTime = Time.unscaledTime + holdSeconds;
             }
 
             Instance?.RefreshDoorPromptVisibility();
@@ -66,7 +68,8 @@ namespace EscapeRoom
             layout.childForceExpandHeight = false;
 
             CreateHintRow(panel, "SHIFT", "빨리 달리기", true);
-            doorOpenHintRow = CreateHintRow(panel, "E", "문열기", false).gameObject;
+            doorOpenHintRow = CreateHintRow(panel, "E", "- 문열기", false).gameObject;
+            doorOpenHintRow.name = "DoorOpenHintRow";
             RefreshDoorPromptVisibility();
         }
 
@@ -74,7 +77,7 @@ namespace EscapeRoom
         {
             if (doorOpenHintRow != null)
             {
-                doorOpenHintRow.SetActive(doorPromptRequestedFrame == Time.frameCount);
+                doorOpenHintRow.SetActive(Time.unscaledTime <= doorPromptVisibleUntilTime);
             }
         }
 

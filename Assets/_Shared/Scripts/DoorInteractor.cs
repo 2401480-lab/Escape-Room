@@ -12,8 +12,10 @@ namespace EscapeGame
         public float openAngle = 90f;
 
         private const int MaxDoorScanHits = 16;
+        private const int MaxDoorProximityHits = 24;
         private Camera playerCamera;
         private readonly RaycastHit[] doorScanHits = new RaycastHit[MaxDoorScanHits];
+        private readonly Collider[] doorProximityHits = new Collider[MaxDoorProximityHits];
         private readonly HashSet<Transform> openedDoors = new HashSet<Transform>();
 
         private void Awake()
@@ -82,7 +84,12 @@ namespace EscapeGame
                 }
             }
 
-            return TryFindDoorWithSphereCast(ray, out door, out hitPoint);
+            if (TryFindDoorWithSphereCast(ray, out door, out hitPoint))
+            {
+                return true;
+            }
+
+            return TryFindNearbyDoor(out door, out hitPoint);
         }
 
         private bool TryFindDoorWithSphereCast(Ray ray, out Transform door, out Vector3 hitPoint)
@@ -116,6 +123,54 @@ namespace EscapeGame
                 door = candidate;
                 hitPoint = hit.point;
                 closestDistance = hit.distance;
+            }
+
+            return door != null;
+        }
+
+        private bool TryFindNearbyDoor(out Transform door, out Vector3 hitPoint)
+        {
+            door = null;
+            hitPoint = Vector3.zero;
+
+            if (playerCamera == null)
+            {
+                return false;
+            }
+
+            Vector3 origin = playerCamera.transform.position;
+            int hitCount = Physics.OverlapSphereNonAlloc(
+                origin,
+                interactDistance,
+                doorProximityHits,
+                ~0,
+                QueryTriggerInteraction.Ignore);
+
+            float closestDistance = float.MaxValue;
+            for (int i = 0; i < hitCount; i++)
+            {
+                Collider hitCollider = doorProximityHits[i];
+                if (hitCollider == null)
+                {
+                    continue;
+                }
+
+                Transform candidate = FindDoorTransform(hitCollider.transform);
+                if (candidate == null || openedDoors.Contains(candidate))
+                {
+                    continue;
+                }
+
+                Vector3 candidatePoint = hitCollider.ClosestPoint(origin);
+                float distance = (candidatePoint - origin).sqrMagnitude;
+                if (distance >= closestDistance)
+                {
+                    continue;
+                }
+
+                door = candidate;
+                hitPoint = candidatePoint;
+                closestDistance = distance;
             }
 
             return door != null;
