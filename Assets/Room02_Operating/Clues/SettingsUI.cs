@@ -53,6 +53,8 @@ namespace EscapeRoom
             {
                 panelRoot.SetActive(isOpen);
             }
+
+            ApplyGalmuriToSettingsText();
         }
 
         private void ShowVolumeSensitivityTab()
@@ -73,12 +75,14 @@ namespace EscapeRoom
 
             if (panelRoot != null)
             {
+                ApplyGalmuriToSettingsText();
                 return;
             }
 
             CreateSettingsButton(settingsCanvas.transform);
             CreateSettingsPanel(settingsCanvas.transform);
             ShowVolumeSensitivityTab();
+            ApplyGalmuriToSettingsText();
         }
 
         private void CreateSettingsButton(Transform parent)
@@ -297,6 +301,20 @@ namespace EscapeRoom
             tmp.alignment = alignment;
             HorrorUITheme.ApplyText(tmp, fontSize);
             return tmp;
+        }
+
+        private void ApplyGalmuriToSettingsText()
+        {
+            if (settingsCanvas == null)
+            {
+                return;
+            }
+
+            TextMeshProUGUI[] texts = settingsCanvas.GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (TextMeshProUGUI text in texts)
+            {
+                FontHelper.Apply(text);
+            }
         }
 
         private static Button CreateButton(string name, Transform parent, string text, float width, float height)

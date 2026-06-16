@@ -59,4 +59,10 @@ foreach ($path in $runtimeTextPaths) {
     Assert-True ($code -match 'FontHelper\.Apply' -or $code -match 'HorrorUITheme\.ApplyText') "Runtime-created TMP text must use Galmuri through FontHelper or HorrorUITheme in $path"
 }
 
+$settingsPath = Join-Path $root 'Assets/Room02_Operating/Clues/SettingsUI.cs'
+$settings = Get-Content -LiteralPath $settingsPath -Raw -Encoding UTF8
+Assert-True ($settings -match 'ApplyGalmuriToSettingsText\s*\(') 'SettingsUI must have a dedicated pass that applies Galmuri to all settings text.'
+Assert-True ($settings -match 'GetComponentsInChildren<TextMeshProUGUI>\s*\(\s*true\s*\)' -and $settings -match 'FontHelper\.Apply\s*\(\s*text') 'SettingsUI must sweep existing and inactive settings TMP text with FontHelper.'
+Assert-True ($settings -match 'EnsureUI[\s\S]*?ApplyGalmuriToSettingsText\s*\(\s*\)' -and $settings -match 'SetOpen[\s\S]*?ApplyGalmuriToSettingsText\s*\(\s*\)') 'SettingsUI must apply Galmuri after UI creation and whenever settings are opened or closed.'
+
 Write-Host 'Galmuri font checks passed.'

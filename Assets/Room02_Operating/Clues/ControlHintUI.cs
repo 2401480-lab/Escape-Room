@@ -37,31 +37,89 @@ namespace EscapeRoom
         private void EnsureUI()
         {
             hintCanvas = EnsureHudCanvas();
+            EnsureHintPanel();
+            EnsureBaseHintRows();
+            RefreshDoorPromptVisibility();
+        }
 
-            if (panelRoot != null)
+        private void EnsureHintPanel()
+        {
+            if (panelRoot == null)
             {
-                return;
+                GameObject existingPanel = GameObject.Find("KeyboardControlHintPanel");
+                if (existingPanel != null)
+                {
+                    panelRoot = existingPanel;
+                }
             }
 
-            RectTransform panel = CreatePanel("KeyboardControlHintPanel", hintCanvas.transform, new Color(0.02f, 0.018f, 0.02f, 0.82f));
-            panelRoot = panel.gameObject;
+            RectTransform panel;
+            if (panelRoot == null)
+            {
+                panel = CreatePanel("KeyboardControlHintPanel", hintCanvas.transform, new Color(0.02f, 0.018f, 0.02f, 0.82f));
+                panelRoot = panel.gameObject;
+            }
+            else
+            {
+                panel = (RectTransform)panelRoot.transform;
+            }
+
             panel.anchorMin = new Vector2(0f, 0f);
             panel.anchorMax = new Vector2(0f, 0f);
             panel.pivot = new Vector2(0f, 0f);
             panel.anchoredPosition = new Vector2(24f, 24f);
             panel.sizeDelta = new Vector2(310f, 92f);
 
-            VerticalLayoutGroup layout = panelRoot.AddComponent<VerticalLayoutGroup>();
+            VerticalLayoutGroup layout = panelRoot.GetComponent<VerticalLayoutGroup>();
+            if (layout == null)
+            {
+                layout = panelRoot.AddComponent<VerticalLayoutGroup>();
+            }
+
             layout.padding = new RectOffset(10, 10, 10, 10);
             layout.spacing = 7f;
             layout.childControlWidth = true;
             layout.childControlHeight = false;
             layout.childForceExpandHeight = false;
+        }
 
-            CreateHintRow(panel, "SHIFT", "빨리 달리기", true);
-            doorOpenHintRow = CreateHintRow(panel, "E", "- 문열기", true).gameObject;
+        private void EnsureBaseHintRows()
+        {
+            if (panelRoot == null)
+            {
+                return;
+            }
+
+            if (panelRoot.transform.Find("ControlHintRow_SHIFT") == null)
+            {
+                CreateHintRow(panelRoot.transform, "SHIFT", "빨리 달리기", true);
+            }
+
+            EnsureDoorOpenHintRow();
+        }
+
+        private void EnsureDoorOpenHintRow()
+        {
+            if (panelRoot == null)
+            {
+                return;
+            }
+
+            Transform existingRow = panelRoot.transform.Find("DoorOpenHintRow");
+            if (existingRow == null)
+            {
+                existingRow = panelRoot.transform.Find("ControlHintRow_E");
+            }
+
+            if (existingRow != null)
+            {
+                doorOpenHintRow = existingRow.gameObject;
+                doorOpenHintRow.name = "DoorOpenHintRow";
+                return;
+            }
+
+            doorOpenHintRow = CreateHintRow(panelRoot.transform, "E", "- 문열기", true).gameObject;
             doorOpenHintRow.name = "DoorOpenHintRow";
-            RefreshDoorPromptVisibility();
         }
 
         private void RefreshDoorPromptVisibility()
