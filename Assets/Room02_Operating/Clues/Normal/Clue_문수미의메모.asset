@@ -11,11 +11,14 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uBB38\uC218\uBBF8\uC758\uBA54\uBAA8"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: normal_sumi_memo
-  clueName: "문수미 일기장"
-  description: "오늘 무슨 일이 생길 것 같다. 나쁜 예감이 든다."
-  meaning: "수첩: 문수미 — 오늘 사건을 미리 눈치챈 인물이 있었던 것 같다."
+  clueName: "\uBB38\uC218\uBBF8 \uC77C\uAE30\uC7A5"
+  description: "\uC624\uB298 \uBB34\uC2A8 \uC77C\uC774 \uC0DD\uAE38 \uAC83 \uAC19\uB2E4.
+    \uB098\uC05C \uC608\uAC10\uC774 \uB4E0\uB2E4."
+  meaning: "\uC218\uCCA9: \uBB38\uC218\uBBF8 \u2014 \uC624\uB298 \uC0AC\uAC74\uC744
+    \uBBF8\uB9AC \uB208\uCE58\uCC48 \uC778\uBB3C\uC774 \uC788\uC5C8\uB358 \uAC83
+    \uAC19\uB2E4."
   areaName: DressingRoom
   category: 0
   isRequired: 1

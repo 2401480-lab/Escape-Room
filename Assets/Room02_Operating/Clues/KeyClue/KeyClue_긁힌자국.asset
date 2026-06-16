@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "KeyClue_\uAE01\uD78C\uC790\uAD6D"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: key_clue_fridge_scratches
-  clueName: "약품 목록표"
-  description: "목록에 없는 약품이 하나 반출됐다. 날짜는 오늘."
-  meaning: "수첩: 공통 — 오늘 누군가 이 보관실에서 약품을 가져갔다."
+  clueName: "\uC57D\uD488 \uBAA9\uB85D\uD45C"
+  description: "\uBAA9\uB85D\uC5D0 \uC5C6\uB294 \uC57D\uD488\uC774 \uD558\uB098 \uBC18\uCD9C\uB410\uB2E4.
+    \uB0A0\uC9DC\uB294 \uC624\uB298."
+  meaning: "\uC218\uCCA9: \uACF5\uD1B5 \u2014 \uC624\uB298 \uB204\uAD70\uAC00 \uC774
+    \uBCF4\uAD00\uC2E4\uC5D0\uC11C \uC57D\uD488\uC744 \uAC00\uC838\uAC14\uB2E4."
   areaName: Storage
   category: 1
   isRequired: 1

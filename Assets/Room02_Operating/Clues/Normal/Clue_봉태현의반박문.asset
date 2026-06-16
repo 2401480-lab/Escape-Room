@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uBD09\uD0DC\uD604\uC758\uBC18\uBC15\uBB38"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: normal_bong_rebuttal
-  clueName: "봉태현 메모"
-  description: "세웅아 내가 먼저 수술실 들어갈게. / 답: 괜찮아, 내가 할게."
-  meaning: "수첩: 봉태현 — 당일 수술실 입장 순서에 변동이 있었다."
+  clueName: "\uBD09\uD0DC\uD604 \uBA54\uBAA8"
+  description: "\uC138\uC6C5\uC544 \uB0B4\uAC00 \uBA3C\uC800 \uC218\uC220\uC2E4 \uB4E4\uC5B4\uAC08\uAC8C.
+    / \uB2F5: \uAD1C\uCC2E\uC544, \uB0B4\uAC00 \uD560\uAC8C."
+  meaning: "\uC218\uCCA9: \uBD09\uD0DC\uD604 \u2014 \uB2F9\uC77C \uC218\uC220\uC2E4
+    \uC785\uC7A5 \uC21C\uC11C\uC5D0 \uBCC0\uB3D9\uC774 \uC788\uC5C8\uB2E4."
   areaName: Storage
   category: 0
   isRequired: 1

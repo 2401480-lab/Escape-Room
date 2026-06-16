@@ -11,11 +11,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uC9C4\uC138\uC6C5\uC77C\uAE30\uC7A5"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: clue_makeup_diary
-  clueName: "진세웅 일기장"
-  description: "더 이상 미룰 수 없다. 오늘이다."
-  meaning: "수첩: 진세웅 — 누군가 오늘을 위해 오래 기다려왔다."
+  clueName: "\uC9C4\uC138\uC6C5 \uC77C\uAE30\uC7A5"
+  description: "\uB354 \uC774\uC0C1 \uBBF8\uB8F0 \uC218 \uC5C6\uB2E4. \uC624\uB298\uC774\uB2E4."
+  meaning: "\uC218\uCCA9: \uC9C4\uC138\uC6C5 \u2014 \uB204\uAD70\uAC00 \uC624\uB298\uC744
+    \uC704\uD574 \uC624\uB798 \uAE30\uB2E4\uB824\uC654\uB2E4."
   areaName: DressingRoom
   category: 0
   isRequired: 1

@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uBD84\uC7A5\uB3C4\uAD6C\uD568"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: normal_makeup_toolbox
-  clueName: "진세웅 분장대"
-  description: "붉은 페인트 통이 열려있다. 발가락 모양 자국이 찍혀있다."
-  meaning: "수첩: 진세웅 — 누군가 이 자리에서 발가락에 페인트를 칠했다."
+  clueName: "\uC9C4\uC138\uC6C5 \uBD84\uC7A5\uB300"
+  description: "\uBD89\uC740 \uD398\uC778\uD2B8 \uD1B5\uC774 \uC5F4\uB824\uC788\uB2E4.
+    \uBC1C\uAC00\uB77D \uBAA8\uC591 \uC790\uAD6D\uC774 \uCC0D\uD600\uC788\uB2E4."
+  meaning: "\uC218\uCCA9: \uC9C4\uC138\uC6C5 \u2014 \uB204\uAD70\uAC00 \uC774 \uC790\uB9AC\uC5D0\uC11C
+    \uBC1C\uAC00\uB77D\uC5D0 \uD398\uC778\uD2B8\uB97C \uCE60\uD588\uB2E4."
   areaName: DressingRoom
   category: 0
   isRequired: 1

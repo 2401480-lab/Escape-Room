@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uCD94\uBAA8\uC561\uC790"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: normal_memorial_frame
-  clueName: "하시호 추모 액자"
-  description: "1개월 전 사망. 향년 22세. 동아리 부원 일동."
-  meaning: "수첩: 공통 — 최근 동아리에서 사망자가 있었다. 사인은 불명확하다."
+  clueName: "\uD558\uC2DC\uD638 \uCD94\uBAA8 \uC561\uC790"
+  description: "1\uAC1C\uC6D4 \uC804 \uC0AC\uB9DD. \uD5A5\uB144 22\uC138. \uB3D9\uC544\uB9AC
+    \uBD80\uC6D0 \uC77C\uB3D9."
+  meaning: "\uC218\uCCA9: \uACF5\uD1B5 \u2014 \uCD5C\uADFC \uB3D9\uC544\uB9AC\uC5D0\uC11C
+    \uC0AC\uB9DD\uC790\uAC00 \uC788\uC5C8\uB2E4. \uC0AC\uC778\uC740 \uBD88\uBA85\uD655\uD558\uB2E4."
   areaName: Hallway
   category: 0
   isRequired: 1

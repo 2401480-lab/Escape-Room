@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uD558\uC2DC\uD638\uC720\uC11C"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: clue_hasho_will
-  clueName: "하시호 유서 사본"
-  description: "살 이유를 잃었다. 안나가 그걸 빼앗아 갔다."
-  meaning: "수첩: 공통 — 하시호의 죽음과 유안나 사이에 연결고리가 있다."
+  clueName: "\uD558\uC2DC\uD638 \uC720\uC11C \uC0AC\uBCF8"
+  description: "\uC0B4 \uC774\uC720\uB97C \uC783\uC5C8\uB2E4. \uC548\uB098\uAC00
+    \uADF8\uAC78 \uBE7C\uC557\uC544 \uAC14\uB2E4."
+  meaning: "\uC218\uCCA9: \uACF5\uD1B5 \u2014 \uD558\uC2DC\uD638\uC758 \uC8FD\uC74C\uACFC
+    \uC720\uC548\uB098 \uC0AC\uC774\uC5D0 \uC5F0\uACB0\uACE0\uB9AC\uAC00 \uC788\uB2E4."
   areaName: Ward
   category: 0
   isRequired: 1

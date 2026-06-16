@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uB300\uD654\uBA54\uBAA8"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: normal_conversation_memo
-  clueName: "쓰레기통 메모"
-  description: "안나, 네가 한 짓을 잊지 않겠다."
-  meaning: "수첩: 공통 — 유안나에게 원한을 품은 인물이 있다. 필체를 기억해둬야 한다."
+  clueName: "\uC4F0\uB808\uAE30\uD1B5 \uBA54\uBAA8"
+  description: "\uC548\uB098, \uB124\uAC00 \uD55C \uC9D3\uC744 \uC78A\uC9C0 \uC54A\uACA0\uB2E4."
+  meaning: "\uC218\uCCA9: \uACF5\uD1B5 \u2014 \uC720\uC548\uB098\uC5D0\uAC8C \uC6D0\uD55C\uC744
+    \uD488\uC740 \uC778\uBB3C\uC774 \uC788\uB2E4. \uD544\uCCB4\uB97C \uAE30\uC5B5\uD574\uB46C\uC57C
+    \uD55C\uB2E4."
   areaName: Hallway
   category: 0
   isRequired: 1

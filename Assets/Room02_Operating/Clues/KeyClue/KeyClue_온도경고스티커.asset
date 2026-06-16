@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "KeyClue_\uC628\uB3C4\uACBD\uACE0\uC2A4\uD2F0\uCEE4"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: key_clue_temperature_warning
-  clueName: "냉장 약품함"
-  description: "온도 경고 스티커. 문 모서리에 긁힌 자국이 있다."
-  meaning: "수첩: 공통 — 누군가 최근에 이 약품함을 열었다."
+  clueName: "\uB0C9\uC7A5 \uC57D\uD488\uD568"
+  description: "\uC628\uB3C4 \uACBD\uACE0 \uC2A4\uD2F0\uCEE4. \uBB38 \uBAA8\uC11C\uB9AC\uC5D0
+    \uAE01\uD78C \uC790\uAD6D\uC774 \uC788\uB2E4."
+  meaning: "\uC218\uCCA9: \uACF5\uD1B5 \u2014 \uB204\uAD70\uAC00 \uCD5C\uADFC\uC5D0
+    \uC774 \uC57D\uD488\uD568\uC744 \uC5F4\uC5C8\uB2E4."
   areaName: Storage
   category: 1
   isRequired: 1

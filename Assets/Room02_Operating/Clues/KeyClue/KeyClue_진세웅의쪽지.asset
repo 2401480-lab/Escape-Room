@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "KeyClue_\uC9C4\uC138\uC6C5\uC758\uCABD\uC9C0"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: key_clue_coldest_place
-  clueName: "침대 밑 쪽지"
-  description: "이 안에 답이 있다. 끝까지 찾아라."
-  meaning: "수첩: 공통 — 누군가 이 병원 안에 무언가를 숨겨뒀다."
+  clueName: "\uCE68\uB300 \uBC11 \uCABD\uC9C0"
+  description: "\uC774 \uC548\uC5D0 \uB2F5\uC774 \uC788\uB2E4. \uB05D\uAE4C\uC9C0
+    \uCC3E\uC544\uB77C."
+  meaning: "\uC218\uCCA9: \uACF5\uD1B5 \u2014 \uB204\uAD70\uAC00 \uC774 \uBCD1\uC6D0
+    \uC548\uC5D0 \uBB34\uC5B8\uAC00\uB97C \uC228\uACA8\uB480\uB2E4."
   areaName: Ward
   category: 1
   isRequired: 1

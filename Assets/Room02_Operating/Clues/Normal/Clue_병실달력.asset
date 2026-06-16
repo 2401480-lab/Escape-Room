@@ -11,11 +11,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e2c4a7a9f3c4a4b9f57c531aef8e1c4, type: 3}
   m_Name: "Clue_\uBCD1\uC2E4\uB2EC\uB825"
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   clueID: normal_ward_calendar
-  clueName: "병실 낙서"
-  description: "왜 살릴 수 있었는데 살리지 않았어."
-  meaning: "수첩: 공통 — 하시호의 죽음에 분노하는 인물이 있다."
+  clueName: "\uBCD1\uC2E4 \uB099\uC11C"
+  description: "\uC65C \uC0B4\uB9B4 \uC218 \uC788\uC5C8\uB294\uB370 \uC0B4\uB9AC\uC9C0
+    \uC54A\uC558\uC5B4."
+  meaning: "\uC218\uCCA9: \uACF5\uD1B5 \u2014 \uD558\uC2DC\uD638\uC758 \uC8FD\uC74C\uC5D0
+    \uBD84\uB178\uD558\uB294 \uC778\uBB3C\uC774 \uC788\uB2E4."
   areaName: Ward
   category: 0
   isRequired: 1
