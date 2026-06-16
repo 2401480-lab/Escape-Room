@@ -69,11 +69,7 @@ namespace EscapeRoom
             if (CluePickupPopupUI.IsPopupVisible) { HidePrompt(); return; }
 
             ClueBoxInteractable bestTarget = FindBestTarget();
-            if (bestTarget != null)
-            {
-                currentTarget = bestTarget;
-            }
-
+            currentTarget = bestTarget;
             if (currentTarget != this)
             {
                 HidePrompt();

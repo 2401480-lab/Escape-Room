@@ -73,6 +73,7 @@ Assert-True ($box -match 'ClueData\s+clueData') 'ClueBoxInteractable must expose
 Assert-True ($box -match 'interactDistance\s*=\s*2\.2f') 'ClueBoxInteractable must only show the prompt when the player is close to the box.'
 Assert-True ($box -match 'Physics\.OverlapSphereNonAlloc' -and $box -match 'Camera\.main') 'ClueBoxInteractable must use 360 degree proximity scanning with camera-based target priority.'
 Assert-True ($box -match 'FindBestTarget\s*\(' -and $box -match 'Vector3\.Dot') 'ClueBoxInteractable must choose the best nearby box using distance and view direction.'
+Assert-True ($box -match 'currentTarget\s*=\s*bestTarget\s*;\s*if\s*\(\s*currentTarget\s*!=\s*this\s*\)') 'ClueBoxInteractable must clear the stale active box target when the player moves away.'
 Assert-True ($box -match 'promptDistance\s*=\s*2\.2f' -and $box -match 'distance\s*>\s*promptDistance') 'ClueBoxInteractable prompt must be gated by close distance, not broad scan range.'
 Assert-True ($box -match 'inputBufferSeconds\s*=\s*0\.2f' -and $box -match 'lastInteractPressedAt') 'ClueBoxInteractable must buffer F briefly so collection is responsive.'
 Assert-True ($box -match 'currentTarget\s*==\s*this' -and $box -match 'SearchBox\s*\(\s*\)') 'ClueBoxInteractable must collect from the active 360 target, not only an exact raycast hit.'

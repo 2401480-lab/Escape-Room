@@ -38,7 +38,8 @@ Assert-True ($hint -match 'KeyboardControlHintPanel' -and $hint -match 'ControlK
 Assert-True ($hint.Contains('SHIFT') -and $hint.Contains($runFastText)) 'ControlHintUI must always show SHIFT run-fast guidance.'
 Assert-True ($hint.Contains('E') -and $hint.Contains($openDoorActionText)) 'ControlHintUI must include an E - open-door prompt.'
 Assert-True ($hint -match 'DoorOpenHintRow' -and $hint -match 'SetDoorPromptVisible\s*\(') 'ControlHintUI must expose a toggle for the door prompt row.'
-Assert-True ($hint -match 'doorPromptVisibleUntilTime' -and $hint -match 'Time\.unscaledTime\s*<=\s*doorPromptVisibleUntilTime') 'ControlHintUI must keep the door prompt visible briefly instead of hiding it after a single frame.'
+Assert-True ($hint.Contains("CreateHintRow(panel, `"E`", `"$openDoorActionText`", true)")) 'ControlHintUI must always show E - 문열기 beside the SHIFT guidance.'
+Assert-True ($hint -match 'RefreshDoorPromptVisibility[\s\S]*?doorOpenHintRow\.SetActive\s*\(\s*true\s*\)' -and $hint -notmatch 'doorPromptVisibleUntilTime') 'ControlHintUI must not hide E - 문열기 behind a timer-based prompt.'
 Assert-True ($hint -match 'FontHelper\.Apply' -or $hint -match 'HorrorUITheme\.ApplyText') 'ControlHintUI runtime text must use the Galmuri font helper.'
 Assert-True ($hint -notmatch 'Time\.timeScale' -and $hint -notmatch 'CursorController') 'ControlHintUI must not alter gameplay time or cursor behavior.'
 
