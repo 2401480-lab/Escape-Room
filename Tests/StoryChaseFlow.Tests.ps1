@@ -69,7 +69,7 @@ Assert-True ($endingUI -match 'new\s+Color\s*\(\s*0\.82f\s*,\s*0\.68f\s*,\s*0\.3
 Assert-True ($endingUI -match 'OnPhaseChanged\.AddListener' -and $endingUI -match 'StoryPhase\.SuspectSelection') 'EndingUI must show the culprit guess button when suspect selection is unlocked.'
 Assert-True ($endingUI -match 'RefreshCulpritChaseButton\s*\(\s*\);') 'EndingUI must refresh the culprit guess button after runtime manager wiring changes.'
 Assert-True ($endingUI -match 'culpritChaseButton\.onClick\.AddListener\s*\(\s*Show\s*\)') 'The culprit chase HUD button must open the suspect selection UI.'
-Assert-True ($endingUI -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*1f\s*,\s*1f\s*\)' -and $endingUI -match 'anchoredPosition\s*=\s*new\s+Vector2\s*\(\s*-24f\s*,\s*-74f\s*\)') 'The culprit chase HUD button must sit under the top-right settings area so it is easy to find.'
+Assert-True ($endingUI -match 'anchorMin\s*=\s*new\s+Vector2\s*\(\s*0f\s*,\s*1f\s*\)' -and $endingUI -match 'pivot\s*=\s*new\s+Vector2\s*\(\s*0f\s*,\s*1f\s*\)' -and $endingUI -match 'anchoredPosition\s*=\s*new\s+Vector2\s*\(\s*304f\s*,\s*-24f\s*\)') 'The culprit chase HUD button must sit beside the top-left suspect notebook button.'
 Assert-True ($endingUI -match 'OnCorrectSuspectSelected' -and $endingUI -match 'OnWrongSuspectSelected') 'EndingUI must expose correct/wrong selection events.'
 Assert-True ($storyManager -match 'GrantEscapeKeyFromCorrectSuspect') 'StoryProgressManager must have a direct key grant path for correct culprit deduction.'
 Assert-True ($endingUI -match 'GrantEscapeKeyFromCorrectSuspect\s*\(\s*\);[\s\S]*?BeginChase\s*\(\s*\)') 'Correct culprit selection must grant the escape key before the chase begins.'

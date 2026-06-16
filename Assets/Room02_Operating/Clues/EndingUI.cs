@@ -231,10 +231,10 @@ namespace EscapeRoom
             if (culpritChaseButton == null)
             {
                 RectTransform rect = CreatePanel("CulpritChaseButton", endingCanvas.transform, new Color(0.82f, 0.68f, 0.32f, 0.5f));
-                rect.anchorMin = new Vector2(1f, 1f);
-                rect.anchorMax = new Vector2(1f, 1f);
-                rect.pivot = new Vector2(1f, 1f);
-                rect.anchoredPosition = new Vector2(-24f, -74f);
+                rect.anchorMin = new Vector2(0f, 1f);
+                rect.anchorMax = new Vector2(0f, 1f);
+                rect.pivot = new Vector2(0f, 1f);
+                rect.anchoredPosition = new Vector2(304f, -24f);
                 rect.sizeDelta = new Vector2(210f, 50f);
 
                 culpritChaseButton = rect.gameObject.AddComponent<Button>();
