@@ -41,6 +41,8 @@ Assert-True ($hint -match 'DoorOpenHintRow' -and $hint -match 'SetDoorPromptVisi
 Assert-True ($hint -match 'EnsureDoorOpenHintRow\s*\(' -and $hint -match 'panelRoot\.transform\.Find\s*\(\s*"DoorOpenHintRow"\s*\)') 'ControlHintUI must repair existing SHIFT-only hint panels by finding or creating DoorOpenHintRow.'
 Assert-True ($hint -match 'EnsureUI[\s\S]*?EnsureDoorOpenHintRow\s*\(\s*\)[\s\S]*?RefreshDoorPromptVisibility\s*\(\s*\)') 'ControlHintUI must ensure the E - 문열기 row even when the hint panel already exists.'
 Assert-True ($hint.Contains("CreateHintRow(panelRoot.transform, `"E`", `"$openDoorActionText`", true)")) 'ControlHintUI must always show E - 문열기 beside the SHIFT guidance.'
+Assert-True ($hint -match 'GetOrCreateInstance\s*\(' -and $hint -match 'new\s+GameObject\s*\(\s*"ControlHintUI"\s*\)') 'ControlHintUI.SetDoorPromptVisible must create the HUD if the scene did not bootstrap it yet.'
+Assert-True ($hint -match 'ConfigureHintRow\s*\(' -and $hint -match 'SetHintRowText\s*\(' -and $hint -match 'doorOpenHintRow\.SetActive\s*\(\s*true\s*\)') 'ControlHintUI must repair existing rows by forcing E - 문열기 text and active state.'
 Assert-True ($hint -match 'RefreshDoorPromptVisibility[\s\S]*?doorOpenHintRow\.SetActive\s*\(\s*true\s*\)' -and $hint -notmatch 'doorPromptVisibleUntilTime') 'ControlHintUI must not hide E - 문열기 behind a timer-based prompt.'
 Assert-True ($hint -match 'FontHelper\.Apply' -or $hint -match 'HorrorUITheme\.ApplyText') 'ControlHintUI runtime text must use the Galmuri font helper.'
 Assert-True ($hint -notmatch 'Time\.timeScale' -and $hint -notmatch 'CursorController') 'ControlHintUI must not alter gameplay time or cursor behavior.'

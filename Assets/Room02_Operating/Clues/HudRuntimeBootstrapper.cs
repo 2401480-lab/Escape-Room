@@ -9,6 +9,7 @@ namespace EscapeRoom
     public static class HudRuntimeBootstrapper
     {
         private const string Room02ScenePath = "Assets/Room02_Operating/Scenes/Show.unity";
+        private const string Room02DirectScenePath = "Assets/Room02_Operating/Scenes/Scene_OperatingRoom.unity";
         private static bool subscribedToSceneLoaded;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -60,7 +61,10 @@ namespace EscapeRoom
 
         private static bool IsRoom02Scene(Scene scene)
         {
-            return scene.name == "Show" || scene.path == Room02ScenePath;
+            return scene.name == "Show" ||
+                   scene.name == "Scene_OperatingRoom" ||
+                   scene.path == Room02ScenePath ||
+                   scene.path == Room02DirectScenePath;
         }
 
         private static void EnsureHudCanvas()

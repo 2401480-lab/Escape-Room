@@ -194,12 +194,26 @@ namespace EscapeRoom
             messageText.color = Color.white;
             OrderEndingLayers();
 
-            yield return new WaitForSecondsRealtime(1f);
-            yield return FadeEnding(Color.black, 0.9f);
-            messageText.text = "";
-            ShowEndingTitle("GAME OVER", Color.red);
-            yield return PopEndingTitle();
-            ShowHomeButton();
+            yield return new WaitForSecondsRealtime(0.45f);
+            SetVisible(false);
+            GetOrCreateGameOverUI()?.PlayGameOver(GameOverReason.ChaseTimerExpired);
+        }
+
+        private static GameOverUI GetOrCreateGameOverUI()
+        {
+            if (GameOverUI.Instance != null)
+            {
+                return GameOverUI.Instance;
+            }
+
+            GameOverUI existingUI = Object.FindFirstObjectByType<GameOverUI>();
+            if (existingUI != null)
+            {
+                return existingUI;
+            }
+
+            GameObject gameOverObject = new GameObject("GameOverUI");
+            return gameOverObject.AddComponent<GameOverUI>();
         }
 
         private void RefreshProgress()

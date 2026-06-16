@@ -31,7 +31,26 @@ namespace EscapeRoom
 
         public static void SetDoorPromptVisible(bool visible)
         {
-            Instance?.RefreshDoorPromptVisibility();
+            GetOrCreateInstance()?.RefreshDoorPromptVisibility();
+        }
+
+        private static ControlHintUI GetOrCreateInstance()
+        {
+            if (Instance != null)
+            {
+                return Instance;
+            }
+
+            ControlHintUI existingUI = Object.FindFirstObjectByType<ControlHintUI>();
+            if (existingUI != null)
+            {
+                Instance = existingUI;
+                existingUI.EnsureUI();
+                return existingUI;
+            }
+
+            GameObject hintObject = new GameObject("ControlHintUI");
+            return hintObject.AddComponent<ControlHintUI>();
         }
 
         private void EnsureUI()
@@ -90,11 +109,13 @@ namespace EscapeRoom
                 return;
             }
 
-            if (panelRoot.transform.Find("ControlHintRow_SHIFT") == null)
+            Transform shiftRow = panelRoot.transform.Find("ControlHintRow_SHIFT");
+            if (shiftRow == null)
             {
-                CreateHintRow(panelRoot.transform, "SHIFT", "빨리 달리기", true);
+                shiftRow = CreateHintRow(panelRoot.transform, "SHIFT", "빨리 달리기", true);
             }
 
+            ConfigureHintRow(shiftRow, "SHIFT", "빨리 달리기");
             EnsureDoorOpenHintRow();
         }
 
@@ -111,15 +132,22 @@ namespace EscapeRoom
                 existingRow = panelRoot.transform.Find("ControlHintRow_E");
             }
 
+            if (existingRow == null && doorOpenHintRow != null)
+            {
+                existingRow = doorOpenHintRow.transform;
+            }
+
             if (existingRow != null)
             {
                 doorOpenHintRow = existingRow.gameObject;
                 doorOpenHintRow.name = "DoorOpenHintRow";
+                ConfigureHintRow(doorOpenHintRow.transform, "E", "- 문열기");
                 return;
             }
 
             doorOpenHintRow = CreateHintRow(panelRoot.transform, "E", "- 문열기", true).gameObject;
             doorOpenHintRow.name = "DoorOpenHintRow";
+            ConfigureHintRow(doorOpenHintRow.transform, "E", "- 문열기");
         }
 
         private void RefreshDoorPromptVisibility()
@@ -127,6 +155,36 @@ namespace EscapeRoom
             if (doorOpenHintRow != null)
             {
                 doorOpenHintRow.SetActive(true);
+            }
+        }
+
+        private static void ConfigureHintRow(Transform row, string keyText, string actionText)
+        {
+            if (row == null)
+            {
+                return;
+            }
+
+            row.gameObject.SetActive(true);
+            SetHintRowText(row.GetComponentsInChildren<TextMeshProUGUI>(true), keyText, actionText);
+        }
+
+        private static void SetHintRowText(TextMeshProUGUI[] labels, string keyText, string actionText)
+        {
+            if (labels == null || labels.Length == 0)
+            {
+                return;
+            }
+
+            foreach (TextMeshProUGUI label in labels)
+            {
+                FontHelper.Apply(label);
+            }
+
+            labels[0].text = keyText;
+            if (labels.Length > 1)
+            {
+                labels[1].text = actionText;
             }
         }
 

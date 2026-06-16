@@ -105,7 +105,9 @@ namespace EscapeRoom
         private bool ShouldPlayJumpscare(GameOverReason reason)
         {
             return reason == GameOverReason.WrongAnswer ||
-                   reason == GameOverReason.DeductionTimerExpired;
+                   reason == GameOverReason.DeductionTimerExpired ||
+                   reason == GameOverReason.CaughtDuringChase ||
+                   reason == GameOverReason.ChaseTimerExpired;
         }
 
         private IEnumerator PlayJumpscareSequence(GameOverReason reason)
